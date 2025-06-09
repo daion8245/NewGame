@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "newgame", "newgame\newgame.csproj", "{564C3F13-C74C-4FA5-8B9F-0C1CC5AADE69}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{564C3F13-C74C-4FA5-8B9F-0C1CC5AADE69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{564C3F13-C74C-4FA5-8B9F-0C1CC5AADE69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{564C3F13-C74C-4FA5-8B9F-0C1CC5AADE69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{564C3F13-C74C-4FA5-8B9F-0C1CC5AADE69}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E71CC2FC-FDB5-4843-8F8F-A89A8376A277}
+	EndGlobalSection
+EndGlobal
