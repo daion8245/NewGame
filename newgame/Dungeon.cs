@@ -22,7 +22,7 @@ namespace newgame
         void CreateMonster()
         {
             Monster monster = new Monster();
-            GameManager.monster = monster;
+            GameManager.Instance.monster = monster;
             monster.start();
             Battle();
         }

@@ -131,7 +131,7 @@
             int count = 0;
             Console.WriteLine($"[{(EquipType)idx}]");
             List<Equipment> items = new List<Equipment>();
-            foreach (Equipment equip in GameManager.GetEquipment)
+            foreach (Equipment equip in GameManager.Instance.GetEquipment)
             {
                 if (equip.GetEquipType == (EquipType)idx)
                 {
@@ -146,9 +146,9 @@
             string input = Console.ReadLine();
 
             int listIdx = int.Parse(input) - 1;
-            if (GameManager.player.MyStatus.coin >= items[listIdx].GetPrice)
+            if (GameManager.Instance.player.MyStatus.coin >= items[listIdx].GetPrice)
             {
-                GameManager.player.MyStatus.coin -= items[listIdx].GetPrice;
+                GameManager.Instance.player.MyStatus.coin -= items[listIdx].GetPrice;
 
                 Inventory.Instance.AddEquip(items[listIdx]);
                 ShowMenu();

@@ -1,5 +1,9 @@
-﻿namespace newgame
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace newgame
 {
+    [JsonObject(MemberSerialization.Fields)]
     internal class Inventory
     {
         static Inventory instance;
@@ -49,9 +53,9 @@
         public void SetEquip(EquipType _type, int _id)
         {
             //현제 착용하고 있는 장비를 확인하는 함수
-            Equipment item = GameManager.FindEquipment(_type, _id);//equipment 타입item변수에
-                                                                   //착용 가능한 장비의
-                                                                   //타입과 id를 넣는다.
+            Equipment item = GameManager.Instance.FindEquipment(_type, _id);//equipment 타입item변수에
+                                                                            //착용 가능한 장비의
+                                                                            //타입과 id를 넣는다.
             if (item == null)
             {
                 return;
@@ -118,7 +122,7 @@
             int temp = idx - 1;
             if (temp >= 0 && temp < canEquips.Count)
             {
-                GameManager.player.MyStatus.coin += canEquips[idx - 1].GetPrice;
+                GameManager.Instance.player.MyStatus.coin += canEquips[idx - 1].GetPrice;
                 canEquips.RemoveAt(idx - 1);
                 return;
             }
@@ -143,6 +147,22 @@
             Console.WriteLine("--------------------");
             Console.WriteLine();
             return true;
+        }
+
+        public void Load()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "GameData_Inventory.json");
+
+            if (File.Exists(path))
+            {
+                string data = File.ReadAllText(path);
+                var settings = new JsonSerializerSettings
+                {
+                    Converters = new List<JsonConverter> { new StringEnumConverter() }
+                };
+
+                instance = JsonConvert.DeserializeObject<Inventory>(data, settings);
+            }
         }
     }
 }

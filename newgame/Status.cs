@@ -1,4 +1,5 @@
-﻿using static newgame.MyDiffain;
+﻿using Newtonsoft.Json;
+using static newgame.MyDiffain;
 
 namespace newgame
 {
@@ -10,13 +11,15 @@ namespace newgame
         MAX
     }
 
-    internal class Status
+    public class Status
     {
         #region Status
         public CharType charType;
         public string Name;
         public int level;
+        [JsonProperty]
         int atk;
+        [JsonIgnore]
         public int ATK
         {
             get
@@ -41,7 +44,9 @@ namespace newgame
 
             set => atk = value;
         }
+        [JsonProperty]
         int def;
+        [JsonIgnore]
         public int DEF
         {
             get
@@ -69,6 +74,10 @@ namespace newgame
         public int nextEXP;
         #endregion
 
+        public Status Clone()
+        {
+            return (Status)this.MemberwiseClone();
+        }
         int GetStrAtk()
         {
             Equipment equip = null;

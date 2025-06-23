@@ -96,15 +96,15 @@ namespace newgame
             switch (itemType)
             {
                 case ItemType.F_POTION_HP:
-                    if (GameManager.player.MyStatus.hp > GameManager.player.MyStatus.maxHp - ItemStatus)
+                    if (GameManager.Instance.player.MyStatus.hp > GameManager.Instance.player.MyStatus.maxHp - ItemStatus)
                     { //플레이어 체력이 최대치이면 체력이 오버되지 않게 하는 if문
-                        GameManager.player.MyStatus.hp = GameManager.player.MyStatus.maxHp;
+                        GameManager.Instance.player.MyStatus.hp = GameManager.Instance.player.MyStatus.maxHp;
                         Console.WriteLine("포션을 사용했다. HP가 최대치로 회복되었다.");
                         break;
                     }
                     else
                     {
-                        GameManager.player.MyStatus.hp += ItemStatus;
+                        GameManager.Instance.player.MyStatus.hp += ItemStatus;
                         Console.WriteLine($"포션을 사용했다. HP가 {ItemStatus} 회복되었다.");
                         break;
                     }
@@ -136,8 +136,8 @@ namespace newgame
                 Console.Write("> ");
                 string str = Console.ReadLine();
 
-                GameManager.player.MyStatus.Name = str;
-                SlowTxtout($"입력된 이름: {GameManager.player.MyStatus.Name} 이 정말 맞습니까?", 30);
+                GameManager.Instance.player.MyStatus.Name = str;
+                SlowTxtout($"입력된 이름: {GameManager.Instance.player.MyStatus.Name} 이 정말 맞습니까?", 30);
                 Console.WriteLine("Y / F");
                 Console.Write("> ");
                 string str2 = Console.ReadLine();

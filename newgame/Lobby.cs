@@ -21,8 +21,8 @@ namespace newgame
             {
                 case "1":
                     {
-                        GameManager.player.MyStatus.ShowStatus();
-                        GameManager.player.MyStatus.ShowInventory();
+                        GameManager.Instance.player.MyStatus.ShowStatus();
+                        GameManager.Instance.player.MyStatus.ShowInventory();
                         Console.WriteLine();
                         Console.WriteLine("[Enter]를 눌러 돌아가기");
                         Console.ReadKey();
@@ -63,6 +63,7 @@ namespace newgame
                 case "8":
                 default:
                     {
+                        DataManager.Instance.Save(GameManager.Instance.player.MyStatus);
                         Environment.Exit(0);
                         break;
                     }

@@ -4,18 +4,7 @@
     {
         public void start()
         {
-            MyStatus = new Status()
-            {
-                charType = CharType.MONSTER,
-                Name = "몬스터",
-                level = 1,
-                hp = 50,
-                maxHp = 50,
-                ATK = 1,
-                DEF = 0,
-                exp = 5,
-                coin = 10,
-            };
+            MyStatus = GameManager.Instance.GetMonsterStat(1);
 
             MyStatus.ShowStatus();
         }

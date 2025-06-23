@@ -13,12 +13,17 @@ namespace newgame
 
         void Create()
         {
-            GameManager.player.MyStatus = new Status();
+            GameManager.Instance.player.MyStatus = new Status();
             MyStatus.charType = CharType.PLAYER;
 
             Console.Clear();
             SetName();
             EnterLobby();
+        }
+
+        public void Load()
+        {
+            GameManager.Instance.player.MyStatus = DataManager.Instance.Load();
         }
 
         void SetName()

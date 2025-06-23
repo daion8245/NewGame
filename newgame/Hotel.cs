@@ -10,7 +10,7 @@ namespace newgame
         {
             HotelLobby();
 
-            if (GameManager.player.IsDead = true)
+            if (GameManager.Instance.player.IsDead = true)
             {
                 RecoveryHP();
             }
@@ -66,9 +66,9 @@ namespace newgame
         void RecoveryHP()
         {
             Console.Clear();
-            GameManager.player.MyStatus.hp = GameManager.player.MyStatus.maxHp;
+            GameManager.Instance.player.MyStatus.hp = GameManager.Instance.player.MyStatus.maxHp;
             SlowTxtout("모든 체력이 회복되었습니다.", 30);
-            SlowTxtout("체력: " + GameManager.player.MyStatus.hp, 30);
+            SlowTxtout("체력: " + GameManager.Instance.player.MyStatus.hp, 30);
 
             Console.WriteLine("돌아가기(ENTER)");
             Console.ReadKey();
@@ -92,7 +92,7 @@ namespace newgame
             {
                 case "1":
                     {
-                        if (GameManager.player.MyStatus.coin < 8)
+                        if (GameManager.Instance.player.MyStatus.coin < 8)
                         {
                             Console.WriteLine("코인이 부족합니다!");
                             Console.WriteLine("돌아가기(ENTER)");
@@ -101,14 +101,14 @@ namespace newgame
                         }
                         else
                         {
-                            GameManager.player.MyStatus.coin -= 8;
+                            GameManager.Instance.player.MyStatus.coin -= 8;
                             food();
                         }
                         break;
                     }
                 case "2":
                     {
-                        if (GameManager.player.MyStatus.coin < 5)
+                        if (GameManager.Instance.player.MyStatus.coin < 5)
                         {
                             Console.WriteLine("코인이 부족합니다!");
                             Console.WriteLine("돌아가기(ENTER)");
@@ -117,7 +117,7 @@ namespace newgame
                         }
                         else
                         {
-                            GameManager.player.MyStatus.coin -= 5;
+                            GameManager.Instance.player.MyStatus.coin -= 5;
                             beer();
                         }
                         break;
@@ -149,43 +149,43 @@ namespace newgame
                 int buff2 = random.Next(1, 5);
                 if (buff == 1)
                 {
-                    if (GameManager.player.MyStatus.ATK <= 1)
+                    if (GameManager.Instance.player.MyStatus.ATK <= 1)
                     {
                         Console.WriteLine("더이상 공격력은 내려갈수 없다!");
                         Console.WriteLine("체력이 감소했다.");
-                        GameManager.player.MyStatus.hp -= buff2;
+                        GameManager.Instance.player.MyStatus.hp -= buff2;
                     }
                     else
                     {
-                        GameManager.player.MyStatus.ATK += buff2;
+                        GameManager.Instance.player.MyStatus.ATK += buff2;
                         SlowTxtout($"{buff2} 만큼 공격력이 증가했다!", 30);
                     }
                 }
                 else if (buff == 2)
                 {
-                    if (GameManager.player.MyStatus.DEF <= 1)
+                    if (GameManager.Instance.player.MyStatus.DEF <= 1)
                     {
                         Console.WriteLine("더이상 방어력은 내려갈수 없다!");
                         Console.WriteLine("체력이 감소했다.");
-                        GameManager.player.MyStatus.hp -= buff2;
+                        GameManager.Instance.player.MyStatus.hp -= buff2;
                     }
                     else
                     {
-                        GameManager.player.MyStatus.DEF += buff2;
+                        GameManager.Instance.player.MyStatus.DEF += buff2;
                         SlowTxtout($"{buff2} 만큼 방어력이 증가했다!", 30);
                     }
                 }
                 else
                 {
-                    if (GameManager.player.MyStatus.maxHp <= 1)
+                    if (GameManager.Instance.player.MyStatus.maxHp <= 1)
                     {
                         Console.WriteLine("더이상 최대 체력은 내려갈수 없다!");
                         Console.WriteLine("체력이 감소했다.");
-                        GameManager.player.MyStatus.hp -= buff2;
+                        GameManager.Instance.player.MyStatus.hp -= buff2;
                     }
                     else
                     {
-                        GameManager.player.MyStatus.maxHp += buff2;
+                        GameManager.Instance.player.MyStatus.maxHp += buff2;
                         SlowTxtout($"{buff2} 만큼 최대 체력이 증가했다!", 30);
                     }
 
@@ -195,43 +195,43 @@ namespace newgame
             {
                 SlowTxtout("이 음식은 매우!!! 맛있다!!!!", 30);
                 SlowTxtout("모든 스텟이 크게 증가했다!", 30);
-                GameManager.player.MyStatus.ATK += 10;
-                GameManager.player.MyStatus.DEF += 10;
-                GameManager.player.MyStatus.maxHp += 10;
+                GameManager.Instance.player.MyStatus.ATK += 10;
+                GameManager.Instance.player.MyStatus.DEF += 10;
+                GameManager.Instance.player.MyStatus.maxHp += 10;
             }
             else if (food == 2)
             {
                 SlowTxtout("이 음식은 혀에게 죄를 짓는 행위와도 같을정도로 맛없다!", 30);
                 SlowTxtout("스텟이 매우 크게 감소했다!", 30);
-                if (GameManager.player.MyStatus.ATK <= 1)
+                if (GameManager.Instance.player.MyStatus.ATK <= 1)
                 {
                     Console.WriteLine("더이상 공격력은 내려갈수 없다!");
                     Console.WriteLine("체력이 감소했다.");
-                    GameManager.player.MyStatus.hp -= 20;
+                    GameManager.Instance.player.MyStatus.hp -= 20;
                 }
                 else
                 {
-                    GameManager.player.MyStatus.ATK -= 20;
+                    GameManager.Instance.player.MyStatus.ATK -= 20;
                 }
-                if (GameManager.player.MyStatus.DEF <= 1)
+                if (GameManager.Instance.player.MyStatus.DEF <= 1)
                 {
                     Console.WriteLine("더이상 방어력은 내려갈수 없다!");
                     Console.WriteLine("체력이 감소했다.");
-                    GameManager.player.MyStatus.hp -= 20;
+                    GameManager.Instance.player.MyStatus.hp -= 20;
                 }
                 else
                 {
-                    GameManager.player.MyStatus.DEF -= 20;
+                    GameManager.Instance.player.MyStatus.DEF -= 20;
                 }
-                if (GameManager.player.MyStatus.maxHp <= 1)
+                if (GameManager.Instance.player.MyStatus.maxHp <= 1)
                 {
                     Console.WriteLine("더이상 최대 체력은 내려갈수 없다!");
                     Console.WriteLine("체력이 감소했다.");
-                    GameManager.player.MyStatus.hp -= 20;
+                    GameManager.Instance.player.MyStatus.hp -= 20;
                 }
                 else
                 {
-                    GameManager.player.MyStatus.maxHp -= 20;
+                    GameManager.Instance.player.MyStatus.maxHp -= 20;
                 }
             }
             else
@@ -239,7 +239,7 @@ namespace newgame
                 SlowTxtout("평범한 음식이었다.", 30);
             }
 
-            if (GameManager.player.MyStatus.hp <= 0)
+            if (GameManager.Instance.player.MyStatus.hp <= 0)
             {
                 SlowTxtout("끔찍한 음식이였다....", 30);
                 SlowTxtout("게임오버", 30);
@@ -270,17 +270,17 @@ namespace newgame
                 int buff2 = random.Next(1, 5);
                 if (buff == 1)
                 {
-                    GameManager.player.MyStatus.ATK += buff2;
+                    GameManager.Instance.player.MyStatus.ATK += buff2;
                     SlowTxtout($"{buff2} 만큼 공격력이 증가했다!", 30);
                 }
                 else if (buff == 2)
                 {
-                    GameManager.player.MyStatus.DEF += buff2;
+                    GameManager.Instance.player.MyStatus.DEF += buff2;
                     SlowTxtout($"{buff2} 만큼 방어력이 증가했다!", 30);
                 }
                 else
                 {
-                    GameManager.player.MyStatus.maxHp += buff2;
+                    GameManager.Instance.player.MyStatus.maxHp += buff2;
                     SlowTxtout($"{buff2} 만큼 체력이 증가했다!", 30);
                 }
             }
@@ -294,49 +294,49 @@ namespace newgame
                 int debuff2 = random.Next(1, 5);
                 if (debuff == 1)
                 {
-                    if (GameManager.player.MyStatus.ATK <= 1)
+                    if (GameManager.Instance.player.MyStatus.ATK <= 1)
                     {
                         Console.WriteLine("더이상 공격력은 내려갈수 없다!");
                         Console.WriteLine("체력이 감소했다.");
-                        GameManager.player.MyStatus.hp -= debuff2;
+                        GameManager.Instance.player.MyStatus.hp -= debuff2;
                     }
                     else
                     {
-                        GameManager.player.MyStatus.ATK -= debuff2;
+                        GameManager.Instance.player.MyStatus.ATK -= debuff2;
                         SlowTxtout($"{debuff2} 만큼 공격력이 감소했다!", 30);
                     }
                 }
                 else if (debuff == 2)
                 {
-                    if (GameManager.player.MyStatus.DEF <= 1)
+                    if (GameManager.Instance.player.MyStatus.DEF <= 1)
                     {
                         Console.WriteLine("더이상 방어력은 내려갈수 없다!");
                         Console.WriteLine("체력이 감소했다.");
-                        GameManager.player.MyStatus.hp -= debuff2;
+                        GameManager.Instance.player.MyStatus.hp -= debuff2;
                     }
                     else
                     {
-                        GameManager.player.MyStatus.DEF -= debuff2;
+                        GameManager.Instance.player.MyStatus.DEF -= debuff2;
                         SlowTxtout($"{debuff2} 만큼 방어력이 감소했다!", 30);
                     }
                 }
                 else
                 {
-                    if (GameManager.player.MyStatus.maxHp <= 1)
+                    if (GameManager.Instance.player.MyStatus.maxHp <= 1)
                     {
                         Console.WriteLine("더이상 최대 체력은 내려갈수 없다!");
                         Console.WriteLine("체력이 감소했다.");
-                        GameManager.player.MyStatus.hp -= debuff2;
+                        GameManager.Instance.player.MyStatus.hp -= debuff2;
                     }
                     else
                     {
                         SlowTxtout($"{debuff2} 만큼 최대 체력이 감소했다!", 30);
-                        GameManager.player.MyStatus.maxHp -= debuff2;
+                        GameManager.Instance.player.MyStatus.maxHp -= debuff2;
                     }
                 }
             }
 
-            if (GameManager.player.MyStatus.hp <= 0)
+            if (GameManager.Instance.player.MyStatus.hp <= 0)
             {
                 SlowTxtout("알코올 중독으로 사망..", 30);
                 SlowTxtout("체력이 0이 되었다.", 30);
