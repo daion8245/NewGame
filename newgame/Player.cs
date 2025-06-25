@@ -124,7 +124,7 @@ namespace newgame
             MyStatus.maxHp *= 10;
             MyStatus.maxHp += 100;
             MyStatus.hp = MyStatus.maxHp;
-            MyStatus.coin = 10000;
+            MyStatus.gold = 10000;
             MyStatus.exp = 0;
             MyStatus.nextEXP = 10;
 

@@ -11,10 +11,8 @@ namespace newgame
         public void Start()
         {
             Console.Clear();
-            SlowTxtout("던전에 들어왔다...", 20);
-            Thread.Sleep(600);
-            SlowTxtout("앗! 야생의 몬스터가 나타났다!", 20);
-            Thread.Sleep(300);
+            MyDiffain.TxtOut(["던전 진입",
+                              "앗! 야생의 몬스터가 나타났다"]);
             Console.Clear();
 
             CreateMonster();

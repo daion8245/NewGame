@@ -3,63 +3,110 @@
     internal class MyDiffain
     {
 
-        public static void SlowTxtout(string s, int t)
-        {
-            for (int i = 0; i < s.Length; i++)
-            {
-                Console.Write(s[i]);
-                Thread.Sleep(t / 10);
-            }
-            Console.WriteLine();
-        }
-
         #region 선택 메뉴
-        public static int SelectMenu(params (string Text, Action Action)[] items)
+        public static int SeletMenu(string[] str)
         {
-            if (items == null || items.Length == 0)
-                throw new ArgumentException("옵션이 필요합니다.");
-
+            int line_coordinates;
             int selected = 0;
-            bool firstRun = false;
+            bool FirstRun = false;
+
             ConsoleKey key;
+
+            line_coordinates = Console.CursorTop + str.Length;
 
             do
             {
-                if (firstRun)
-                    ClearLines(items.Length);
-                else
-                    firstRun = true;
-
-                for (int i = 0; i < items.Length; i++)
+                if (FirstRun == true)
                 {
-                    Console.ForegroundColor = (i == selected) ? ConsoleColor.Green : ConsoleColor.Gray;
-                    Console.WriteLine((i == selected ? "> " : "  ") + items[i].Text);
+                    MenuTxtDel(str.Length, line_coordinates);
                 }
-                Console.ResetColor();
+                else
+                {
+                    FirstRun = true;
+                }
+                for (int i = 0; i < str.Length; i++)
+                {
+                    if (i == selected)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"> {str[i]}");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"  {str[i]}");
+                    }
+                }
 
                 key = Console.ReadKey(true).Key;
+
                 if (key == ConsoleKey.UpArrow)
-                    selected = (selected - 1 + items.Length) % items.Length;
+                {
+                    selected = (selected - 1 + str.Length) % str.Length;
+                }
                 else if (key == ConsoleKey.DownArrow)
-                    selected = (selected + 1) % items.Length;
+                {
+                    selected = (selected + 1) % str.Length;
+                }
 
             } while (key != ConsoleKey.Enter);
 
-            ClearLines(items.Length);
             Console.ResetColor();
 
-            items[selected].Action?.Invoke();
             return selected;
+
         }
 
-        static void ClearLines(int count)
+        const string ESC = "\u001b[";
+        static void MenuTxtDel(int Line, int coordinates)
         {
-            for (int i = 0; i < count; i++)
+            Console.SetCursorPosition(0, coordinates);
+
+            for (int i = 0; i < Line; i++)
             {
-                Console.Write("\u001b[2K");
-                Console.Write("\u001b[1F");
+                Console.Write($"{ESC}2K");
+                Console.Write($"{ESC}1F");
             }
         }
         #endregion
+
+        #region 텍스트 고급 출력
+        public static void TxtOut(string[] str)
+        {
+            foreach (string line in str)
+            {
+                if (DeffenStatic.SlowTxtOut)
+                {
+                    for (int i = 0; i < line.Length; i++)
+                    {
+                        Console.Write(line[i]);
+                        Thread.Sleep(DeffenStatic.SlowTxtOutTime);
+                    }
+
+                    Console.WriteLine();
+                    Thread.Sleep(DeffenStatic.SlowTxtLineTime);
+                }
+                else
+                {
+                    Console.WriteLine(line);
+                    Thread.Sleep(DeffenStatic.SlowTxtLineTime);
+                }
+            }
+        }
+        #endregion
+
+        #region 계속하기
+        public static void Continue(string str)
+        {
+            Console.WriteLine(str);
+            Console.ReadKey();
+        }
+        #endregion
+    }
+    public static class DeffenStatic
+    {
+        public static bool SlowTxtOut = false;
+        public static int SlowTxtOutTime = 0;
+        public static int SlowTxtLineTime = 0;
     }
 }

@@ -4,7 +4,7 @@
     {
         public void start()
         {
-            MyStatus = GameManager.Instance.GetMonsterStat(1);
+            MyStatus = GameManager.Instance.GetMonsterStat(10);
 
             MyStatus.ShowStatus();
         }

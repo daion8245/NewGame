@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Net.NetworkInformation;
 using static newgame.MyDiffain;
 
 namespace newgame
@@ -69,7 +70,9 @@ namespace newgame
         }
         public int hp;
         public int maxHp;
-        public int coin;
+        public int mp;
+        public int maxMp;
+        public int gold;
         public int exp;
         public int nextEXP;
         #endregion
@@ -96,17 +99,20 @@ namespace newgame
 
         public void ShowStatus()
         {
-            Console.Clear();
+            DeffenStatic.SlowTxtOut = true;
+            DeffenStatic.SlowTxtOutTime = 1;
+            DeffenStatic.SlowTxtLineTime = 0;
 
-            Console.WriteLine("--------------------------");
-            SlowTxtout($"--이름: {Name}\t\t--", 10);
-            SlowTxtout($"--레벨: {level}\t\t--", 10);
-            SlowTxtout($"--공격력: {ATK}({atk} + {GetStrAtk()})--", 10);
-            SlowTxtout($"--체력: {hp}/{maxHp}\t\t--", 10);
-            SlowTxtout($"--방어력: {DEF}\t\t--", 10);
-            SlowTxtout($"--코인: {coin}\t\t--", 10);
-            SlowTxtout($"--경험치: {exp}/{nextEXP}\t\t--", 10);
-            Console.WriteLine("---------------------------");
+            MyDiffain.TxtOut([
+                $"이름 : {Name}",
+                $"  레벨 : {level}",
+                $"  체력 : {hp}/{maxHp}",
+                $"  공격력 : {atk}",
+                $"  방어력 : {def}",
+                $"  마나 : {mp}/{maxMp}",
+                $"  골드 : {gold}",
+                $"  경험치 : {hp} / {nextEXP}"
+                ]);
         }
 
         public void ShowInventory()
