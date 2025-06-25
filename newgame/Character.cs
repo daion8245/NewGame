@@ -39,8 +39,8 @@
                 Console.WriteLine("전투에서 패배했다..");
                 Console.WriteLine("눈앞이 깜깜해졌다.");
                 Thread.Sleep(2000);
-                Hotel hotel = new Hotel();
-                hotel.Start();
+                Tavern tavern = new Tavern();
+                tavern.Start();
             }
         }
     }

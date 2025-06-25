@@ -47,7 +47,7 @@ namespace NewGame
                         Console.Clear();
 
                         GameManager.Instance.player = new Player();
-                        GameManager.Instance.player.Create();
+                        GameManager.Instance.player.Start();
                         GameManager.Instance.player.SetName(inputName);
                         return;
                     }
@@ -168,7 +168,7 @@ namespace NewGame
             {
                 Console.WriteLine($"남은 포인트 : {statcoin}");
 
-                int selstat = Deffen.SeletMenu(new[] { "공격력", "체력", "방어력" });
+                int selstat = MyDiffain.SeletMenu(new[] { "공격력", "체력", "방어력" });
 
                 switch (selstat)
                 {

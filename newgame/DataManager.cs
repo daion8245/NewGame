@@ -244,9 +244,9 @@ namespace newgame
                     {
                         monStat.exp = int.Parse(curLine[1].Trim());
                     }
-                    else if (curLine[0].Trim() == "COIN")
+                    else if (curLine[0].Trim() == "gold")
                     {
-                        monStat.coin = int.Parse(curLine[1].Trim());
+                        monStat.gold = int.Parse(curLine[1].Trim());
                     }
                 }
             }

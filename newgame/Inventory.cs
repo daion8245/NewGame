@@ -122,7 +122,7 @@ namespace newgame
             int temp = idx - 1;
             if (temp >= 0 && temp < canEquips.Count)
             {
-                GameManager.Instance.player.MyStatus.coin += canEquips[idx - 1].GetPrice;
+                GameManager.Instance.player.MyStatus.gold += canEquips[idx - 1].GetPrice;
                 canEquips.RemoveAt(idx - 1);
                 return;
             }

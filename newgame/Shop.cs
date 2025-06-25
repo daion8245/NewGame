@@ -146,9 +146,9 @@
             string input = Console.ReadLine();
 
             int listIdx = int.Parse(input) - 1;
-            if (GameManager.Instance.player.MyStatus.coin >= items[listIdx].GetPrice)
+            if (GameManager.Instance.player.MyStatus.gold >= items[listIdx].GetPrice)
             {
-                GameManager.Instance.player.MyStatus.coin -= items[listIdx].GetPrice;
+                GameManager.Instance.player.MyStatus.gold -= items[listIdx].GetPrice;
 
                 Inventory.Instance.AddEquip(items[listIdx]);
                 ShowMenu();

@@ -8,85 +8,85 @@ namespace newgame
 
         public void Start()
         {
-            ShowMenu();
+            LobbyMenu();
         }
 
-        void ShowMenu()
+        #region 메뉴 출력
+        void LobbyMenu()
         {
-            MenuTxtout();
+            Console.Clear();
 
-            string input = Console.ReadLine();
+            Console.WriteLine("\t[마을]");
 
-            switch (input)
+            int menusel = MyDiffain.SeletMenu([
+                "상태창 보기",
+                "인벤토리 보기",
+                "미궁으로 들어가기",
+                "상점",
+                "여관",
+                "대장간",
+                "저장",
+                "게임 종료",
+                ]);
+
+            switch (menusel)
             {
-                case "1":
+                case 0:
                     {
-                        GameManager.Instance.player.MyStatus.ShowStatus();
-                        GameManager.Instance.player.MyStatus.ShowInventory();
-                        Console.WriteLine();
+                        Console.Clear();
+                        Console.WriteLine("[ 상태창 ] \r");
+                        GameManager.Instance.player.ShowStat();
                         Console.WriteLine("[Enter]를 눌러 돌아가기");
                         Console.ReadKey();
-                        Start();
+                        Console.Clear();
                         break;
                     }
-                case "2":
+                case 1:
                     {
-                        Dungeon dungeon = new Dungeon();
+                        Console.Clear();
+                        Console.WriteLine("[ 인벤토리 ] \r");
+                        GameManager.Instance.player.MyStatus.ShowInventory();
                         break;
                     }
-                case "3":
+                case 2:
+                    {
+                        Console.Clear();
+                        Dungeon dungeon = new Dungeon();
+                        dungeon.Start();
+                        break;
+                    }
+                case 3:
                     {
                         Shop shop = new Shop();
                         shop.Start();
                         break;
                     }
-                case "4":
+                case 4:
+                    {
+                        Tavern tavern = new Tavern();
+                        tavern.Start();
+                        return;
+                    }
+                case 5:
                     {
                         Smithy smithy = new Smithy();
                         smithy.Start();
                         break;
                     }
-                case "5":
+                case 6:
                     {
-                        Hotel hotel = new Hotel();
-                        hotel.Start();
-                        break;
-                    }
-                case "6":
-                    {
-                        break;
-                    }
-                case "7":
-                    {
-                        break;
-                    }
-                case "8":
-                default:
-                    {
+                        Console.Clear();
                         DataManager.Instance.Save(GameManager.Instance.player.MyStatus);
-                        Environment.Exit(0);
+                        MyDiffain.Continue("게임 저장됨. (SHIFT를 눌러 계속)");
                         break;
+                    }
+                case 7:
+                    {
+                        return;
                     }
             }
             Start();
         }
-
-        void MenuTxtout()
-        {
-            Console.WriteLine("-------------------");
-            SlowTxtout("--------쉼터-------", 20);
-            SlowTxtout("--1.플레이어 정보--", 5);
-            SlowTxtout("--2.던전-----------", 5);
-            SlowTxtout("--3.상점-----------", 5);
-            SlowTxtout("--4.대장간---------", 5);
-            SlowTxtout("--5.여관-----------", 5);
-            SlowTxtout("--6.저장/불러오기--", 5);
-            SlowTxtout("--7.설정-----------", 5);
-            SlowTxtout("--8.게임종료-------", 5);
-            Console.WriteLine("-------------------");
-            Console.Write("> ");
-
-
-        }
+        #endregion
     }
 }
