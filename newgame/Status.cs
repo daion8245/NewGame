@@ -85,6 +85,9 @@ namespace newgame
         {
             Equipment equip = null;
 
+            equip = Inventory.Instance.GetEquip(EquipType.WEAPON);
+            int weapon = equip == null ? 0 : equip.GetEquipStat;
+
             equip = Inventory.Instance.GetEquip(EquipType.HELMET);
             int helmet = equip == null ? 0 : equip.GetEquipStat;
 

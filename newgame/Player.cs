@@ -79,26 +79,27 @@ namespace newgame
 
         public override void Attack(Character target)
         {
-            Console.WriteLine("------------------");
-            Console.WriteLine("---- 1. 공격  ----");
-            Console.WriteLine("---- 2. 아이템 ---");
-            Console.WriteLine("---- 3. 도망 -----");
-            Console.WriteLine("------------------");
+            Console.WriteLine();
+            int input = MyDiffain.SeletMenu(["공격","스킬","아이템","도망"]);
 
-            string input = Console.ReadLine();
             switch (input)
             {
-                case "1":
+                case 0:
                     {
                         Console.Clear();
                         base.Attack(target);
                         break;
                     }
-                case "2":
+                case 1:
                     {
                         break;
                     }
-                case "3":
+                case 2:
+                    {
+                        
+                        break;
+                    }
+                    case 3:
                     {
                         BattleRun();
                         break;

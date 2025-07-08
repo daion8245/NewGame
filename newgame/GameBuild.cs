@@ -62,6 +62,7 @@ namespace NewGame
                      "",
                     "enter를 눌러 계속"
                     });
+                    Console.WriteLine(e);
                     Console.ReadKey();
                 }
             }

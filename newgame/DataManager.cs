@@ -256,5 +256,78 @@ namespace newgame
             }
         }
         #endregion
+
+        //#region 던전 맵
+        //public void LoadDungeonMap()
+        //{
+        //    // exe 파일 실행 경로
+        //    string exePath = AppDomain.CurrentDomain.BaseDirectory;
+
+        //    for (int i = 1; i < (int)EquipType.MAX; i++)
+        //    {
+        //        // 텍스트 파일 이름
+        //        string fileName = $"Equip_{(EquipType)i}.txt";
+        //        // 텍스트 파일 경로
+        //        string filePath = Path.Combine(exePath, fileName);
+
+        //        // 텍스트 파일 존재 유무 판단
+        //        if (!File.Exists(filePath))
+        //        {
+        //            // 파일이 없는 경우
+        //            Console.WriteLine($"해당 경로 [{filePath}]가 존재하지 않습니다. ");
+        //            Console.WriteLine($"[{fileName}] 파일을 확인해주세요.");
+        //            return;
+        //        }
+
+        //        SetDungeonMapData(filePath, (EquipType)i);
+        //    }
+        //}
+
+        //void SetDungeonMapData(string filePath, EquipType _type)
+        //{
+        //    try
+        //    {
+        //        // 텍스트 파일에서 모든 라인 읽어오기
+        //        string[] lines = File.ReadAllLines(filePath);
+        //        string name = string.Empty;         // 아이템 이름
+        //        int[] data = new int[3];            // id, stat, price
+        //        foreach (string line in lines)
+        //        {
+        //            if (line == "#")
+        //            {
+        //                // 현재까지 얻어진 정보로 Equipment 클래스 생성하고
+        //                Equipment equip = new Equipment(_type, data[0], name, data[1], data[2]);
+        //                // GameManager 에서 equips 리스트에 등록하기
+        //                GameManager.Instance.SetEquipList(equip);
+
+        //                continue;
+        //            }
+
+        //            // 문자열 자르기 ( 해당 형식은 ":" 를 기준으로 문자열을 구분하고 있음 )
+        //            string[] curLine = line.Split(':');
+        //            if (curLine[0].Trim() == "ID")                 // ID 일 때
+        //            {
+        //                data[0] = int.Parse(curLine[1].Trim());
+        //            }
+        //            else if (curLine[0].Trim() == "NAME")           // NAME 일 때
+        //            {
+        //                name = curLine[1].Trim();
+        //            }
+        //            else if (curLine[0].Trim() == "STAT")           // STAT 일 때
+        //            {
+        //                data[1] = int.Parse(curLine[1].Trim());
+        //            }
+        //            else if (curLine[0].Trim() == "PRICE")          // PRICE 일 때
+        //            {
+        //                data[2] = int.Parse(curLine[1].Trim());
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"[오류] : 파일 읽기 실패 ({ex.Message})");
+        //    }
+        //}
+        //#endregion
     }
 }

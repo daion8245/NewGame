@@ -5,6 +5,7 @@ namespace newgame
     public enum EquipType
     {
         NONE,
+        WEAPON,
         HELMET,
         SHIRT,
         PANTS,

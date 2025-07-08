@@ -25,6 +25,7 @@ namespace newgame
         private Dictionary<EquipType, Equipment> equips =
             new Dictionary<EquipType, Equipment>()
             {
+                {EquipType.WEAPON, null },
                 {EquipType.HELMET, null },
                 {EquipType.SHIRT, null },
                 {EquipType.PANTS, null },
@@ -97,20 +98,67 @@ namespace newgame
             return equips[_type];
         }
 
+        #region 착용 장비 보이기
         public void ShowEquipList()
         {
-            Console.WriteLine("------착용 장비------");
-            for (int i = 1; i < (int)EquipType.MAX; i++)
+            #region 박스 출력
+            for (int i = 0; i <= 7; i++)
             {
-                Equipment _equip = GetEquip((EquipType)i);
-                if (_equip == null)
+                for(int j = 0; j <= 30; j++)
                 {
-                    continue;
+                    if ((i, j) == (0, 0))
+                    {
+                        Console.Write('┏');
+                    }
+                    else if ((i, j) == (0, 30))
+                    {
+                        Console.Write('┓');
+                    }
+                    else if (i == 0 && j == 20)
+                    {
+                        for (int l = 0; l <= 8; l++)
+                        {
+                            Console.Write("\b \b");
+                        }
+                        Console.Write(" 인벤토리 ");
+                    }
+                    else if ((i, j) == (7, 30))
+                    {
+                        Console.Write('┛');
+                    }
+                    else if ((i, j) == (7, 0))
+                    {
+                        Console.Write('┗');
+                    }
+                    else if (j == 0 || j == 30)
+                    {
+                        Console.Write('┃');
+                    }
+                    else if (i == 0 || i == 7 || j < 0 || j > 30)
+                    {
+                        Console.Write('━');
+                    }
+                    else
+                    {
+                        Console.Write(' ');
+                    }
+
+
+                    if(i >= 2 && i <= 5)
+                    {
+                        if()
+                        {
+
+                        }
+                    }
                 }
-                Console.WriteLine($"-{(EquipType)i} => {_equip.GetEquipName} + {_equip.GetUpdateCount}");
+                Console.WriteLine();
             }
-            Console.WriteLine("---------------------");
+            #endregion
+
+
         }
+        #endregion
 
         public void AddEquip(Equipment equip)
         {

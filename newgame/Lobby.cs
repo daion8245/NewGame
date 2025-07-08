@@ -57,7 +57,16 @@ namespace newgame
                     }
                 case 3:
                     {
+                        Console.Clear();
+
                         Shop shop = new Shop();
+                        
+                        shop.items.Add(EquipType.WEAPON, 2);
+                        shop.items.Add(EquipType.GLOVE, 2);
+                        shop.items.Add(EquipType.HELMET, 2);
+                        shop.items.Add(EquipType.SHIRT, 2);
+                        shop.items.Add(EquipType.PANTS, 2);
+                        shop.items.Add(EquipType.SHOES, 2);
                         shop.Start();
                         break;
                     }

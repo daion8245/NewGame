@@ -1,4 +1,6 @@
-﻿namespace newgame
+﻿using System.Net.Security;
+
+namespace newgame
 {
     internal class MyDiffain
     {
@@ -102,6 +104,7 @@
             Console.ReadKey();
         }
         #endregion
+
     }
     public static class DeffenStatic
     {
