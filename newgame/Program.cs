@@ -9,8 +9,8 @@ namespace newgame
         {
             Init();
 
-            StartMasage startMasage = new StartMasage();
-            startMasage.Start();
+            StartMessage startMessage = new StartMessage();
+            startMessage.Start();
         }
 
         static void Init()

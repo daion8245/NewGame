@@ -8,19 +8,25 @@ using System.Threading.Tasks;
 
 namespace newgame
 {
-    internal class StartMasage
+    /// <summary>
+    /// Shows the initial game menu and handles basic start actions.
+    /// </summary>
+    internal class StartMessage
     {
         public void Start()
         {
-            GameStartMasage();
+            GameStartMessage();
         }
 
-        void GameStartMasage()
+        /// <summary>
+        /// Displays the start menu and processes the player's selection.
+        /// </summary>
+        void GameStartMessage()
         {
-            DeffenStatic.SlowTxtOut = true;
-            DeffenStatic.SlowTxtOutTime = 30;
-            DeffenStatic.SlowTxtLineTime = 0;
-            MyDiffain.TxtOut(
+            TextDisplayConfig.SlowTxtOut = true;
+            TextDisplayConfig.SlowTxtOutTime = 30;
+            TextDisplayConfig.SlowTxtLineTime = 0;
+            UiHelper.TxtOut(
                 [
                 "TXTRPG-Remake",
                 "버전 0.0.1",
@@ -34,7 +40,7 @@ namespace newgame
             //Console.ReadKey();
             Console.ResetColor();
 
-            int sel = MyDiffain.SeletMenu([
+            int sel = UiHelper.SelectMenu([
                 "새로운 게임",
                 "게임 불러오기",
                 "게임 종료",

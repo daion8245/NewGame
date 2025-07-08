@@ -11,15 +11,15 @@ namespace newgame
         public static int TavernFavorability = 0;
         public void Start()
         {
-            TavernMassage();
+            ShowTavernMenu();
         }
 
         #region 여관 진입
-        void TavernMassage()
+        void ShowTavernMenu()
         {
             Console.Clear();
 
-            MyDiffain.TxtOut(["\t 「여관」",
+            UiHelper.TxtOut(["\t 「여관」",
                                "여관 주인: 어서오게나 모험가씨",
                 ""]);
 
@@ -27,7 +27,7 @@ namespace newgame
 
             if (TavernFavorability < 10)
             {
-                sel = MyDiffain.SeletMenu([
+                sel = UiHelper.SelectMenu([
                         "숙박",
                         "구매",
                         "대화",
@@ -37,7 +37,7 @@ namespace newgame
             }
             else
             {
-                sel = MyDiffain.SeletMenu([
+                sel = UiHelper.SelectMenu([
                         "숙박",
                         "구매",
                         "대화",
@@ -97,7 +97,7 @@ namespace newgame
             {
                 Console.WriteLine("숙박비는 10Gold 라네");
                 Console.WriteLine();
-                int sel = MyDiffain.SeletMenu(["숙박하기",
+                int sel = UiHelper.SelectMenu(["숙박하기",
                                             "돌아가기"]);
 
                 switch (sel)
@@ -106,7 +106,7 @@ namespace newgame
                         {
                             if (playerstat.gold >= 10)
                             {
-                                MyDiffain.TxtOut(["여관의 방을 빌렸다," +
+                                UiHelper.TxtOut(["여관의 방을 빌렸다," +
                                         "드디어 쉴수 있어!"]);
                                 Console.WriteLine();
 
@@ -118,17 +118,17 @@ namespace newgame
                                 Thread.Sleep(1000);
 
                                 playerstat.hp = playerstat.maxHp;
-                                MyDiffain.TxtOut(["체력이 최대치로 회복되었다!",
+                                UiHelper.TxtOut(["체력이 최대치로 회복되었다!",
                                                $"체력 : {playerstat.hp}/{playerstat.maxHp}"]);
 
-                                MyDiffain.Continue("[Enter]를 눌러 계속");
+                                UiHelper.WaitForInput("[Enter]를 눌러 계속");
                                 Start();
                             }
                             else
                             {
-                                MyDiffain.TxtOut([$"돈이 부족하다(현제 골드 : {playerstat.gold})"]);
+                                UiHelper.TxtOut([$"돈이 부족하다(현제 골드 : {playerstat.gold})"]);
 
-                                MyDiffain.Continue("[Enter]를 눌러 계속");
+                                UiHelper.WaitForInput("[Enter]를 눌러 계속");
                                 SleepTavern();
                                 break;
                             }
@@ -152,7 +152,7 @@ namespace newgame
             Console.Clear();
 
             Console.WriteLine("미구현");
-            MyDiffain.Continue("[Enter]를 눌러 계속");
+            UiHelper.WaitForInput("[Enter]를 눌러 계속");
 
             SleepTavern();
         }
@@ -174,7 +174,7 @@ namespace newgame
             Console.WriteLine("???:도박장에 오신걸 환영합니다. 모험가님");
             Console.WriteLine();
 
-            int sel = MyDiffain.SeletMenu(["도박",
+            int sel = UiHelper.SelectMenu(["도박",
                                         "나가기"]);
 
             switch(sel)
@@ -197,7 +197,7 @@ namespace newgame
             var playerstat = GameManager.Instance.player.MyStatus;
             Console.Clear();
 
-            int sel = MyDiffain.SeletMenu(["골드 배팅",
+            int sel = UiHelper.SelectMenu(["골드 배팅",
                                         "룰 설명",
                                         "나가기"]);
 
@@ -218,7 +218,7 @@ namespace newgame
                             else
                             {
                                 Console.WriteLine("골드가 부족합니다.");
-                                MyDiffain.Continue("[ENTER]를 눌러 계속");
+                                UiHelper.WaitForInput("[ENTER]를 눌러 계속");
                                 TavernGambling_Betting();
                             }
                         }
@@ -235,7 +235,7 @@ namespace newgame
                 case 1:
                     {
                         Console.Clear();
-                        MyDiffain.TxtOut(["게임은 슬롯머신 형식으로 진행됩니다.",
+                        UiHelper.TxtOut(["게임은 슬롯머신 형식으로 진행됩니다.",
                                        "$ x 3 = x10",
                                        "# x 3 = x5",
                                        "@ x 1 = x1",
@@ -243,7 +243,7 @@ namespace newgame
                                        "* x 1 = x0.1"]);
 
                         Console.WriteLine();
-                        MyDiffain.Continue("[ENTER]를 눌러 계속");
+                        UiHelper.WaitForInput("[ENTER]를 눌러 계속");
                         TavernGambling_Betting();
                         break;
                     }
@@ -300,7 +300,7 @@ namespace newgame
                 Console.WriteLine("획득 골드: 0");
             }
 
-            MyDiffain.Continue("[ENTER]를 눌러 계속");
+            UiHelper.WaitForInput("[ENTER]를 눌러 계속");
             TavernGambling();
         }
         #endregion

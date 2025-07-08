@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Net.NetworkInformation;
-using static newgame.MyDiffain;
+using static newgame.UiHelper;
 
 namespace newgame
 {
@@ -102,11 +102,11 @@ namespace newgame
 
         public void ShowStatus()
         {
-            DeffenStatic.SlowTxtOut = true;
-            DeffenStatic.SlowTxtOutTime = 1;
-            DeffenStatic.SlowTxtLineTime = 0;
+            TextDisplayConfig.SlowTxtOut = true;
+            TextDisplayConfig.SlowTxtOutTime = 1;
+            TextDisplayConfig.SlowTxtLineTime = 0;
 
-            MyDiffain.TxtOut([
+            UiHelper.TxtOut([
                 $"이름 : {Name}",
                 $"  레벨 : {level}",
                 $"  체력 : {hp}/{maxHp}",

@@ -15,9 +15,9 @@ namespace NewGame
             SetStatus();
 
 
-            Lobby Lobby = new Lobby();
+            Lobby lobby = new Lobby();
             Console.Clear();
-            Lobby.Start();
+            lobby.Start();
         }
 
         #region 플레이어 이름 정하기
@@ -40,7 +40,7 @@ namespace NewGame
                     Console.Clear();
                     Console.WriteLine($"입력하신 이름 [{inputName}] 이 정말 맞습니까?");
 
-                    int sel = MyDiffain.SeletMenu(new[] { "Y", "N" });
+                    int sel = UiHelper.SelectMenu(new[] { "Y", "N" });
 
                     if (sel == 0)
                     {
@@ -55,7 +55,7 @@ namespace NewGame
                 catch (Exception e)
                 {
 
-                    MyDiffain.TxtOut(new[]
+                    UiHelper.TxtOut(new[]
                     {
                     $"잘못된 이름입니다.",
                     "다시 입력해 주세요.",
@@ -81,7 +81,7 @@ namespace NewGame
 
             Console.WriteLine($"플레이어 {GameManager.Instance.player.MyStatus.Name}" +
                                                         $"의 기초 스텟을 설정합니다.");
-            int sel = MyDiffain.SeletMenu([
+            int sel = UiHelper.SelectMenu([
                 "랜덤 설정",
                 "직접 설정"]);
 
@@ -169,7 +169,7 @@ namespace NewGame
             {
                 Console.WriteLine($"남은 포인트 : {statcoin}");
 
-                int selstat = MyDiffain.SeletMenu(new[] { "공격력", "체력", "방어력" });
+                int selstat = UiHelper.SelectMenu(new[] { "공격력", "체력", "방어력" });
 
                 switch (selstat)
                 {
