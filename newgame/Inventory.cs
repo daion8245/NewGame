@@ -101,62 +101,31 @@ namespace newgame
         #region 착용 장비 보이기
         public void ShowEquipList()
         {
-            #region 박스 출력
-            for (int i = 0; i <= 7; i++)
+            // 기존 구현은 콘솔 화면에 상자를 그리며 장비를 표시하려 했으나
+            // 미완성된 상태여서 컴파일 오류가 발생하였다. 간단한 텍스트
+            // 형식으로 현재 장비 목록을 출력하도록 수정한다.
+
+            Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+            Console.WriteLine("┃          인벤토리            ┃");
+            Console.WriteLine("┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫");
+
+            foreach (EquipType type in Enum.GetValues(typeof(EquipType)))
             {
-                for(int j = 0; j <= 30; j++)
+                if (type == EquipType.NONE || type == EquipType.MAX)
                 {
-                    if ((i, j) == (0, 0))
-                    {
-                        Console.Write('┏');
-                    }
-                    else if ((i, j) == (0, 30))
-                    {
-                        Console.Write('┓');
-                    }
-                    else if (i == 0 && j == 20)
-                    {
-                        for (int l = 0; l <= 8; l++)
-                        {
-                            Console.Write("\b \b");
-                        }
-                        Console.Write(" 인벤토리 ");
-                    }
-                    else if ((i, j) == (7, 30))
-                    {
-                        Console.Write('┛');
-                    }
-                    else if ((i, j) == (7, 0))
-                    {
-                        Console.Write('┗');
-                    }
-                    else if (j == 0 || j == 30)
-                    {
-                        Console.Write('┃');
-                    }
-                    else if (i == 0 || i == 7 || j < 0 || j > 30)
-                    {
-                        Console.Write('━');
-                    }
-                    else
-                    {
-                        Console.Write(' ');
-                    }
-
-
-                    if(i >= 2 && i <= 5)
-                    {
-                        if()
-                        {
-
-                        }
-                    }
+                    continue;
                 }
-                Console.WriteLine();
+
+                string equipName = "없음";
+                if (equips.ContainsKey(type) && equips[type] != null)
+                {
+                    equipName = equips[type].GetEquipName;
+                }
+
+                Console.WriteLine($"┃ {type,-6} : {equipName,-18} ┃");
             }
-            #endregion
 
-
+            Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
         }
         #endregion
 
