@@ -1,10 +1,9 @@
-﻿using static newgame.MyDiffain;
+﻿using static newgame.UiHelper;
 
 namespace newgame
 {
     internal class Player : Character
     {
-        MyDiffain MyDiffain = new MyDiffain();
 
         public void Start()
         {
@@ -50,11 +49,11 @@ namespace newgame
         #region 스텟 표시
         public void ShowStat()
         {
-            DeffenStatic.SlowTxtOut = true;
-            DeffenStatic.SlowTxtOutTime = 1;
-            DeffenStatic.SlowTxtLineTime = 0;
+            TextDisplayConfig.SlowTxtOut = true;
+            TextDisplayConfig.SlowTxtOutTime = 1;
+            TextDisplayConfig.SlowTxtLineTime = 0;
 
-            MyDiffain.TxtOut(new string[] {
+            UiHelper.TxtOut(new string[] {
                 $"이름 : {MyStatus.Name}",
                 $"  레벨 : {MyStatus.level}",
                 $"  체력 : {MyStatus.hp}/{MyStatus.maxHp}",
@@ -80,7 +79,7 @@ namespace newgame
         public override void Attack(Character target)
         {
             Console.WriteLine();
-            int input = MyDiffain.SeletMenu(["공격","스킬","아이템","도망"]);
+            int input = UiHelper.SelectMenu(["공격","스킬","아이템","도망"]);
 
             switch (input)
             {
@@ -113,9 +112,9 @@ namespace newgame
 
         void BattleRun()
         {
-            Random range = new Random();
-            int rdx = range.Next(1, 101);
-            if (rdx >= 50)
+            Random random = new Random();
+            int chance = random.Next(1, 101);
+            if (chance >= 50)
             {
                 isbattleRun = true;
                 Console.Clear();

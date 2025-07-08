@@ -2,7 +2,7 @@
 {
     internal class Monster : Character
     {
-        public void start()
+        public void Start()
         {
             MyStatus = GameManager.Instance.GetMonsterStat(10);
 

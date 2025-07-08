@@ -1,4 +1,4 @@
-﻿using static newgame.MyDiffain;
+﻿using static newgame.UiHelper;
 
 namespace newgame
 {
@@ -18,7 +18,7 @@ namespace newgame
 
             Console.WriteLine("\t[마을]");
 
-            int menusel = MyDiffain.SeletMenu([
+            int menusel = UiHelper.SelectMenu([
                 "상태창 보기",
                 "인벤토리 보기",
                 "미궁으로 들어가기",
@@ -86,7 +86,7 @@ namespace newgame
                     {
                         Console.Clear();
                         DataManager.Instance.Save(GameManager.Instance.player.MyStatus);
-                        MyDiffain.Continue("게임 저장됨. (SHIFT를 눌러 계속)");
+                        UiHelper.WaitForInput("게임 저장됨. (SHIFT를 눌러 계속)");
                         break;
                     }
                 case 7:

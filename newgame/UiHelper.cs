@@ -2,41 +2,44 @@
 
 namespace newgame
 {
-    internal class MyDiffain
+    /// <summary>
+    /// Utility functions for console UI operations.
+    /// </summary>
+    internal class UiHelper
     {
 
         #region 선택 메뉴
-        public static int SeletMenu(string[] str)
+        public static int SelectMenu(string[] options)
         {
-            int line_coordinates;
+            int lineCoordinate;
             int selected = 0;
-            bool FirstRun = false;
+            bool firstRun = false;
 
             ConsoleKey key;
 
-            line_coordinates = Console.CursorTop + str.Length;
+            lineCoordinate = Console.CursorTop + options.Length;
 
             do
             {
-                if (FirstRun == true)
+                if (firstRun)
                 {
-                    MenuTxtDel(str.Length, line_coordinates);
+                    ClearMenuLines(options.Length, lineCoordinate);
                 }
                 else
                 {
-                    FirstRun = true;
+                    firstRun = true;
                 }
-                for (int i = 0; i < str.Length; i++)
+                for (int i = 0; i < options.Length; i++)
                 {
                     if (i == selected)
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"> {str[i]}");
+                        Console.WriteLine($"> {options[i]}");
                         Console.ResetColor();
                     }
                     else
                     {
-                        Console.WriteLine($"  {str[i]}");
+                        Console.WriteLine($"  {options[i]}");
                     }
                 }
 
@@ -44,11 +47,11 @@ namespace newgame
 
                 if (key == ConsoleKey.UpArrow)
                 {
-                    selected = (selected - 1 + str.Length) % str.Length;
+                    selected = (selected - 1 + options.Length) % options.Length;
                 }
                 else if (key == ConsoleKey.DownArrow)
                 {
-                    selected = (selected + 1) % str.Length;
+                    selected = (selected + 1) % options.Length;
                 }
 
             } while (key != ConsoleKey.Enter);
@@ -59,15 +62,15 @@ namespace newgame
 
         }
 
-        const string ESC = "\u001b[";
-        static void MenuTxtDel(int Line, int coordinates)
+        const string Esc = "\u001b[";
+        static void ClearMenuLines(int lineCount, int coordinates)
         {
             Console.SetCursorPosition(0, coordinates);
 
-            for (int i = 0; i < Line; i++)
+            for (int i = 0; i < lineCount; i++)
             {
-                Console.Write($"{ESC}2K");
-                Console.Write($"{ESC}1F");
+                Console.Write($"{Esc}2K");
+                Console.Write($"{Esc}1F");
             }
         }
         #endregion
@@ -77,36 +80,39 @@ namespace newgame
         {
             foreach (string line in str)
             {
-                if (DeffenStatic.SlowTxtOut)
+                if (TextDisplayConfig.SlowTxtOut)
                 {
                     for (int i = 0; i < line.Length; i++)
                     {
                         Console.Write(line[i]);
-                        Thread.Sleep(DeffenStatic.SlowTxtOutTime);
+                        Thread.Sleep(TextDisplayConfig.SlowTxtOutTime);
                     }
 
                     Console.WriteLine();
-                    Thread.Sleep(DeffenStatic.SlowTxtLineTime);
+                    Thread.Sleep(TextDisplayConfig.SlowTxtLineTime);
                 }
                 else
                 {
                     Console.WriteLine(line);
-                    Thread.Sleep(DeffenStatic.SlowTxtLineTime);
+                    Thread.Sleep(TextDisplayConfig.SlowTxtLineTime);
                 }
             }
         }
         #endregion
 
-        #region 계속하기
-        public static void Continue(string str)
+        #region 입력 대기
+        public static void WaitForInput(string message)
         {
-            Console.WriteLine(str);
+            Console.WriteLine(message);
             Console.ReadKey();
         }
         #endregion
 
     }
-    public static class DeffenStatic
+    /// <summary>
+    /// Global configuration for text output.
+    /// </summary>
+    public static class TextDisplayConfig
     {
         public static bool SlowTxtOut = false;
         public static int SlowTxtOutTime = 0;

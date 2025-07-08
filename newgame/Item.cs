@@ -1,4 +1,4 @@
-﻿using static newgame.MyDiffain;
+﻿using static newgame.UiHelper;
 
 namespace newgame
 {
@@ -80,7 +80,7 @@ namespace newgame
             string once = itemType.ToString().Split('_')[0];
             if (once[0] == 'F')
             {
-                OnecUse();
+                UseOnce();
             }
             else if (once[0] == 'T')
             {
@@ -91,7 +91,7 @@ namespace newgame
             }
         }
 
-        void OnecUse()
+        void UseOnce()
         {
             switch (itemType)
             {
@@ -135,7 +135,7 @@ namespace newgame
                     Console.Clear();
                     Console.WriteLine($"입력하신 이름 [{inputName}] 이 정말 맞습니까?");
 
-                    int sel = MyDiffain.SeletMenu(new[] { "Y", "N" });
+                    int sel = UiHelper.SelectMenu(new[] { "Y", "N" });
 
                     if (sel == 0)
                     {
@@ -148,7 +148,7 @@ namespace newgame
                 catch (Exception e)
                 {
 
-                    MyDiffain.TxtOut(new[]
+                    UiHelper.TxtOut(new[]
                     {
                     $"잘못된 이름입니다.",
                     "다시 입력해 주세요.",

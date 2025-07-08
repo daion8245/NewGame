@@ -1,4 +1,4 @@
-﻿using static newgame.MyDiffain;
+﻿using static newgame.UiHelper;
 
 namespace newgame
 {
@@ -112,7 +112,7 @@ namespace newgame
         {
             Monster monster = new Monster();
             GameManager.Instance.monster = monster;
-            monster.start();
+            monster.Start();
             Battle();
         }
 

@@ -2,7 +2,6 @@
 {
     internal class Battle : Character //Battle 클래스 생성 Character를 상속받는다
     {
-        int temp = 0; //int temp를 만들고 0으로 초기화
         public Battle()
         {
             //Start();
@@ -32,22 +31,22 @@
 
             GameManager.Instance.player.isbattleRun = false;
 
-            int curAtkNum = 0;
+            int currentIndex = 0;
             while (true)
             {
-                int temp = (curAtkNum + 1) % charac.Length;
-                charac[curAtkNum].Attack(charac[temp]);
+                int nextIndex = (currentIndex + 1) % charac.Length;
+                charac[currentIndex].Attack(charac[nextIndex]);
 
-                if (charac[curAtkNum].isbattleRun == true)
+                if (charac[currentIndex].isbattleRun == true)
                 {
                     break;
                 }
 
-                curAtkNum = temp;
+                currentIndex = nextIndex;
 
                 Thread.Sleep(1000);
 
-                if (charac[curAtkNum].IsDead == true)
+                if (charac[currentIndex].IsDead == true)
                 {
                     break;
                 }

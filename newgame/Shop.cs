@@ -15,10 +15,10 @@ namespace newgame
         {
             Console.Clear();
 
-            MyDiffain.TxtOut(["\t 「상점」",
+            UiHelper.TxtOut(["\t 「상점」",
                                "상점 주인: 천천히 둘러보세요!",""]);
 
-            int selet = MyDiffain.SeletMenu(["구매",
+            int selet = UiHelper.SelectMenu(["구매",
                                              "판매",
                                              "나가기"]);
 
@@ -49,7 +49,7 @@ namespace newgame
         void BuyEquipItem()
         {
             Console.Clear();
-            MyDiffain.TxtOut(["\t 「상점/구매」",
+            UiHelper.TxtOut(["\t 「상점/구매」",
                 ""]);
 
             List<Equipment> items = new List<Equipment>();
@@ -68,7 +68,7 @@ namespace newgame
             }
             itemNames.Add("나가기");
 
-            int menuSelect = MyDiffain.SeletMenu(itemNames.ToArray());
+            int menuSelect = UiHelper.SelectMenu(itemNames.ToArray());
 
             if (menuSelect == itemNames.Count - 1)
             {
@@ -81,9 +81,9 @@ namespace newgame
                 GameManager.Instance.player.MyStatus.gold -= items[menuSelect].GetPrice;
                 Inventory.Instance.AddEquip(items[menuSelect]);
 
-                MyDiffain.TxtOut(["", $"{items[menuSelect].GetEquipName} 구매 완료",""]);
+                UiHelper.TxtOut(["", $"{items[menuSelect].GetEquipName} 구매 완료",""]);
 
-                int GoLobbySel = MyDiffain.SeletMenu(["구매 계속하기","나가기"]);
+                int GoLobbySel = UiHelper.SelectMenu(["구매 계속하기","나가기"]);
                 if (GoLobbySel == 0)
                 {
                     BuyEquipItem();
@@ -99,7 +99,7 @@ namespace newgame
             else
             {
                 Console.WriteLine("코인 부족");
-                MyDiffain.Continue("[ENTER]를 눌러 계속");
+                UiHelper.WaitForInput("[ENTER]를 눌러 계속");
                 ShowMenu();
                 return;
             }
