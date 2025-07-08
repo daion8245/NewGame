@@ -120,24 +120,50 @@ namespace newgame
 
         public void ShowInventory()
         {
-            Console.WriteLine("1. 인벤토리 2.이전으로");
-            string input = Console.ReadLine();
-            if (input != "1") return;
-
             Inventory.Instance.ShowEquipList();
 
-            Console.WriteLine("1. 장비 착용 2.이전으로");
-            input = Console.ReadLine();
-            if (input != "1") return;
-
-            bool canEquip = Inventory.Instance.ShowCanEquips();
-            if (!canEquip)
+            int input = MyDiffain.SeletMenu(new string[]
             {
-                Console.WriteLine("착용 가능한 장비가 없습니다.");
-                return;
-            }
+                "장비 착용",
+                "장비 버리기",
+                "이전으로"
+            });
+            
+            switch(input)
+            {
+                case 0:
+                    {
+                        bool canEquip = Inventory.Instance.ShowCanEquips();
+                        if (!canEquip)
+                        {
+                            Console.WriteLine("착용 가능한 장비가 없습니다.");
+                            MyDiffain.Continue("[ENTER]를 눌러 계속");
+                            return;
+                        }
 
-            SetEquip();
+                        SetEquip();
+                        return;
+                    }
+
+                case 1:
+                    {
+                        bool canEquip = Inventory.Instance.ShowCanEquips();
+                        if (!canEquip)
+                        {
+                            Console.WriteLine("버릴 장비가 없습니다.");
+                            MyDiffain.Continue("[ENTER]를 눌러 계속");
+                            return;
+                        }
+
+                        Inventory.Instance.RemoveCanEquip(MyDiffain.SeletMenu(new string[] { "장비 번호 입력" }));
+                        return;
+                    }
+
+                case 2:
+                    {
+                        return;
+                    }
+            }
         }
 
 

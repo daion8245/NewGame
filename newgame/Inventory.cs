@@ -106,7 +106,7 @@ namespace newgame
             // 형식으로 현재 장비 목록을 출력하도록 수정한다.
 
             Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
-            Console.WriteLine("┃          인벤토리            ┃");
+            Console.WriteLine("┃          장착 장비           ┃");
             Console.WriteLine("┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫");
 
             foreach (EquipType type in Enum.GetValues(typeof(EquipType)))
@@ -122,7 +122,7 @@ namespace newgame
                     equipName = equips[type].GetEquipName;
                 }
 
-                Console.WriteLine($"┃ {type,-6} : {equipName,-18} ┃");
+                Console.WriteLine($"┃ {type,-6} : {equipName,-14} ┃");
             }
 
             Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
