@@ -13,131 +13,60 @@ namespace newgame
 
         void Create()
         {
-            GameManager.player.MyStatus = new Status();
+            GameManager.Instance.player.MyStatus = new Status();
             MyStatus.charType = CharType.PLAYER;
-
-            Console.Clear();
-            SetName();
-            EnterLobby();
-        }
-
-        void SetName()
-        {
-            while (true)
-            {
-                Console.Clear();
-                SlowTxtout("플레이어의 이름을 입력하세요.", 30);
-                Console.Write("> ");
-                string str = Console.ReadLine();
-
-                MyStatus.Name = str;
-                SlowTxtout($"입력된 이름: {MyStatus.Name} 이 정말 맞습니까?", 30);
-                Console.WriteLine("Y / F");
-                Console.Write("> ");
-                string str2 = Console.ReadLine();
-                if (str2.ToUpper() == "Y")
-                {
-                    SetStatus();
-                    break;
-                }
-                else
-                {
-                    MyStatus.Name = null;
-                    str = null;
-                    str2 = null;
-                }
-            }
-
-        }
-
-        void SetStatus()
-        {
-            int point = 10;
-            Random random = new Random();
-
-            while (point != 0)
-            {
-                Console.Clear();
-
-                Console.WriteLine("-------------------------");
-                Console.WriteLine($"-\t1. 공격력: {MyStatus.ATK}\t-");
-                Console.WriteLine($"-\t2. 체력: {MyStatus.maxHp}\t-");
-                Console.WriteLine($"-\t3. 방어력: {MyStatus.DEF}\t-");
-                Console.WriteLine("-\t4. 랜덤   \t-");
-                Console.WriteLine("-------------------------");
-
-                Console.WriteLine($"능력치 설정: 남은 스텟포인트 {point}");
-                Console.Write("> ");
-                string str = Console.ReadLine();
-                if (!int.TryParse(str, out int num1))
-                {
-                    Console.WriteLine("잘못된 입력입니다!");
-                    Thread.Sleep(1000);
-                    continue;
-                }
-
-                switch (num1)
-                {
-                    case 1:
-                        point--;
-                        MyStatus.ATK++;
-                        break;
-                    case 2:
-                        point--;
-                        MyStatus.maxHp++;
-                        break;
-                    case 3:
-                        point--;
-                        MyStatus.DEF++;
-                        break;
-                    case 4:
-                        point--;
-                        int randomStat = random.Next(1, 4);
-                        if (randomStat == 1)
-                        {
-                            MyStatus.ATK++;
-                        }
-                        else if (randomStat == 2)
-                        {
-                            MyStatus.maxHp++;
-                        }
-                        else if (randomStat == 3)
-                        {
-                            MyStatus.DEF++;
-                        }
-                        break;
-                    default:
-                        Console.WriteLine("잘못된 입력입니다!");
-                        Thread.Sleep(1000);
-                        break;
-                }
-            }
-
-            MyStatus.level = 1;
-            MyStatus.ATK += 1;
-            MyStatus.DEF += 1;
-            MyStatus.maxHp *= 10;
-            MyStatus.maxHp += 100;
-            MyStatus.hp = MyStatus.maxHp;
-            MyStatus.coin = 10000;
-            MyStatus.exp = 0;
-            MyStatus.nextEXP = 10;
-
-            MyStatus.ShowStatus();
-        }
-
-        void EnterLobby()
-        {
-            Thread.Sleep(1);
             SetPlayerStarterItem();
 
-            Console.WriteLine("계속하기 [ENTER]");
-            Console.ReadKey();
-
             Console.Clear();
-            Lobby lobby = new Lobby();
-            lobby.Start();
         }
+
+        public void Load()
+        {
+            GameManager.Instance.player.MyStatus = DataManager.Instance.Load();
+        }
+
+        #region 이름 설정
+        public void SetName(string name)
+        {
+            MyStatus.Name = name;
+            Console.WriteLine($"설정된 이름 : {MyStatus.Name}");
+        }
+        public void SetDefStat(int atk, int hp, int def, int mp)
+        {
+            // 기본값 설정
+            MyStatus.level = 1;
+            MyStatus.ATK = 8 + atk;
+            MyStatus.maxHp = 45 + (hp * 10);
+            MyStatus.hp = MyStatus.maxHp;
+            MyStatus.DEF = 2 + def;
+            MyStatus.maxMp = 30 + (mp * 2);
+            MyStatus.mp = MyStatus.maxMp;
+            MyStatus.exp = 0;
+            MyStatus.nextEXP = 50;
+            MyStatus.gold = 25;
+        }
+        #endregion
+
+        #region 스텟 표시
+        public void ShowStat()
+        {
+            DeffenStatic.SlowTxtOut = true;
+            DeffenStatic.SlowTxtOutTime = 1;
+            DeffenStatic.SlowTxtLineTime = 0;
+
+            MyDiffain.TxtOut(new string[] {
+                $"이름 : {MyStatus.Name}",
+                $"  레벨 : {MyStatus.level}",
+                $"  체력 : {MyStatus.hp}/{MyStatus.maxHp}",
+                $"  공격력 : {MyStatus.ATK}",
+                $"  방어력 : {MyStatus.DEF}",
+                $"  마나 : {MyStatus.mp}/{MyStatus.maxMp}",
+                $"  골드 : {MyStatus.gold}",
+                $"  경험치 : {MyStatus.exp}/{MyStatus.nextEXP}"
+            });
+        }
+        #endregion
+
         void SetPlayerStarterItem()
         {
             for (int i = 1; i < (int)EquipType.MAX; i++)
@@ -150,26 +79,27 @@ namespace newgame
 
         public override void Attack(Character target)
         {
-            Console.WriteLine("------------------");
-            Console.WriteLine("---- 1. 공격  ----");
-            Console.WriteLine("---- 2. 아이템 ---");
-            Console.WriteLine("---- 3. 도망 -----");
-            Console.WriteLine("------------------");
+            Console.WriteLine();
+            int input = MyDiffain.SeletMenu(["공격","스킬","아이템","도망"]);
 
-            string input = Console.ReadLine();
             switch (input)
             {
-                case "1":
+                case 0:
                     {
                         Console.Clear();
                         base.Attack(target);
                         break;
                     }
-                case "2":
+                case 1:
                     {
                         break;
                     }
-                case "3":
+                case 2:
+                    {
+                        
+                        break;
+                    }
+                    case 3:
                     {
                         BattleRun();
                         break;

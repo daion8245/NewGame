@@ -1,12 +1,52 @@
-﻿namespace newgame
+﻿using System.Text.Json.Serialization.Metadata;
+
+namespace newgame
 {
-    internal static class GameManager
+    internal class GameManager
     {
-        public static Player player;
-        public static Monster monster;
+        static GameManager instance;
+
+        public static GameManager Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new GameManager();
+                }
+                return instance;
+            }
+        }
+
+        public Player player;
+        public Monster monster;
+
+        #region 몬스터 정보
+        Dictionary<int, Status> monsterInfo = new Dictionary<int, Status>();
+
+        public void SetMonsterInfo(Status _stat)
+        {
+            int key = monsterInfo.Count + 1;
+            monsterInfo.Add(key, _stat);
+        }
+
+        public Status GetMonsterStat(int _key)
+        {
+            bool isKey = monsterInfo.ContainsKey(_key);
+            if(isKey == false)
+            {
+                return new Status();
+            }
+
+            return monsterInfo[_key].Clone();
+        }
+
+
+        #endregion
+
         #region 아이템
-        static List<Item> items = new List<Item>();
-        public static Item FindItem(ItemType _type)
+        List<Item> items = new List<Item>();
+        public Item FindItem(ItemType _type)
         {
             foreach (Item item in items)
             {
@@ -19,7 +59,7 @@
             return null;
         }
 
-        public static void SetItemList()
+        public void SetItemList()
         {
             items = new List<Item>();
             #region 포션
@@ -31,12 +71,12 @@
         }
         #endregion
 
-        #region
-        static List<Equipment> equips;
-        public static List<Equipment> GetEquipment { get => equips; }
-        public static Equipment FindEquipment(EquipType _type, int _id)
+        #region 장비 상태 확인
+        List<Equipment> equips = new List<Equipment>();
+        public List<Equipment> GetEquipment { get => Instance.equips; }
+        public Equipment FindEquipment(EquipType _type, int _id)
         {
-            foreach (Equipment equip in equips)
+            foreach (Equipment equip in Instance.equips)
             {
                 if (equip.GetEquipType == _type && equip.GetEquipID == _id)
                 {
@@ -47,32 +87,23 @@
         }
         #endregion
 
-
-        public static void SetEquipList()
+        public bool SetEquipList(Equipment equip)
         {
-            equips = new List<Equipment>();
+            if(equips == null)
+            {
+                equips = new List<Equipment>();
+            }
 
-            #region 모자
-            equips.Add(new Equipment(EquipType.HELMET, 1, "초보자 모자", 0, 0));
-            equips.Add(new Equipment(EquipType.HELMET, 2, "초보자 모자(강화)", 1, 1000));
-            equips.Add(new Equipment(EquipType.HELMET, 3, "초보자 모자(강화2)", 2, 2000));
-            #endregion
+            foreach(Equipment item in equips)
+            {
+                if(equip.GetEquipType == item.GetEquipType && equip.GetEquipID == item.GetEquipID)
+                {
+                    return false;
+                }
+            }
 
-            #region 상의
-            equips.Add(new Equipment(EquipType.SHIRT, 1, "초보자 상의", 0, 0));
-            #endregion
-
-            #region 하의
-            equips.Add(new Equipment(EquipType.PANTS, 1, "초보자 하의", 0, 0));
-            #endregion
-
-            #region 장갑
-            equips.Add(new Equipment(EquipType.GLOVE, 1, "초보자 장갑", 0, 0));
-            #endregion
-
-            #region 신발
-            equips.Add(new Equipment(EquipType.SHOES, 1, "초보자 신발", 0, 0));
-            #endregion
+            equips.Add(equip);
+            return true;
         }
     }
 }

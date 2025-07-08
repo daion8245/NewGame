@@ -1,35 +1,40 @@
-﻿namespace newgame
+﻿using System.ComponentModel;
+
+namespace newgame
 {
     internal class Shop
     {
+        public Dictionary<EquipType,int> items = new Dictionary<EquipType,int>();
+
         public void Start()
         {
             ShowMenu();
         }
-
+        #region 메뉴
         void ShowMenu()
         {
-            Console.WriteLine("--------상점--------");
-            Console.WriteLine("1 구매: ");
-            Console.WriteLine("2 판매: ");
-            Console.WriteLine("3 나가기: ");
-            Console.WriteLine("----------------------");
+            Console.Clear();
 
-            string selet = Console.ReadLine();
+            MyDiffain.TxtOut(["\t 「상점」",
+                               "상점 주인: 천천히 둘러보세요!",""]);
+
+            int selet = MyDiffain.SeletMenu(["구매",
+                                             "판매",
+                                             "나가기"]);
 
             switch (selet)
             {
-                case "1":
+                case 0:
                     {
-                        ShowBuyMenu();
+                        BuyEquipItem();
                         break;
                     }
-                case "2":
+                case 1:
                     {
-                        ShowSellMenu();
+                        SellEquipItem();
                         break;
                     }
-                case "3":
+                case 2:
                 default:
                     {
                         Lobby lobby = new Lobby();
@@ -38,133 +43,78 @@
                     }
             }
         }
+        #endregion
 
-        void ShowBuyMenu()
-        {
-            Console.WriteLine("--------상점--------");
-            Console.WriteLine("1 장비 구매: ");
-            Console.WriteLine("2 아이템 구매: ");
-            Console.WriteLine("3 나가기: ");
-            Console.WriteLine("----------------------");
-
-            string selet = Console.ReadLine();
-
-            switch (selet)
-            {
-                case "1":
-                    {
-                        ShowBuyEquipMenu();
-                        break;
-                    }
-                case "2":
-                    {
-                        break;
-                    }
-                case "3":
-                default:
-                    {
-                        Lobby lobby = new Lobby();
-                        lobby.Start();
-                        break;
-                    }
-            }
-        }
-
-        void ShowSellMenu()
-        {
-            Console.WriteLine("--------상점--------");
-            Console.WriteLine("1 장비 판매: ");
-            Console.WriteLine("2 아이템 판매: ");
-            Console.WriteLine("3 나가기: ");
-            Console.WriteLine("----------------------");
-
-            string selet = Console.ReadLine();
-
-            switch (selet)
-            {
-                case "1":
-                    {
-                        break;
-                    }
-                case "2":
-                    {
-                        break;
-                    }
-                case "3":
-                default:
-                    {
-                        Lobby lobby = new Lobby();
-                        lobby.Start();
-                        break;
-                    }
-            }
-        }
-
-        void ShowBuyEquipMenu()
+        #region 아이템 구매
+        void BuyEquipItem()
         {
             Console.Clear();
-            for (int i = 1; i < (int)EquipType.MAX; i++)
-            {
-                Console.WriteLine($"[{i}] {(EquipType)i}");
-            }
+            MyDiffain.TxtOut(["\t 「상점/구매」",
+                ""]);
 
-            Console.WriteLine("입력 : ");
-            string input = Console.ReadLine();
-            BuyEquipItem(input);
-        }
-
-        void BuyEquipItem(string _idx)
-        {
-            if (string.IsNullOrEmpty(_idx))
-            {
-                ShowBuyEquipMenu();
-                return;
-            }
-            int idx = int.Parse(_idx);
-            //idx = 0 | 0 <= 0(t) | idx = 6 | 6 >= 6(t) | idx = 5 | 5 >= 6(F)
-            if (idx <= (int)EquipType.NONE || idx >= (int)EquipType.MAX)
-            {
-                ShowBuyEquipMenu();
-                return;
-            }
-
-            int count = 0;
-            Console.WriteLine($"[{(EquipType)idx}]");
             List<Equipment> items = new List<Equipment>();
-            foreach (Equipment equip in GameManager.GetEquipment)
+            List<string> itemNames = new List<string>();
+
+            foreach (var item in this.items)
             {
-                if (equip.GetEquipType == (EquipType)idx)
+                foreach (Equipment equip in GameManager.Instance.GetEquipment)
                 {
-                    count++;
-                    Console.WriteLine($"[{count}] {equip.GetEquipName} - {equip.GetPrice}");
-                    items.Add(equip);
+                    if (equip.GetEquipType == item.Key && equip.GetEquipID == item.Value)
+                    {
+                        itemNames.Add($"{equip.GetEquipName} - {equip.GetPrice}골드");
+                        items.Add(equip);
+                    }
                 }
             }
+            itemNames.Add("나가기");
 
-            Console.WriteLine("구입할 장비 번호: ");
+            int menuSelect = MyDiffain.SeletMenu(itemNames.ToArray());
 
-            string input = Console.ReadLine();
-
-            int listIdx = int.Parse(input) - 1;
-            if (GameManager.player.MyStatus.coin >= items[listIdx].GetPrice)
+            if (menuSelect == itemNames.Count - 1)
             {
-                GameManager.player.MyStatus.coin -= items[listIdx].GetPrice;
-
-                Inventory.Instance.AddEquip(items[listIdx]);
                 ShowMenu();
+                return;
+            }
+
+            if (GameManager.Instance.player.MyStatus.gold >= items[menuSelect].GetPrice)
+            {
+                GameManager.Instance.player.MyStatus.gold -= items[menuSelect].GetPrice;
+                Inventory.Instance.AddEquip(items[menuSelect]);
+
+                MyDiffain.TxtOut(["", $"{items[menuSelect].GetEquipName} 구매 완료",""]);
+
+                int GoLobbySel = MyDiffain.SeletMenu(["구매 계속하기","나가기"]);
+                if (GoLobbySel == 0)
+                {
+                    BuyEquipItem();
+                    return;
+                }
+                else
+                {
+                    ShowMenu();
+                    return;
+                }
+
             }
             else
             {
                 Console.WriteLine("코인 부족");
+                MyDiffain.Continue("[ENTER]를 눌러 계속");
+                ShowMenu();
+                return;
             }
-        }
 
+        }
+        #endregion
+
+        #region 아이템 판매
         void SellEquipItem()
         {
             bool canEquip = Inventory.Instance.ShowCanEquips();
             if (canEquip == false)
             {
                 Console.WriteLine("판매할 장비가 없습니다.");
+                Console.ReadKey();
                 Start();
                 return;
             }
@@ -205,14 +155,14 @@
                 Console.WriteLine("판매할 장비가 없습니다.");
                 return;
             }
-
-            SetEquip();
         }
+        #endregion
 
-        void SetEquip()
+        #region 상점 판매품목 초기화
+        public void ResetShopItems()
         {
-            Console.WriteLine("착용하려는 장비 번호 : ");
-            int idx = 0;
+            items.Clear();
         }
+        #endregion
     }
 }

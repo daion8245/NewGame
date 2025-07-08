@@ -1,5 +1,9 @@
-﻿namespace newgame
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace newgame
 {
+    [JsonObject(MemberSerialization.Fields)]
     internal class Inventory
     {
         static Inventory instance;
@@ -21,6 +25,7 @@
         private Dictionary<EquipType, Equipment> equips =
             new Dictionary<EquipType, Equipment>()
             {
+                {EquipType.WEAPON, null },
                 {EquipType.HELMET, null },
                 {EquipType.SHIRT, null },
                 {EquipType.PANTS, null },
@@ -49,9 +54,9 @@
         public void SetEquip(EquipType _type, int _id)
         {
             //현제 착용하고 있는 장비를 확인하는 함수
-            Equipment item = GameManager.FindEquipment(_type, _id);//equipment 타입item변수에
-                                                                   //착용 가능한 장비의
-                                                                   //타입과 id를 넣는다.
+            Equipment item = GameManager.Instance.FindEquipment(_type, _id);//equipment 타입item변수에
+                                                                            //착용 가능한 장비의
+                                                                            //타입과 id를 넣는다.
             if (item == null)
             {
                 return;
@@ -93,20 +98,67 @@
             return equips[_type];
         }
 
+        #region 착용 장비 보이기
         public void ShowEquipList()
         {
-            Console.WriteLine("------착용 장비------");
-            for (int i = 1; i < (int)EquipType.MAX; i++)
+            #region 박스 출력
+            for (int i = 0; i <= 7; i++)
             {
-                Equipment _equip = GetEquip((EquipType)i);
-                if (_equip == null)
+                for(int j = 0; j <= 30; j++)
                 {
-                    continue;
+                    if ((i, j) == (0, 0))
+                    {
+                        Console.Write('┏');
+                    }
+                    else if ((i, j) == (0, 30))
+                    {
+                        Console.Write('┓');
+                    }
+                    else if (i == 0 && j == 20)
+                    {
+                        for (int l = 0; l <= 8; l++)
+                        {
+                            Console.Write("\b \b");
+                        }
+                        Console.Write(" 인벤토리 ");
+                    }
+                    else if ((i, j) == (7, 30))
+                    {
+                        Console.Write('┛');
+                    }
+                    else if ((i, j) == (7, 0))
+                    {
+                        Console.Write('┗');
+                    }
+                    else if (j == 0 || j == 30)
+                    {
+                        Console.Write('┃');
+                    }
+                    else if (i == 0 || i == 7 || j < 0 || j > 30)
+                    {
+                        Console.Write('━');
+                    }
+                    else
+                    {
+                        Console.Write(' ');
+                    }
+
+
+                    if(i >= 2 && i <= 5)
+                    {
+                        if()
+                        {
+
+                        }
+                    }
                 }
-                Console.WriteLine($"-{(EquipType)i} => {_equip.GetEquipName} + {_equip.GetUpdateCount}");
+                Console.WriteLine();
             }
-            Console.WriteLine("---------------------");
+            #endregion
+
+
         }
+        #endregion
 
         public void AddEquip(Equipment equip)
         {
@@ -118,7 +170,7 @@
             int temp = idx - 1;
             if (temp >= 0 && temp < canEquips.Count)
             {
-                GameManager.player.MyStatus.coin += canEquips[idx - 1].GetPrice;
+                GameManager.Instance.player.MyStatus.gold += canEquips[idx - 1].GetPrice;
                 canEquips.RemoveAt(idx - 1);
                 return;
             }
@@ -143,6 +195,22 @@
             Console.WriteLine("--------------------");
             Console.WriteLine();
             return true;
+        }
+
+        public void Load()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "GameData_Inventory.json");
+
+            if (File.Exists(path))
+            {
+                string data = File.ReadAllText(path);
+                var settings = new JsonSerializerSettings
+                {
+                    Converters = new List<JsonConverter> { new StringEnumConverter() }
+                };
+
+                instance = JsonConvert.DeserializeObject<Inventory>(data, settings);
+            }
         }
     }
 }

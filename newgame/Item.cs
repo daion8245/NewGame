@@ -96,27 +96,71 @@ namespace newgame
             switch (itemType)
             {
                 case ItemType.F_POTION_HP:
-                    if (GameManager.player.MyStatus.hp > GameManager.player.MyStatus.maxHp - ItemStatus)
+                    if (GameManager.Instance.player.MyStatus.hp > GameManager.Instance.player.MyStatus.maxHp - ItemStatus)
                     { //플레이어 체력이 최대치이면 체력이 오버되지 않게 하는 if문
-                        GameManager.player.MyStatus.hp = GameManager.player.MyStatus.maxHp;
-                        Console.WriteLine("포션을 사용했다. HP가 최대치로 회복되었다.");
+                        GameManager.Instance.player.MyStatus.hp = GameManager.Instance.player.MyStatus.maxHp;
+                        Console.WriteLine("포션을 사용했다. hp가 최대치로 회복되었다.");
                         break;
                     }
                     else
                     {
-                        GameManager.player.MyStatus.hp += ItemStatus;
-                        Console.WriteLine($"포션을 사용했다. HP가 {ItemStatus} 회복되었다.");
+                        GameManager.Instance.player.MyStatus.hp += ItemStatus;
+                        Console.WriteLine($"포션을 사용했다. hp가 {ItemStatus} 회복되었다.");
                         break;
                     }
                 case ItemType.F_ETC_RESETNAME:
                     {
-                        SetName();
+                        PlayerNameSet();
                         break;
                     }
             }
         }
 
-        void ActiveUse()
+        void PlayerNameSet()
+        {
+            while (true)
+            {
+                Console.Clear();
+
+                Console.Write("플레이어의 이름을 입력해 주세요 : ");
+                try
+                {
+                    string inputName = Console.ReadLine();
+
+                    if (string.IsNullOrWhiteSpace(inputName) || inputName.Length < 2 || inputName.Length > 10)
+                    {
+                        throw new Exception("이름은 2자 이상 10자 이하로 입력해야 합니다.");
+                    }
+
+                    Console.Clear();
+                    Console.WriteLine($"입력하신 이름 [{inputName}] 이 정말 맞습니까?");
+
+                    int sel = MyDiffain.SeletMenu(new[] { "Y", "N" });
+
+                    if (sel == 0)
+                    {
+                        Console.Clear();
+
+                        GameManager.Instance.player.SetName(inputName);
+                        return;
+                    }
+                }
+                catch (Exception e)
+                {
+
+                    MyDiffain.TxtOut(new[]
+                    {
+                    $"잘못된 이름입니다.",
+                    "다시 입력해 주세요.",
+                     "",
+                    "enter를 눌러 계속"
+                    });
+                    Console.ReadKey();
+                }
+            }
+        }
+
+            void ActiveUse()
         {
             if (isActivate)
             {
@@ -125,28 +169,6 @@ namespace newgame
             }
             isActivate = true;
             curItemUseCount = ItemUsedCount;
-        }
-
-        void SetName()
-        {
-            while (true)
-            {
-                Console.Clear();
-                SlowTxtout("플레이어의 이름을 입력하세요.", 30);
-                Console.Write("> ");
-                string str = Console.ReadLine();
-
-                GameManager.player.MyStatus.Name = str;
-                SlowTxtout($"입력된 이름: {GameManager.player.MyStatus.Name} 이 정말 맞습니까?", 30);
-                Console.WriteLine("Y / F");
-                Console.Write("> ");
-                string str2 = Console.ReadLine();
-                if (str2.ToUpper() == "Y")
-                {
-                    break;
-                }
-            }
-
         }
 
         public bool CheckActiveUse()

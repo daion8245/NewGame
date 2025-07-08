@@ -1,4 +1,6 @@
-﻿using static newgame.MyDiffain;
+﻿using Newtonsoft.Json;
+using System.Net.NetworkInformation;
+using static newgame.MyDiffain;
 
 namespace newgame
 {
@@ -10,13 +12,15 @@ namespace newgame
         MAX
     }
 
-    internal class Status
+    public class Status
     {
         #region Status
         public CharType charType;
         public string Name;
         public int level;
+        [JsonProperty]
         int atk;
+        [JsonIgnore]
         public int ATK
         {
             get
@@ -41,7 +45,9 @@ namespace newgame
 
             set => atk = value;
         }
+        [JsonProperty]
         int def;
+        [JsonIgnore]
         public int DEF
         {
             get
@@ -64,14 +70,23 @@ namespace newgame
         }
         public int hp;
         public int maxHp;
-        public int coin;
+        public int mp;
+        public int maxMp;
+        public int gold;
         public int exp;
         public int nextEXP;
         #endregion
 
+        public Status Clone()
+        {
+            return (Status)this.MemberwiseClone();
+        }
         int GetStrAtk()
         {
             Equipment equip = null;
+
+            equip = Inventory.Instance.GetEquip(EquipType.WEAPON);
+            int weapon = equip == null ? 0 : equip.GetEquipStat;
 
             equip = Inventory.Instance.GetEquip(EquipType.HELMET);
             int helmet = equip == null ? 0 : equip.GetEquipStat;
@@ -87,17 +102,20 @@ namespace newgame
 
         public void ShowStatus()
         {
-            Console.Clear();
+            DeffenStatic.SlowTxtOut = true;
+            DeffenStatic.SlowTxtOutTime = 1;
+            DeffenStatic.SlowTxtLineTime = 0;
 
-            Console.WriteLine("--------------------------");
-            SlowTxtout($"--이름: {Name}\t\t--", 10);
-            SlowTxtout($"--레벨: {level}\t\t--", 10);
-            SlowTxtout($"--공격력: {ATK}({atk} + {GetStrAtk()})--", 10);
-            SlowTxtout($"--체력: {hp}/{maxHp}\t\t--", 10);
-            SlowTxtout($"--방어력: {DEF}\t\t--", 10);
-            SlowTxtout($"--코인: {coin}\t\t--", 10);
-            SlowTxtout($"--경험치: {exp}/{nextEXP}\t\t--", 10);
-            Console.WriteLine("---------------------------");
+            MyDiffain.TxtOut([
+                $"이름 : {Name}",
+                $"  레벨 : {level}",
+                $"  체력 : {hp}/{maxHp}",
+                $"  공격력 : {atk}",
+                $"  방어력 : {def}",
+                $"  마나 : {mp}/{maxMp}",
+                $"  골드 : {gold}",
+                $"  경험치 : {hp} / {nextEXP}"
+                ]);
         }
 
         public void ShowInventory()

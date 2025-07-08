@@ -1,8 +1,11 @@
-﻿namespace newgame
+﻿using Newtonsoft.Json;
+
+namespace newgame
 {
     public enum EquipType
     {
         NONE,
+        WEAPON,
         HELMET,
         SHIRT,
         PANTS,
@@ -12,37 +15,42 @@
     }
     internal class Equipment
     {
+        [JsonProperty]
         EquipType equiptype = EquipType.NONE;
         public EquipType GetEquipType
         {
             get => equiptype;
             private set => equiptype = value;
         }
+        [JsonProperty]
         int equipStat = 0;
         public int GetEquipStat
         {
             get => equipStat;
             private set => equipStat = value;
         }
+        [JsonProperty]
         string equipName = string.Empty;
         public string GetEquipName
         {
             get => equipName;
             private set => equipName = value;
         }
+        [JsonProperty]
         int equipId = 0;
         public int GetEquipID
         {
             get => equipId;
             private set => equipId = value;
         }
-
+        [JsonProperty]
         int price = 0;
         public int GetPrice
         {
             get => price;
             private set => price = value;
         }
+        [JsonProperty]
         int updateCount = 0;
         public int GetUpdateCount
         {

@@ -26,9 +26,11 @@
         {
             Character[] charac = new Character[]
             {
-                GameManager.player,
-                GameManager.monster,
+                GameManager.Instance.player,
+                GameManager.Instance.monster,
             };
+
+            GameManager.Instance.player.isbattleRun = false;
 
             int curAtkNum = 0;
             while (true)
