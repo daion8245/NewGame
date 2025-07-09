@@ -149,20 +149,23 @@ namespace newgame
 
         public bool ShowCanEquips()
         {
-            if (canEquips.Count == 0 || canEquips == null)
+            if (canEquips == null || canEquips.Count == 0)
             {
                 return false;
             }
 
-            Console.WriteLine("착용 가능한 장비 목록:");
-            Console.WriteLine("--------------------");
+            Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+            Console.WriteLine("┃          인벤토리           ┃");
+            Console.WriteLine("┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫");
 
             for (int i = 0; i < canEquips.Count; i++)
             {
-                Console.WriteLine($"[{i + 1}] {canEquips[i].GetEquipName} - 가격: {canEquips[i].GetPrice}");
+                string pointer = i == 0 ? ">" : " ";
+                Console.WriteLine($"┃   {pointer}{canEquips[i].GetEquipName,-26}┃");
             }
-            Console.WriteLine("--------------------");
-            Console.WriteLine();
+
+            Console.WriteLine("┃                              ┃");
+            Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
             return true;
         }
 
