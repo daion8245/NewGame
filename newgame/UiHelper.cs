@@ -2,9 +2,6 @@
 
 namespace newgame
 {
-    /// <summary>
-    /// Utility functions for console UI operations.
-    /// </summary>
     internal class UiHelper
     {
 
@@ -109,9 +106,7 @@ namespace newgame
         #endregion
 
     }
-    /// <summary>
-    /// Global configuration for text output.
-    /// </summary>
+
     public static class TextDisplayConfig
     {
         public static bool SlowTxtOut = false;

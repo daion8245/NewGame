@@ -97,7 +97,7 @@ namespace newgame
             equip = Inventory.Instance.GetEquip(EquipType.SHOES);
             int shoes = equip == null ? 0 : equip.GetEquipStat;
 
-            return helmet + glove + shoes;
+            return weapon + helmet + glove + shoes;
         }
 
         public void ShowStatus()
@@ -122,7 +122,7 @@ namespace newgame
         {
             Inventory.Instance.ShowEquipList();
 
-            int input = MyDiffain.SeletMenu(new string[]
+            int input = UiHelper.SelectMenu(new string[]
             {
                 "장비 착용",
                 "장비 버리기",
@@ -133,29 +133,29 @@ namespace newgame
             {
                 case 0:
                     {
-                        bool canEquip = Inventory.Instance.ShowCanEquips();
-                        if (!canEquip)
+                        int canEquip = Inventory.Instance.ShowCanEquips();
+                        if (canEquip == -1)
                         {
                             Console.WriteLine("착용 가능한 장비가 없습니다.");
-                            MyDiffain.Continue("[ENTER]를 눌러 계속");
+                            UiHelper.WaitForInput("[ENTER]를 눌러 계속");
                             return;
                         }
 
-                        SetEquip();
+                        SetEquip(canEquip);
                         return;
                     }
 
                 case 1:
                     {
-                        bool canEquip = Inventory.Instance.ShowCanEquips();
-                        if (!canEquip)
+                        int canEquip = Inventory.Instance.ShowCanEquips();
+                        if (canEquip == -1)
                         {
                             Console.WriteLine("버릴 장비가 없습니다.");
-                            MyDiffain.Continue("[ENTER]를 눌러 계속");
+                            UiHelper.WaitForInput("[ENTER]를 눌러 계속");
                             return;
                         }
 
-                        Inventory.Instance.RemoveCanEquip(MyDiffain.SeletMenu(new string[] { "장비 번호 입력" }));
+                        Inventory.Instance.RemoveCanEquip(canEquip + 1);
                         return;
                     }
 
@@ -167,12 +167,12 @@ namespace newgame
         }
 
 
-        void SetEquip()
+        void SetEquip(int sel)
         {
-            Console.WriteLine("착용할려는 장비 번호 : ");
-            int idx = 0;
-            int.TryParse(Console.ReadLine(), out idx);
-            Inventory.Instance.SetEquip(idx);
+            //Console.WriteLine("착용할려는 장비 번호 : ");
+            //int idx = 0;
+            //int.TryParse(Console.ReadLine(), out idx);
+            Inventory.Instance.SetEquip(sel + 1);
         }
     }
 }

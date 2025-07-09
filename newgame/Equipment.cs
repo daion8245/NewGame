@@ -52,7 +52,7 @@ namespace newgame
         }
         [JsonProperty]
         int updateCount = 0;
-        public int GetUpdateCount
+        public int GetUpgradeCount
         {
             get => updateCount;
             private set => updateCount = value;

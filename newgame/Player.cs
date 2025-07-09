@@ -1,4 +1,8 @@
-﻿using static newgame.UiHelper;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Drawing;
 
 namespace newgame
 {
@@ -9,7 +13,7 @@ namespace newgame
         {
             Create();
         }
-
+        #region 플레이어 생성
         void Create()
         {
             GameManager.Instance.player.MyStatus = new Status();
@@ -18,11 +22,14 @@ namespace newgame
 
             Console.Clear();
         }
+        #endregion
 
+        #region 저장된 플레이어 불러오기
         public void Load()
         {
             GameManager.Instance.player.MyStatus = DataManager.Instance.Load();
         }
+        #endregion
 
         #region 이름 설정
         public void SetName(string name)
@@ -66,6 +73,7 @@ namespace newgame
         }
         #endregion
 
+        #region 기본템 설정
         void SetPlayerStarterItem()
         {
             for (int i = 1; i < (int)EquipType.MAX; i++)
@@ -75,9 +83,15 @@ namespace newgame
 
             Inventory.Instance.ShowEquipList();
         }
+        #endregion
 
+        #region 플레이어 전투
         public override void Attack(Character target)
         {
+            #region 이미지
+            Image[] battleImage = new Image[3];
+            #endregion
+
             Console.WriteLine();
             int input = UiHelper.SelectMenu(["공격","스킬","아이템","도망"]);
 
@@ -125,5 +139,6 @@ namespace newgame
                 isbattleRun = false;
             }
         }
+        #endregion
     }
 }

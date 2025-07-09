@@ -117,12 +117,13 @@ namespace newgame
                 }
 
                 string equipName = "없음";
+                string? upType = null;
                 if (equips.ContainsKey(type) && equips[type] != null)
                 {
                     equipName = equips[type].GetEquipName;
                 }
 
-                Console.WriteLine($"┃ {type,-6} : {equipName,-14} ┃");
+                Console.WriteLine($"┃ {type,-6} : {equipName,-14}");
             }
 
             Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
@@ -147,26 +148,38 @@ namespace newgame
             Console.WriteLine("해당 번호의 장비가 존재하지 않습니다.");
         }
 
-        public bool ShowCanEquips()
+        public int ShowCanEquips()
         {
             if (canEquips == null || canEquips.Count == 0)
             {
-                return false;
+                return -1;
             }
 
-            Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
-            Console.WriteLine("┃          인벤토리           ┃");
-            Console.WriteLine("┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫");
+            List<string> equipItemList = new List<string>();
+
+            string? upType = null;
 
             for (int i = 0; i < canEquips.Count; i++)
             {
-                string pointer = i == 0 ? ">" : " ";
-                Console.WriteLine($"┃   {pointer}{canEquips[i].GetEquipName,-26}┃");
+                if (canEquips[i].GetEquipType is EquipType.WEAPON or EquipType.HELMET or EquipType.GLOVE or EquipType.SHOES)
+                {
+                    upType = "공격력";
+                }
+                else
+                {
+                    upType = "방어력";
+                }
+                equipItemList.Add($"{canEquips[i].GetEquipName} -> {upType}+{canEquips[i].GetEquipStat} 증가");
+                //equipItemList.Add($"┃ {canEquips[i].GetEquipName} ");
             }
 
-            Console.WriteLine("┃                              ┃");
+            List<string> equipList = new List<string>();
+
+            Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+            Console.WriteLine("┃          인벤토리            ┃");
             Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
-            return true;
+            int SelectEquip = UiHelper.SelectMenu(equipItemList.ToArray());
+            return SelectEquip;
         }
 
         public void Load()

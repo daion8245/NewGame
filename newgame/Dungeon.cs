@@ -67,7 +67,6 @@ namespace newgame
                 // 현재 방 정보 출력
                 Console.WriteLine();
                 Console.WriteLine("현재 방: " + GetRoomName((RoomType)map[playerY, playerX]));
-                Console.WriteLine("이동: ⟰(위) ⟱(아래) ⟵(왼쪽) ⟶(오른쪽)");
 
                 // 키 입력 받기
                 ConsoleKeyInfo key = Console.ReadKey(true);

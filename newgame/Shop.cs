@@ -110,49 +110,49 @@ namespace newgame
         #region 아이템 판매
         void SellEquipItem()
         {
-            bool canEquip = Inventory.Instance.ShowCanEquips();
-            if (canEquip == false)
+            Console.Clear();
+
+            int input = Inventory.Instance.ShowCanEquips();
+            if (input == -1)
             {
-                Console.WriteLine("판매할 장비가 없습니다.");
-                Console.ReadKey();
+                Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+                Console.WriteLine("┃         .장비 없음.           ┃");
+                Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+                UiHelper.WaitForInput("[ENTER]를 눌러 계속");
                 Start();
                 return;
             }
 
-            Console.WriteLine("선택 : ");
-            string input = Console.ReadLine();
-            if (string.IsNullOrEmpty(input))
-            {
-                SellEquipItem();
-                return;
-            }
+            //int num = 0;
 
-            int num = 0;
-            bool isNum = int.TryParse(input, out num);
-            if (isNum == false)
-            {
-                SellEquipItem();
-                return;
-            }
+            //bool isNum = int.TryParse(input, out num);
+            //if (isNum == false)
+            //{
+            //    SellEquipItem();
+            //    return;
+            //}
 
-            Inventory.Instance.RemoveCanEquip(num);
+            Inventory.Instance.RemoveCanEquip(input + 1);
 
-            Console.WriteLine("다른 아이템도 판매하시겠습니까? (Y / N)");
-            input = Console.ReadLine();
+            //Console.WriteLine("다른 아이템도 판매하시겠습니까? (Y / N)");
 
-            if (input.ToUpper() == "Y")
-            {
-                SellEquipItem();
-            }
-            else
-            {
-                Start();
-            }
+            //if (input.ToUpper() == "Y")
+            //{
+            //    SellEquipItem();
+            //}
+            //else
+            //{
+            //    Start();
+            //}
 
-            bool CanEquip = Inventory.Instance.ShowCanEquips();
-            if (CanEquip == false)
+            int CanEquip = Inventory.Instance.ShowCanEquips();
+            if (CanEquip == -1)
             {
-                Console.WriteLine("판매할 장비가 없습니다.");
+                Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+                Console.WriteLine("┃          인벤토리            ┃");
+                Console.WriteLine("┃                             ┃");
+                Console.WriteLine("┃         장비 없음            ┃");
+                Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
                 return;
             }
         }
