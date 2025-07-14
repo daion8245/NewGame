@@ -1,4 +1,5 @@
 ﻿using static newgame.UiHelper;
+using System.Text;
 
 namespace newgame
 {
@@ -15,12 +16,14 @@ namespace newgame
             Shop,
             Event,
             Boss,
-            Exit
+            Exit,
+            Skip
         }
 
         public void Start()
         {
             Console.Clear();
+            LoadMapData();
             SetDungeon();
         }
 
@@ -39,6 +42,8 @@ namespace newgame
 
         void SetDungeon()
         {
+            Console.OutputEncoding = Encoding.UTF8;
+
             // 게임 시작
             while (true)
             {
@@ -52,7 +57,7 @@ namespace newgame
                     {
                         // 플레이어가 있는 위치면 @ 출력
                         if (x == playerX && y == playerY)
-                            Console.Write("@");
+                            Console.Write("☻");
                         else
                             DrawRoom((RoomType)map[y][x]);
                     }
@@ -61,6 +66,7 @@ namespace newgame
 
                 // 현재 방 정보 출력
                 Console.WriteLine();
+                Console.WriteLine("☻ -> 플레이어 , ◼ -> 벽 , ▢ -> 빈 방 , ㅒ -> 사다리(다음 층) , 🜟 => 몬스터 ");
                 Console.WriteLine("현재 방: " + GetRoomName((RoomType)map[playerY][playerX]));
                 RoomEvent((RoomType)map[playerY][playerX]);
 
@@ -133,8 +139,11 @@ namespace newgame
                     Console.WriteLine("던전을 클리어했습니다!");
                     // 게임 종료 또는 다음 단계로 이동
                     break;
-                default:
+                case RoomType.Empty:
                     Console.WriteLine("빈 방입니다.");
+                    break;
+                default:
+                    Console.WriteLine("알 수 없는 방입니다.");
                     break;
             }
         }
@@ -146,22 +155,22 @@ namespace newgame
             switch (room)
             {
                 case RoomType.Wall:
-                    Console.Write("■");
+                    Console.Write("◼");
                     break;
                 case RoomType.Empty:
-                    Console.Write(" ");
+                    Console.Write("▢");
                     break;
                 case RoomType.Ladder:
-                    Console.Write("▲");
+                    Console.Write("L");
                     break;
                 case RoomType.Monster:
-                    Console.Write("M");
+                    Console.Write("🜟");
                     break;
                 case RoomType.Treasure:
-                    Console.Write("T");
+                    Console.Write("⚝");
                     break;
                 case RoomType.Shop:
-                    Console.Write("S");
+                    Console.Write("$");
                     break;
                 case RoomType.Event:
                     Console.Write("E");
@@ -171,6 +180,9 @@ namespace newgame
                     break;
                 case RoomType.Exit:
                     Console.Write("X");
+                    break;
+                case RoomType.Skip:
+                    Console.Write(" ");
                     break;
             }
         }

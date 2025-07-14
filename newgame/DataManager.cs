@@ -284,21 +284,25 @@ namespace newgame
             foreach (string raw in File.ReadLines(filePath))
             {
                 string line = raw.Trim();
-                if (line.Length == 0 || line.Length == ' ') continue;
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
 
                 if (line == "#")
                 {
-                    GameManager.Instance.SetDungeonMapInfo(mapRows);
+                    if (mapRows.Count > 0)
+                        GameManager.Instance.SetDungeonMapInfo(mapRows);
                     mapRows = new List<List<int>>();
                     continue;
                 }
 
                 // 콤마 단위로 잘라 int 리스트로 변환
-                List<int> row = line.Split(',')
+                List<int> row = line.Split(',', StringSplitOptions.RemoveEmptyEntries)
                                     .Select(s => int.Parse(s.Trim()))
                                     .ToList();
                 mapRows.Add(row);
             }
+            if (mapRows.Count > 0)
+                GameManager.Instance.SetDungeonMapInfo(mapRows);
         }
 
         #endregion

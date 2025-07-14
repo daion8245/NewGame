@@ -17,6 +17,7 @@ namespace newgame
         {
             DataManager.Instance.LoadAllEquipData();
             DataManager.Instance.LoadEnemyData();
+            DataManager.Instance.LoadDungeonMap();
         }
     }
 }
