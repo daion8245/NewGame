@@ -105,5 +105,31 @@ namespace newgame
             equips.Add(equip);
             return true;
         }
+
+        #region 던전
+        public Dictionary<int, List<List<int>>> dungeonMapInfo = new Dictionary<int, List<List<int>>>();
+        public void SetDungeonMapInfo(List<List<int>> _Map)
+        {
+            int key = dungeonMapInfo.Count + 1;
+            dungeonMapInfo.Add(key, _Map);
+        }
+
+        public List<List<int>> GetDungeonMap(int _key)
+        {
+            bool isKey = dungeonMapInfo.ContainsKey(_key);
+            if (isKey == false)
+            {
+                return new List<List<int>>();
+            }
+
+            var original = dungeonMapInfo[_key];
+            var copy = new List<List<int>>();
+            foreach (var innerList in original)
+            {
+                copy.Add(new List<int>(innerList));
+            }
+            return copy;
+        }
+        #endregion
     }
 }

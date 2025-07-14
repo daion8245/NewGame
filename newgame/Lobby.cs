@@ -91,6 +91,9 @@ namespace newgame
                     }
                 case 7:
                     {
+                        Console.Clear();
+                        Console.WriteLine("게임을 종료합니다...");
+                        Environment.Exit(0);
                         return;
                     }
             }

@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System;
+using SkiaSharp;
 
 namespace newgame
 {
@@ -88,9 +85,11 @@ namespace newgame
         #region 플레이어 전투
         public override void Attack(Character target)
         {
-            #region 이미지
-            Image[] battleImage = new Image[3];
-            #endregion
+
+            // ── 콘솔 출력: 최대한 간단 ────────────────────────────────
+            const int lineWidth = 40;                                        // 글자 수
+            Console.WriteLine("(이미지)".PadRight(lineWidth));               // :contentReference[oaicite:1]{index=1}
+            Console.WriteLine(new string('-', lineWidth));                   // :contentReference[oaicite:2]{index=2}
 
             Console.WriteLine();
             int input = UiHelper.SelectMenu(["공격","스킬","아이템","도망"]);

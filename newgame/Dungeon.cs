@@ -18,10 +18,6 @@ namespace newgame
             Exit
         }
 
-        public Dungeon()
-        {
-            Start();
-        }
         public void Start()
         {
             Console.Clear();
@@ -31,13 +27,12 @@ namespace newgame
         #region 던전
 
         // 맵 데이터 (2차원 배열)
-        static int[,] map = {
-            {0,0,0,0,0,0,0,0},
-            {0,1,1,2,3,5,6,4},
-            {0,4,4,5,4,5,2,0},
-            {0,1,1,2,3,4,2,3},
-            {0,0,0,0,0,0,0,0}
-        };
+        List<List<int>> map = new List<List<int>>();
+
+        void LoadMapData()
+        {
+            map = GameManager.Instance.GetDungeonMap(1);
+        }
 
         // 플레이어 위치
         static int playerX = 1, playerY = 1;
@@ -59,14 +54,16 @@ namespace newgame
                         if (x == playerX && y == playerY)
                             Console.Write("@");
                         else
-                            Console.Write(map[y, x]);
+                            DrawRoom((RoomType)map[y][x]);
                     }
                     Console.WriteLine();
                 }
 
                 // 현재 방 정보 출력
                 Console.WriteLine();
-                Console.WriteLine("현재 방: " + GetRoomName((RoomType)map[playerY, playerX]));
+                Console.WriteLine("현재 방: " + GetRoomName((RoomType)map[playerY][playerX]));
+                RoomEvent((RoomType)map[playerY][playerX]);
+
 
                 // 키 입력 받기
                 ConsoleKeyInfo key = Console.ReadKey(true);
@@ -80,7 +77,7 @@ namespace newgame
                 else if (key.Key == ConsoleKey.RightArrow) newX++; // 오른쪽으로
 
                 // 이동 가능한지 확인 (맵 안에 있고 벽이 아닌 경우)
-                if (newX >= 0 && newX < 8 && newY >= 0 && newY < 5 && map[newY, newX] != 0)
+                if (newX >= 0 && newX < 8 && newY >= 0 && newY < 5 && map[newY][newX] != 0) // 수정
                 {
                     playerX = newX;
                     playerY = newY;
@@ -88,6 +85,7 @@ namespace newgame
             }
 
         }
+        #region 방 이름 가져오기
         static string GetRoomName(RoomType room)
         {
             switch (room)
@@ -104,6 +102,80 @@ namespace newgame
                 default: return "알 수 없음";
             }
         }
+        #endregion
+
+        #region 방 이벤트 처리
+        void RoomEvent(RoomType playerRoom)
+        {
+            RoomType room = (RoomType)map[playerY][playerX]; // 수정
+            switch (room)
+            {
+                case RoomType.Monster:
+                    CreateMonster();
+                    break;
+                case RoomType.Treasure:
+                    Console.WriteLine("보물을 찾았습니다!");
+                    // 보물 획득 로직 추가
+                    break;
+                case RoomType.Shop:
+                    Console.WriteLine("상점에 들어왔습니다.");
+                    // 상점 로직 추가
+                    break;
+                case RoomType.Event:
+                    Console.WriteLine("특별 이벤트가 발생했습니다!");
+                    // 이벤트 로직 추가
+                    break;
+                case RoomType.Boss:
+                    Console.WriteLine("보스와의 전투가 시작됩니다!");
+                    CreateMonster(); // 보스 몬스터 생성
+                    break;
+                case RoomType.Exit:
+                    Console.WriteLine("던전을 클리어했습니다!");
+                    // 게임 종료 또는 다음 단계로 이동
+                    break;
+                default:
+                    Console.WriteLine("빈 방입니다.");
+                    break;
+            }
+        }
+        #endregion
+
+        #region 방 그리기
+        void DrawRoom(RoomType room)
+        {
+            switch (room)
+            {
+                case RoomType.Wall:
+                    Console.Write("■");
+                    break;
+                case RoomType.Empty:
+                    Console.Write(" ");
+                    break;
+                case RoomType.Ladder:
+                    Console.Write("▲");
+                    break;
+                case RoomType.Monster:
+                    Console.Write("M");
+                    break;
+                case RoomType.Treasure:
+                    Console.Write("T");
+                    break;
+                case RoomType.Shop:
+                    Console.Write("S");
+                    break;
+                case RoomType.Event:
+                    Console.Write("E");
+                    break;
+                case RoomType.Boss:
+                    Console.Write("B");
+                    break;
+                case RoomType.Exit:
+                    Console.Write("X");
+                    break;
+            }
+        }
+        #endregion
+
         #endregion
 
         #region 몬스터 소환/배틀
