@@ -18,9 +18,13 @@ namespace newgame
             Exit
         }
 
+        const int Padding = 1;               // 각 방 주변 공백 크기
+        const int CellSize = Padding * 2 + 1; // 실제 화면에 사용될 셀 크기
+
         public void Start()
         {
             Console.Clear();
+            LoadMapData();
             SetDungeon();
         }
 
@@ -39,25 +43,16 @@ namespace newgame
 
         void SetDungeon()
         {
+            int height = map.Count;
+            int width = map[0].Count;
+
             // 게임 시작
             while (true)
             {
-                // 화면 지우기
                 Console.Clear();
 
-                // 맵 출력
-                for (int y = 0; y < 5; y++)
-                {
-                    for (int x = 0; x < 8; x++)
-                    {
-                        // 플레이어가 있는 위치면 @ 출력
-                        if (x == playerX && y == playerY)
-                            Console.Write("@");
-                        else
-                            DrawRoom((RoomType)map[y][x]);
-                    }
-                    Console.WriteLine();
-                }
+                DrawMap(width, height);
+                DrawPlayer();
 
                 // 현재 방 정보 출력
                 Console.WriteLine();
@@ -77,7 +72,7 @@ namespace newgame
                 else if (key.Key == ConsoleKey.RightArrow) newX++; // 오른쪽으로
 
                 // 이동 가능한지 확인 (맵 안에 있고 벽이 아닌 경우)
-                if (newX >= 0 && newX < 8 && newY >= 0 && newY < 5 && map[newY][newX] != 0) // 수정
+                if (newX >= 0 && newX < width && newY >= 0 && newY < height && map[newY][newX] != 0)
                 {
                     playerX = newX;
                     playerY = newY;
@@ -141,38 +136,66 @@ namespace newgame
         #endregion
 
         #region 방 그리기
-        void DrawRoom(RoomType room)
+        char GetRoomSymbol(RoomType room)
         {
-            switch (room)
+            return room switch
             {
-                case RoomType.Wall:
-                    Console.Write("■");
-                    break;
-                case RoomType.Empty:
-                    Console.Write(" ");
-                    break;
-                case RoomType.Ladder:
-                    Console.Write("▲");
-                    break;
-                case RoomType.Monster:
-                    Console.Write("M");
-                    break;
-                case RoomType.Treasure:
-                    Console.Write("T");
-                    break;
-                case RoomType.Shop:
-                    Console.Write("S");
-                    break;
-                case RoomType.Event:
-                    Console.Write("E");
-                    break;
-                case RoomType.Boss:
-                    Console.Write("B");
-                    break;
-                case RoomType.Exit:
-                    Console.Write("X");
-                    break;
+                RoomType.Wall => '■',
+                RoomType.Empty => ' ',
+                RoomType.Ladder => '▲',
+                RoomType.Monster => 'M',
+                RoomType.Treasure => 'T',
+                RoomType.Shop => 'S',
+                RoomType.Event => 'E',
+                RoomType.Boss => 'B',
+                RoomType.Exit => 'X',
+                _ => ' '
+            };
+        }
+
+        void DrawRoomWithPadding(RoomType room, int x, int y)
+        {
+            int left = x * CellSize;
+            int top = y * CellSize;
+            char symbol = GetRoomSymbol(room);
+
+            if (room == RoomType.Wall)
+            {
+                for (int i = 0; i < CellSize; i++)
+                {
+                    Console.SetCursorPosition(left, top + i);
+                    Console.Write(new string(symbol, CellSize));
+                }
             }
+            else
+            {
+                for (int i = 0; i < CellSize; i++)
+                {
+                    Console.SetCursorPosition(left, top + i);
+                    Console.Write(new string(' ', CellSize));
+                }
+                Console.SetCursorPosition(left + Padding, top + Padding);
+                Console.Write(symbol);
+            }
+        }
+
+        void DrawMap(int width, int height)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    DrawRoomWithPadding((RoomType)map[y][x], x, y);
+                }
+            }
+        }
+
+        void DrawPlayer()
+        {
+            int left = playerX * CellSize + Padding;
+            int top = playerY * CellSize + Padding;
+            Console.SetCursorPosition(left, top);
+            Console.Write('@');
         }
         #endregion
 
