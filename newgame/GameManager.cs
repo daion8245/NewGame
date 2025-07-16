@@ -50,7 +50,7 @@ namespace newgame
         {
             foreach (Item item in items)
             {
-                if (item.GetItemType == _type)
+                if (item.ItemType == _type)
                 {
                     return item;
                 }

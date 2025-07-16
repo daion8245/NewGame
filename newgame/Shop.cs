@@ -45,7 +45,7 @@ namespace newgame
         }
         #endregion
 
-        #region 아이템 구매
+        #region 장비/아이템 구매
         void BuyEquipItem()
         {
             Console.Clear();
@@ -107,7 +107,7 @@ namespace newgame
         }
         #endregion
 
-        #region 아이템 판매
+        #region 장비 판매
         void SellEquipItem()
         {
             Console.Clear();
@@ -156,6 +156,59 @@ namespace newgame
                 return;
             }
         }
+        #endregion
+
+        #region 아이템 관련 추가
+        void ShowBuyConsumableItemMenu()
+        {
+            for (int i = 1; i < Enum.GetValues(typeof(ItemType)).Length; i++)
+            {
+                Console.WriteLine($"[{i}] {Inventory.Instance.GetItemName((ItemType)i)}");
+            }
+
+            Console.Write("입력 : ");
+            string input = Console.ReadLine();
+            BuyConsumableItem(input);
+        }
+
+        #region 아이템 관련 추가
+        void BuyConsumableItem(string _idx)
+        {
+            // _idx 문자열이 비어있다면
+            if (string.IsNullOrEmpty(_idx))
+            {
+                // 잘못된 입력이므로, 이전 메뉴로 돌아가게 만들어줄 것
+                // 현재 여기에서는 ShowBuyEquipMenu <- 이 상태로 돌아가게 해놓음
+                ShowBuyConsumableItemMenu();
+                return;
+            }
+
+            int idx = int.Parse(_idx);
+            // idx = 1 ~ 5 범위가 아닌 경우에는 함수 종료
+            if (idx <= (int)ItemType.NONE || idx >= Enum.GetValues(typeof(ItemType)).Length)
+            {
+                // 잘못된 입력이므로, 이전 메뉴로 돌아가게 만들어줄 것
+                // 현재 여기에서는 ShowBuyEquipMenu <- 이 상태로 돌아가게 해놓음
+                ShowBuyConsumableItemMenu();
+                return;
+            }
+
+            // 구매 진행
+            Item item = GameManager.Instance.FindItem((ItemType)idx);
+            if (GameManager.Instance.player.MyStatus.gold >= item.ItemPrice)
+            {
+                // 돈이 있네?
+                GameManager.Instance.player.MyStatus.gold -= item.ItemPrice;
+                Inventory.Instance.AddItem(item);
+
+                ShowMenu();
+            }
+            else
+            {
+                Console.WriteLine("가지고 있는 재화가 부족합니다.");
+            }
+        }
+        #endregion
         #endregion
 
         #region 상점 판매품목 초기화
