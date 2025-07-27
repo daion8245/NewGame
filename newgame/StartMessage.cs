@@ -24,8 +24,6 @@ namespace newgame
             TextDisplayConfig.SlowTxtOutTime = 30;
             TextDisplayConfig.SlowTxtLineTime = 0;
 
-            UiHelper.TxtOut(["┏━━━━━━━━━━━━━━━", "┃ ", "┃ --+ ", "┃    ＼〇_", "┃      ｜=)", "┃      /＼ ", "┃----------------", "┗━━━━━━━━━━━━━━━"]);
-
             UiHelper.TxtOut(
                 [
                 "TXTRPG-Remake",

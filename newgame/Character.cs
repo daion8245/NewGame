@@ -17,15 +17,16 @@ namespace newgame
 
         public bool IsDead = false;
         public bool isbattleRun = false;
-        public virtual void Attack(Character target)
+        public virtual string Attack(Character target)
         {
             target.Status.hp -= MyStatus.ATK;
-            Console.WriteLine($"{MyStatus.Name}의 공격!{target.Status.Name} 은 {MyStatus.ATK} 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.hp}");
 
             if (target.Status.hp <= 0)
             {
                 target.Dead(this);
             }
+
+            return ($"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.hp}");
         }
 
         public virtual void Dead(Character target)
@@ -34,9 +35,12 @@ namespace newgame
 
             if (target == GameManager.Instance.player)
             {
-                Console.WriteLine($"{Status.Name}는/은 쓰러졌다!");
-                Lobby lobby = new Lobby();
-                lobby.Start();
+                UiHelper.TxtOut([$"{Status.Name}은 쓰러졌다!",$"{Status.Name} 에게서 승리했다!",$"+{Status.exp}Exp , +{Status.gold}골드 를 획득했다!"]);
+                Console.WriteLine();
+                UiHelper.WaitForInput("[Enter]를 눌러 계속");
+
+                Dungeon dungeon = new Dungeon();
+                dungeon.Start();
             }
             else
             {

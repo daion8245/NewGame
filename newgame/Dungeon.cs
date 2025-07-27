@@ -95,12 +95,45 @@ namespace newgame
         #region 방 이벤트 처리
         void RoomEvent(RoomType playerRoom)
         {
-            RoomType room = (RoomType)map[playerY][playerX]; // 수정
+            RoomType room = (RoomType)map[playerY][playerX];
+            Console.Clear();
             switch (room)
             {
-                case (RoomType.Monster):
+                case RoomType.Monster:
                     {
-                        MonsterCreate();
+                        Console.WriteLine("");
+                        UiHelper.TxtOut(new string[]
+                        {
+                            "몬스터 방에 진입했습니다.",""
+                        });
+
+                        int select = UiHelper.SelectMenu(new string[]
+                        {
+                            "몬스터와 전투",
+                            "도망 시도(35%)"
+                        });
+
+                        if(select == 0)
+                        {
+                            UiHelper.WaitForInput("몬스터와의 전투를 시작합니다. [ENTER를 눌러 계속]");
+                            MonsterCreate();
+                        }
+                        else
+                        {
+                            int randomChance = new Random().Next(1, 101);
+                            if (randomChance <= 35) // 35% 확률로 도망 성공
+                            {
+                                Console.WriteLine("도망에 성공했습니다!");
+                                Console.WriteLine();
+                            }
+                            else
+                            {
+                                UiHelper.WaitForInput("도망에 실패했습니다! 체력의 30%를 잃고 몬스터와 전투를 시작합니다!  [ENTER를 눌러 계속]");
+                                GameManager.Instance.player.MyStatus.hp -= (int)(GameManager.Instance.player.MyStatus.maxHp * 0.3);
+                                MonsterCreate();
+                            }
+                        }
+                        RoomDelete(); // 이벤트 처리 후 방 삭제
                         break;
                     }
                 case (RoomType.Treasure):
@@ -164,17 +197,24 @@ namespace newgame
                 }
                 Console.WriteLine();
             }
-            // 현재 방 정보 출력
 
             Console.WriteLine();
             Console.WriteLine("현재 방: " + GetRoomName((RoomType)map[playerY][playerX]));
-
             Console.WriteLine();
-            Console.WriteLine($"\t↑{GetRoomName((RoomType)map[playerY + 1][playerX])}");
-            Console.WriteLine($"←{GetRoomName((RoomType)map[playerY][playerX - 1])}" +
-                              $"\t\t→{GetRoomName((RoomType)map[playerY][playerX + 1])}");
-            Console.WriteLine($"\t↓{GetRoomName((RoomType)map[playerY - 1][playerX])}");
 
+            // 인접 방 경계 체크
+            Console.WriteLine($"\t↑{GetRoomName(GetRoomTypeSafe(playerY + 1, playerX))}");
+            Console.WriteLine($"←{GetRoomName(GetRoomTypeSafe(playerY, playerX - 1))}" +
+                              $"\t\t→{GetRoomName(GetRoomTypeSafe(playerY, playerX + 1))}");
+            Console.WriteLine($"\t↓{GetRoomName(GetRoomTypeSafe(playerY - 1, playerX))}");
+        }
+
+        // 맵 경계 체크 함수 추가
+        RoomType GetRoomTypeSafe(int y, int x)
+        {
+            if (y >= 0 && y < map.Count && x >= 0 && x < map[0].Count)
+                return (RoomType)map[y][x];
+            return RoomType.Wall; // 경계 밖은 벽으로 처리
         }
 
         void DrawPlayer()

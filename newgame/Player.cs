@@ -83,17 +83,21 @@ namespace newgame
         #endregion
 
         #region 플레이어 전투
-        public override void Attack(Character target)
+        public override string Attack(Character target)
         {
-            Console.WriteLine("테스트");
+            string[] battleLog = new string[2];
+            battleLog[0] = " ";
+            battleLog[1] = " ";
+
+            ShowBattleInfo(target, battleLog);
             int input = SelectBattleAction();
 
             switch (input)
             {
                 case 0:
                     {
-                        Console.Clear();
-                        base.Attack(target);
+                        battleLog[0] = base.Attack(target);
+                        ShowBattleInfo(target, battleLog);
                         break;
                     }
                 case 1:
@@ -123,6 +127,8 @@ namespace newgame
                         break;
                     }
             }
+
+            return null;
         }
 
         void BattleRun()
@@ -155,7 +161,7 @@ namespace newgame
                 "스킬",
                 "아이템",
                 "탐색",
-                "도망"
+                "포기"
             };
 
             lineCoordinate = Console.CursorTop + menuOptions.Length;
@@ -210,6 +216,16 @@ namespace newgame
             while (key != ConsoleKey.Enter);
 
             return selected;
+        }
+        #endregion
+
+        #region 플레이어&적 정보
+        void ShowBattleInfo(Character target, string[] battleLog)
+        {
+            Console.Clear();
+            Console.WriteLine($"Name.{MyStatus.Name} \t Name.{target.MyStatus.Name} \t {battleLog[0]}");
+            Console.WriteLine($"Lv.{MyStatus.level} \t\t Lv.{target.MyStatus.level} \t\t {battleLog[1]}");
+            Console.WriteLine($"Hp.{MyStatus.hp} \t\t Hp.{target.MyStatus.hp}");
         }
         #endregion
         #endregion
