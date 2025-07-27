@@ -1,196 +1,72 @@
-﻿using static newgame.UiHelper;
+﻿using Newtonsoft.Json;
 
 namespace newgame
 {
+    // 아이템 타입 설정 규칙
+    // 타입명은 [0]_[1]_[2]
+    // 0 : 지속여부 -> T, F
+    // 1 : 종류
+    // 2 : 효과
     public enum ItemType
     {
-        NONE,
+        NONE,           // 없음
         #region 포션
-        F_POTION_HP,
-        T_POTION_EXPUP,
-        T_POTION_ATKUP,
+        F_POTION_HP,      // 회복 물약 - 지속여부 : false
+        T_POTION_EXPUP,   // 경험치 획득량 증가 물약 - 지속여부 : true
+        T_POTION_ATKUP,   // 공격력 증가 물약 - 지속여부 : true
         #endregion
         #region 기타
-        F_ETC_RESETNAME,
+        F_ETC_RESETNAME, // 닉네임 변경권 - 지속여부 : false
         #endregion
-        MAX,
     }
+
+    [JsonObject(MemberSerialization.Fields)]
     internal class Item
     {
-        ItemType itemType = ItemType.NONE;
-        public ItemType GetItemType
+        // 아이템 타입
+        public ItemType ItemType { get; private set; } = ItemType.NONE;
+
+        // 아이템 능력치
+        public int ItemStatus { get; private set; } = 0;
+
+        // 아이템 유지 횟수
+        public int ItemUsedCount { get; private set; } = 0;
+
+        // 아이템 가격
+        public int ItemPrice { get; private set; } = 0;
+
+        public bool IsPersistent() => ItemType.ToString().StartsWith("T_");
+
+        // 재정의
+        public Item(ItemType _type, int _status, int _usedCount, int _price)
         {
-            get => itemType;
-            private set => itemType = value;
+            ItemType = _type;                   // 아이템 타입 설정
+            ItemStatus = _status;               // 아이템 능력치 설정
+            ItemUsedCount = _usedCount;         // 아이템 유지 횟수 설정
+            ItemPrice = _price;                 // 아이템 가격 설정
         }
 
-        int itemStatus = 0;
-        public int ItemStatus
-        {
-            get => itemStatus;
-            private set => itemStatus = value;
-        }
-
-        int itemCount = 0;
-        public int ItemCount
-        {
-            get => itemCount;
-            private set => itemCount = value;
-        }
-
-        public int ItemUsedCount
-        {
-            get => ItemUsedCount;
-            private set => ItemUsedCount = value;
-        }
-
-        int curItemUseCount = 0;
-
-        bool isActivate = false;
-        public bool IsActvate
-        {
-            get => isActivate;
-            private set => isActivate = value;
-        }
-
-        int itemPrice = 0;
-        public int ItemPrice
-        {
-            get => itemPrice;
-            private set => itemPrice = value;
-        }
-        public Item(ItemType _type, int _status, int _UsedCount, int _price)
-        {
-            itemType = _type;
-            itemStatus = _status;
-            ItemUsedCount = _UsedCount;
-            curItemUseCount = ItemUsedCount;
-            ItemPrice = _price;
-        }
-
+        // 아이템 사용
         public void Use()
         {
-            if (itemCount == 0)
+            if (IsPersistent() == false)
             {
-                return;
-            }
-            itemCount--;
-            Console.WriteLine();
-
-            string once = itemType.ToString().Split('_')[0];
-            if (once[0] == 'F')
-            {
-                UseOnce();
-            }
-            else if (once[0] == 'T')
-            {
-                if (itemType == ItemType.T_POTION_ATKUP)
-                {
-                    ActiveUse();
-                }
+                Console.WriteLine($"[단일 아이템 사용] {ItemType}: +{ItemStatus} 효과 즉시 적용");
+                ApplyInstantEffect();
             }
         }
 
-        void UseOnce()
+        private void ApplyInstantEffect()
         {
-            switch (itemType)
+            switch (ItemType)
             {
                 case ItemType.F_POTION_HP:
-                    if (GameManager.Instance.player.MyStatus.hp > GameManager.Instance.player.MyStatus.maxHp - ItemStatus)
-                    { //플레이어 체력이 최대치이면 체력이 오버되지 않게 하는 if문
-                        GameManager.Instance.player.MyStatus.hp = GameManager.Instance.player.MyStatus.maxHp;
-                        Console.WriteLine("포션을 사용했다. hp가 최대치로 회복되었다.");
-                        break;
-                    }
-                    else
                     {
-                        GameManager.Instance.player.MyStatus.hp += ItemStatus;
-                        Console.WriteLine($"포션을 사용했다. hp가 {ItemStatus} 회복되었다.");
+                        // 회복
                         break;
                     }
-                case ItemType.F_ETC_RESETNAME:
-                    {
-                        PlayerNameSet();
-                        break;
-                    }
+                // TODO
             }
-        }
-
-        void PlayerNameSet()
-        {
-            while (true)
-            {
-                Console.Clear();
-
-                Console.Write("플레이어의 이름을 입력해 주세요 : ");
-                try
-                {
-                    string inputName = Console.ReadLine();
-
-                    if (string.IsNullOrWhiteSpace(inputName) || inputName.Length < 2 || inputName.Length > 10)
-                    {
-                        throw new Exception("이름은 2자 이상 10자 이하로 입력해야 합니다.");
-                    }
-
-                    Console.Clear();
-                    Console.WriteLine($"입력하신 이름 [{inputName}] 이 정말 맞습니까?");
-
-                    int sel = UiHelper.SelectMenu(new[] { "Y", "N" });
-
-                    if (sel == 0)
-                    {
-                        Console.Clear();
-
-                        GameManager.Instance.player.SetName(inputName);
-                        return;
-                    }
-                }
-                catch (Exception e)
-                {
-
-                    UiHelper.TxtOut(new[]
-                    {
-                    $"잘못된 이름입니다.",
-                    "다시 입력해 주세요.",
-                     "",
-                    "enter를 눌러 계속"
-                    });
-                    Console.ReadKey();
-                }
-            }
-        }
-
-            void ActiveUse()
-        {
-            if (isActivate)
-            {
-                curItemUseCount += ItemUsedCount;
-                return;
-            }
-            isActivate = true;
-            curItemUseCount = ItemUsedCount;
-        }
-
-        public bool CheckActiveUse()
-        {
-            bool result = false;
-
-            switch (itemType)
-            {
-                case ItemType.T_POTION_EXPUP:
-                    {
-                        curItemUseCount--;
-                        break;
-                    }
-                case ItemType.T_POTION_ATKUP:
-                    {
-                        curItemUseCount--;
-                        break;
-                    }
-            }
-
-            result = curItemUseCount <= 0;
-            return result;
         }
     }
 }
