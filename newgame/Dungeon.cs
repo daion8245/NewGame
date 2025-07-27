@@ -1,148 +1,215 @@
 ﻿using static newgame.UiHelper;
-using System.Text;
 
 namespace newgame
 {
     internal class Dungeon
     {
-        /* ──────────────── 1. 기본 설정 ──────────────── */
-        enum RoomType { Wall, Empty, Ladder, Monster, Treasure, Shop, Event, Boss, Exit, Skip }
 
-        const int Padding  = 1;                 // 방 둘레 공백
-        const int CellSize = Padding * 2 + 1;   // 한 칸의 실제 출력 높이·너비
+        enum RoomType
+        {
+            Wall,
+            Empty,
+            Ladder,
+            Monster,
+            Treasure,
+            Shop,
+            Event,
+            Boss,
+            Exit
+        }
 
-        /* ──────────────── 2. 필드 ──────────────── */
-        List<List<int>> map = new();            // 2D 맵 데이터
-        static int playerX = 1, playerY = 1;    // 플레이어 위치
-
-        /* ──────────────── 3. 진입점 ──────────────── */
         public void Start()
         {
             Console.Clear();
-            Console.OutputEncoding = Encoding.UTF8;   // 특수문자 출력
             LoadMapData();
-            RunDungeonLoop();
+            SetDungeon();
         }
 
-        /* ──────────────── 4. 맵 로딩 ──────────────── */
-        void LoadMapData() => map = GameManager.Instance.GetDungeonMap(1);
+        #region 던전
 
-        /* ──────────────── 5. 메인 루프 ──────────────── */
-        void RunDungeonLoop()
+        // 맵 데이터 (2차원 배열)
+        List<List<int>> map = new List<List<int>>();
+
+        void LoadMapData()
+        {
+            map = GameManager.Instance.GetDungeonMap(1);
+        }
+
+        // 플레이어 위치
+        static int playerX = 1, playerY = 1;
+
+        void SetDungeon()
         {
             int height = map.Count;
-            int width  = map[0].Count;
+            int width = map[0].Count;
 
+            // 게임 시작
             while (true)
             {
                 Console.Clear();
+
                 DrawMap(width, height);
                 DrawPlayer();
 
+                RoomEvent((RoomType)map[playerY][playerX]);
+
+                // 키 입력 받기
                 ConsoleKeyInfo key = Console.ReadKey(true);
+
+                RoomDelete();
+                // 이동 처리
                 int newX = playerX, newY = playerY;
 
-                if (key.Key is ConsoleKey.UpArrow)        newY--;
-                else if (key.Key is ConsoleKey.DownArrow) newY++;
-                else if (key.Key is ConsoleKey.LeftArrow) newX--;
-                else if (key.Key is ConsoleKey.RightArrow)newX++;
+                if (key.Key == ConsoleKey.UpArrow) newY--;      // 위로
+                else if (key.Key == ConsoleKey.DownArrow) newY++; // 아래로
+                else if (key.Key == ConsoleKey.LeftArrow) newX--; // 왼쪽으로
+                else if (key.Key == ConsoleKey.RightArrow) newX++; // 오른쪽으로
 
-                // 맵 범위 + 벽 체크
-                if (newX >= 0 && newX < width &&
-                    newY >= 0 && newY < height &&
-                    map[newY][newX] != (int)RoomType.Wall)
+                // 이동 가능한지 확인 (맵 안에 있고 벽이 아닌 경우)
+                if (newX >= 0 && newX < width && newY >= 0 && newY < height && map[newY][newX] != 0)
                 {
                     playerX = newX;
                     playerY = newY;
-                    HandleRoomEvent();   // 이동 완료 후 이벤트 처리
                 }
             }
+
         }
-
-        /* ──────────────── 6. 이벤트 처리 ──────────────── */
-        void HandleRoomEvent()
+        #region 방 이름 가져오기
+        static string GetRoomName(RoomType room)
         {
-            RoomType room = (RoomType)map[playerY][playerX];
-
             switch (room)
             {
-                case RoomType.Monster:   CreateMonster();             break;
-                case RoomType.Treasure:  WriteLineCenter("보물을 찾았다!");  break;
-                case RoomType.Shop:      WriteLineCenter("상점이다.");       break;
-                case RoomType.Event:     WriteLineCenter("이벤트 발생!");    break;
-                case RoomType.Boss:      WriteLineCenter("보스 등장!"); CreateMonster(); break;
-                case RoomType.Exit:      WriteLineCenter("던전 클리어!");   break;
-                case RoomType.Empty:     /* 아무 일도 없음 */          break;
+                case RoomType.Wall: return "벽";
+                case RoomType.Empty: return "빈 방";
+                case RoomType.Ladder: return "사다리";
+                case RoomType.Monster: return "몬스터";
+                case RoomType.Treasure: return "보물";
+                case RoomType.Shop: return "상점";
+                case RoomType.Event: return "이벤트";
+                case RoomType.Boss: return "보스";
+                case RoomType.Exit: return "출구";
+                default: return "알 수 없음";
             }
         }
-
-        /* ──────────────── 7. 그리기 ──────────────── */
-        char GetRoomSymbol(RoomType room) => room switch
+        #endregion
+        #region 방 이벤트 처리
+        void RoomEvent(RoomType playerRoom)
         {
-            RoomType.Wall     => '■',
-            RoomType.Empty    => ' ',
-            RoomType.Ladder   => '▲',
-            RoomType.Monster  => 'M',
-            RoomType.Treasure => 'T',
-            RoomType.Shop     => 'S',
-            RoomType.Event    => 'E',
-            RoomType.Boss     => 'B',
-            RoomType.Exit     => 'X',
-            _                 => ' '
-        };
+            RoomType room = (RoomType)map[playerY][playerX]; // 수정
+            switch (room)
+            {
+                case (RoomType.Monster):
+                    {
+                        CreateMonster();
+                        break;
+                    }
+                case (RoomType.Treasure):
+                    {
+                        // 보물 획득 로직 추가
+                        break;
+                    }
+                case (RoomType.Shop):
+                    {
+                        // 상점 로직 추가
+                        break;
+                    }
+                case (RoomType.Event):
+                    {
+                        // 이벤트 로직 추가
+                        break;
+                    }
+                case (RoomType.Boss):
+                    {
+                        CreateMonster(); // 보스 몬스터 생성
+                        break;
+                    }
+                case(RoomType.Exit):
+                    {
+                        // 게임 종료 또는 다음 단계로 이동
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+        }
+        #endregion
 
-        void DrawRoomWithPadding(RoomType room, int x, int y)
+        #region 방 그리기
+        char GetRoomSymbol(RoomType room)
         {
-            int left = x * CellSize;
-            int top  = y * CellSize;
-            char sym = GetRoomSymbol(room);
-
-            for (int i = 0; i < CellSize; i++)
+            return room switch
             {
-                Console.SetCursorPosition(left, top + i);
-
-                if (room == RoomType.Wall)
-                    Console.Write(new string(sym, CellSize));
-                else
-                    Console.Write(new string(' ', CellSize));
-            }
-
-            if (room != RoomType.Wall)
-            {
-                Console.SetCursorPosition(left + Padding, top + Padding);
-                Console.Write(sym);
-            }
+                RoomType.Wall => '■',
+                RoomType.Empty => ' ',
+                RoomType.Ladder => '▲',
+                RoomType.Monster => 'M',
+                RoomType.Treasure => 'T',
+                RoomType.Shop => 'S',
+                RoomType.Event => 'E',
+                RoomType.Boss => 'B',
+                RoomType.Exit => 'X',
+                _ => ' '
+            };
         }
 
         void DrawMap(int width, int height)
         {
             for (int y = 0; y < height; y++)
+            {
                 for (int x = 0; x < width; x++)
-                    DrawRoomWithPadding((RoomType)map[y][x], x, y);
+                {
+                    Console.Write(GetRoomSymbol((RoomType)map[y][x]));
+                }
+                Console.WriteLine();
+            }
+            // 현재 방 정보 출력
+
+            Console.WriteLine();
+            Console.WriteLine("현재 방: " + GetRoomName((RoomType)map[playerY][playerX]));
+
+            Console.WriteLine();
+            Console.WriteLine($"\t↑{GetRoomName((RoomType)map[playerY + 1][playerX])}");
+            Console.WriteLine($"←{GetRoomName((RoomType)map[playerY][playerX - 1])}" +
+                              $"\t\t→{GetRoomName((RoomType)map[playerY][playerX + 1])}");
+            Console.WriteLine($"\t↓{GetRoomName((RoomType)map[playerY - 1][playerX])}");
+
         }
 
         void DrawPlayer()
         {
-            Console.SetCursorPosition(playerX * CellSize + Padding,
-                                      playerY * CellSize + Padding);
+            int left = playerX;
+            int top = playerY;
+            Console.SetCursorPosition(left, top);
             Console.Write('@');
         }
 
-        /* ──────────────── 8. 몬스터 & 전투 ──────────────── */
+        void RoomDelete()
+        {
+            if (playerY >= 0 && playerY < map.Count && playerX >= 0 && playerX < map[playerY].Count && (RoomType)map[playerY][playerX] != RoomType.Empty)
+            {
+                map[playerY][playerX] = (int)RoomType.Empty;
+            }
+        }
+        #endregion
+
+        #endregion
+
+        #region 몬스터 소환/배틀
         void CreateMonster()
         {
-            var monster = new Monster();
+            Monster monster = new Monster();
             GameManager.Instance.monster = monster;
             monster.Start();
-            new Battle().Start();
+            Battle();
         }
 
-        /* ──────────────── 9. 출력 보조 ──────────────── */
-        void WriteLineCenter(string msg)
+        void Battle()
         {
-            Console.SetCursorPosition(0, map.Count * CellSize + 1);
-            Console.WriteLine(msg);
-            Console.ReadKey(true);   // 확인 후 계속
+            Battle battle = new Battle();
+            battle.Start();
         }
+        #endregion
     }
 }
