@@ -85,14 +85,8 @@ namespace newgame
         #region 플레이어 전투
         public override void Attack(Character target)
         {
-
-            // ── 콘솔 출력: 최대한 간단 ────────────────────────────────
-            const int lineWidth = 40;                                        // 글자 수
-            Console.WriteLine("(이미지)".PadRight(lineWidth));               // :contentReference[oaicite:1]{index=1}
-            Console.WriteLine(new string('-', lineWidth));                   // :contentReference[oaicite:2]{index=2}
-
-            Console.WriteLine();
-            int input = UiHelper.SelectMenu(["공격","스킬","아이템","도망"]);
+            Console.WriteLine("테스트");
+            int input = SelectBattleAction();
 
             switch (input)
             {
@@ -104,15 +98,22 @@ namespace newgame
                     }
                 case 1:
                     {
-                        UseItem();
+                        //스킬 시스템 구현
                         break;
                     }
                 case 2:
                     {
-                        
+                        UseItem();
                         break;
                     }
-                    case 3:
+                case 3:
+                    {
+                        Console.Clear();
+                        Console.WriteLine("탐색 중...");
+                        // 탐색 로직 구현
+                        break;
+                    }
+                case 4:
                     {
                         BattleRun();
                         break;
@@ -139,6 +140,78 @@ namespace newgame
                 isbattleRun = false;
             }
         }
+
+        #region 전투 액션 선택
+        int SelectBattleAction()
+        {
+            const string Esc = "\u001b[";
+            int selected = 0;
+            int lineCoordinate;
+            ConsoleKey key;
+            bool firstRun = false;
+            string[] menuOptions = new string[]
+            {
+                "공격",
+                "스킬",
+                "아이템",
+                "탐색",
+                "도망"
+            };
+
+            lineCoordinate = Console.CursorTop + menuOptions.Length;
+
+            do
+            {
+                if (firstRun)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Console.Write($"{Esc}2K");
+                        Console.Write($"{Esc}1F");
+                    }
+                }
+                else
+                {
+                    firstRun = true;
+                }
+
+                Console.WriteLine();
+                Console.Write("|");
+                for (int i = 0; i < menuOptions.Length; i++)
+                {
+
+                    Console.Write(" ");
+
+                    if (i == selected)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write(">" + menuOptions[i]);
+                    }
+                    else
+                    {
+                        Console.Write(" " + menuOptions[i]);
+                    }
+
+                    Console.ResetColor();
+                }
+                Console.WriteLine(" |");
+
+                key = Console.ReadKey(true).Key;
+
+                if (key == ConsoleKey.RightArrow)
+                {
+                    selected = (selected + 1) % menuOptions.Length;
+                }
+                if (key == ConsoleKey.LeftArrow)
+                {
+                    selected = (selected - 1 + menuOptions.Length) % menuOptions.Length;
+                }
+            }
+            while (key != ConsoleKey.Enter);
+
+            return selected;
+        }
+        #endregion
         #endregion
     }
 }

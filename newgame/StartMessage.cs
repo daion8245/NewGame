@@ -18,14 +18,14 @@ namespace newgame
             GameStartMessage();
         }
 
-        /// <summary>
-        /// Displays the start menu and processes the player's selection.
-        /// </summary>
         void GameStartMessage()
         {
             TextDisplayConfig.SlowTxtOut = true;
             TextDisplayConfig.SlowTxtOutTime = 30;
             TextDisplayConfig.SlowTxtLineTime = 0;
+
+            UiHelper.TxtOut(["┏━━━━━━━━━━━━━━━", "┃ ", "┃ --+ ", "┃    ＼〇_", "┃      ｜=)", "┃      /＼ ", "┃----------------", "┗━━━━━━━━━━━━━━━"]);
+
             UiHelper.TxtOut(
                 [
                 "TXTRPG-Remake",

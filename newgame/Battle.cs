@@ -4,21 +4,14 @@
     {
         public Battle()
         {
-            //Start();
-            Start_Battle();
+            Start();
         }
 
         public void Start()
         {
-            for (int i = 3; i > 0; i--)//3번 반복
-            {
-                Thread.Sleep(1000);//1초 대기
-                Console.WriteLine(i);//i출력
+            Console.Clear();
 
-                Console.Clear();//콘솔 지우기
-            }
-
-            Console.WriteLine("전투 시작");//메세지
+            Start_Battle();
         }
 
         void Start_Battle()

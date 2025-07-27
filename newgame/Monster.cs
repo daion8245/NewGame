@@ -2,9 +2,18 @@
 {
     internal class Monster : Character
     {
-        public void Start()
+        public void Start(int monsterType)
         {
-            MyStatus = GameManager.Instance.GetMonsterStat(1);
+            if (monsterType >= 1)
+            {
+                MyStatus = GameManager.Instance.GetMonsterStat(monsterType);
+            }
+            else
+            {
+                MyStatus = GameManager.Instance.GetMonsterStat(1);
+                Console.WriteLine("잘못된 몬스터 타입입니다.");
+            }
+            Console.Clear();
 
             MyStatus.ShowStatus();
         }
