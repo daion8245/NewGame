@@ -18,9 +18,6 @@ namespace newgame
             Exit
         }
 
-        const int Padding = 1;               // 각 방 주변 공백 크기
-        const int CellSize = Padding * 2 + 1; // 실제 화면에 사용될 셀 크기
-
         public void Start()
         {
             Console.Clear();
@@ -54,15 +51,12 @@ namespace newgame
                 DrawMap(width, height);
                 DrawPlayer();
 
-                // 현재 방 정보 출력
-                Console.WriteLine();
-                Console.WriteLine("현재 방: " + GetRoomName((RoomType)map[playerY][playerX]));
                 RoomEvent((RoomType)map[playerY][playerX]);
-
 
                 // 키 입력 받기
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
+                RoomDelete();
                 // 이동 처리
                 int newX = playerX, newY = playerY;
 
@@ -98,39 +92,46 @@ namespace newgame
             }
         }
         #endregion
-
         #region 방 이벤트 처리
         void RoomEvent(RoomType playerRoom)
         {
             RoomType room = (RoomType)map[playerY][playerX]; // 수정
             switch (room)
             {
-                case RoomType.Monster:
-                    CreateMonster();
-                    break;
-                case RoomType.Treasure:
-                    Console.WriteLine("보물을 찾았습니다!");
-                    // 보물 획득 로직 추가
-                    break;
-                case RoomType.Shop:
-                    Console.WriteLine("상점에 들어왔습니다.");
-                    // 상점 로직 추가
-                    break;
-                case RoomType.Event:
-                    Console.WriteLine("특별 이벤트가 발생했습니다!");
-                    // 이벤트 로직 추가
-                    break;
-                case RoomType.Boss:
-                    Console.WriteLine("보스와의 전투가 시작됩니다!");
-                    CreateMonster(); // 보스 몬스터 생성
-                    break;
-                case RoomType.Exit:
-                    Console.WriteLine("던전을 클리어했습니다!");
-                    // 게임 종료 또는 다음 단계로 이동
-                    break;
+                case (RoomType.Monster):
+                    {
+                        CreateMonster();
+                        break;
+                    }
+                case (RoomType.Treasure):
+                    {
+                        // 보물 획득 로직 추가
+                        break;
+                    }
+                case (RoomType.Shop):
+                    {
+                        // 상점 로직 추가
+                        break;
+                    }
+                case (RoomType.Event):
+                    {
+                        // 이벤트 로직 추가
+                        break;
+                    }
+                case (RoomType.Boss):
+                    {
+                        CreateMonster(); // 보스 몬스터 생성
+                        break;
+                    }
+                case(RoomType.Exit):
+                    {
+                        // 게임 종료 또는 다음 단계로 이동
+                        break;
+                    }
                 default:
-                    Console.WriteLine("빈 방입니다.");
-                    break;
+                    {
+                        break;
+                    }
             }
         }
         #endregion
@@ -153,49 +154,43 @@ namespace newgame
             };
         }
 
-        void DrawRoomWithPadding(RoomType room, int x, int y)
-        {
-            int left = x * CellSize;
-            int top = y * CellSize;
-            char symbol = GetRoomSymbol(room);
-
-            if (room == RoomType.Wall)
-            {
-                for (int i = 0; i < CellSize; i++)
-                {
-                    Console.SetCursorPosition(left, top + i);
-                    Console.Write(new string(symbol, CellSize));
-                }
-            }
-            else
-            {
-                for (int i = 0; i < CellSize; i++)
-                {
-                    Console.SetCursorPosition(left, top + i);
-                    Console.Write(new string(' ', CellSize));
-                }
-                Console.SetCursorPosition(left + Padding, top + Padding);
-                Console.Write(symbol);
-            }
-        }
-
         void DrawMap(int width, int height)
         {
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    DrawRoomWithPadding((RoomType)map[y][x], x, y);
+                    Console.Write(GetRoomSymbol((RoomType)map[y][x]));
                 }
+                Console.WriteLine();
             }
+            // 현재 방 정보 출력
+
+            Console.WriteLine();
+            Console.WriteLine("현재 방: " + GetRoomName((RoomType)map[playerY][playerX]));
+
+            Console.WriteLine();
+            Console.WriteLine($"\t↑{GetRoomName((RoomType)map[playerY + 1][playerX])}");
+            Console.WriteLine($"←{GetRoomName((RoomType)map[playerY][playerX - 1])}" +
+                              $"\t\t→{GetRoomName((RoomType)map[playerY][playerX + 1])}");
+            Console.WriteLine($"\t↓{GetRoomName((RoomType)map[playerY - 1][playerX])}");
+
         }
 
         void DrawPlayer()
         {
-            int left = playerX * CellSize + Padding;
-            int top = playerY * CellSize + Padding;
+            int left = playerX;
+            int top = playerY;
             Console.SetCursorPosition(left, top);
             Console.Write('@');
+        }
+
+        void RoomDelete()
+        {
+            if (playerY >= 0 && playerY < map.Count && playerX >= 0 && playerX < map[playerY].Count && (RoomType)map[playerY][playerX] != RoomType.Empty)
+            {
+                map[playerY][playerX] = (int)RoomType.Empty;
+            }
         }
         #endregion
 

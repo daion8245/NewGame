@@ -36,6 +36,33 @@ namespace newgame
         //착용 가능한 장비
         List<Equipment> canEquips = new List<Equipment>();
 
+        #region 아이템 관련 추가
+        [JsonProperty]
+        List<ItemSlot> items = new List<ItemSlot>();
+
+        [JsonProperty]
+        Dictionary<ItemType, string> itemNames = new Dictionary<ItemType, string>()
+        {
+            {ItemType.F_POTION_HP, "회복 물약" },
+            {ItemType.T_POTION_EXPUP, "경험치 획득량 증가" },
+            {ItemType.T_POTION_ATKUP, "공격력 증가" },
+            {ItemType.F_ETC_RESETNAME, "닉네임 변경" }
+        };
+
+        public string GetItemName(ItemType _type)
+        {
+            foreach (var names in itemNames)
+            {
+                if (names.Key == _type)
+                {
+                    return names.Value;
+                }
+            }
+
+            return string.Empty;
+        }
+        #endregion
+
         public void SetEquip(int idx)
         {
             if (idx < 1 || idx > canEquips.Count)
@@ -197,5 +224,102 @@ namespace newgame
                 instance = JsonConvert.DeserializeObject<Inventory>(data, settings);
             }
         }
+
+        #region 아이템 관련 추가
+        public void AddItem(Item item, int count = 1)
+        {
+            if (items == null)
+                items = new List<ItemSlot>();
+
+            foreach (ItemSlot slot in items)
+            {
+                if (slot.Item.ItemType == item.ItemType)
+                {
+                    slot.Add(count);
+                    return;
+                }
+            }
+
+            items.Add(new ItemSlot(item, count));
+        }
+
+        public void RemoveItem(ItemType type, int count = 1)
+        {
+            foreach (ItemSlot slot in items)
+            {
+                if (slot.Item.ItemType == type)
+                {
+                    if (slot.Count < count)
+                    {
+                        Console.WriteLine("해당 아이템이 충분하지 않습니다.");
+                        return;
+                    }
+
+                    slot.Decrease(count);
+
+                    if (slot.Count <= 0)
+                    {
+                        items.Remove(slot);
+                    }
+
+                    return;
+                }
+            }
+
+            Console.WriteLine("해당 아이템이 없습니다.");
+        }
+
+        public void UseItem(int index)
+        {
+            var slot = items[index - 1];
+            var item = slot.Item;
+
+            item.Use(); // 효과 메시지 출력
+
+            if (item.IsPersistent())
+            {
+                GameManager.Instance.player.AddEffect(item);
+            }
+
+            slot.Decrease(1);
+            if (slot.Count <= 0)
+            {
+                items.Remove(slot);
+            }
+        }
+
+        public bool ShowItems()
+        {
+            if (items.Count == 0)
+            {
+                Console.WriteLine("보유 아이템이 존재하지 않습니다.");
+                return false;
+            }
+
+            Console.WriteLine("보유 아이템 목록:");
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                Console.WriteLine($"[{i + 1}] {GetItemName(items[i].Item.ItemType)} x {items[i].Count}");
+            }
+
+            return true;
+        }
+
+        public int SelectedItem(string _input)
+        {
+            if (int.TryParse(_input, out int idx))
+            {
+                if (idx > items.Count)
+                {
+                    return -1;
+                }
+
+                return idx;
+            }
+
+            return -1;
+        }
+        #endregion
     }
 }

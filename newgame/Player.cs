@@ -104,6 +104,7 @@ namespace newgame
                     }
                 case 1:
                     {
+                        UseItem();
                         break;
                     }
                 case 2:
