@@ -1,0 +1,15 @@
+ID : 1
+NAME : 초보자 바지
+STAT : 0
+PRICE : 0
+#
+ID : 2
+NAME : 가죽 바지
+STAT : 0
+PRICE : 10
+#
+ID : 3
+NAME : 질긴 가죽 바지
+STAT : 0
+PRICE : 20
+#

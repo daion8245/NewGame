@@ -1,0 +1,291 @@
+NAME : 슬라임
+LEVEL : 1
+hp : 20
+ATK : 2
+DEF : 3 
+EXP : 5
+COIN : 10
+#
+NAME : 스켈레톤
+LEVEL : 2
+hp : 30
+ATK : 4
+DEF : 3
+EXP : 10
+COIN : 15
+#
+NAME : 고블린
+LEVEL : 3
+hp : 55
+ATK : 7
+DEF : 3
+EXP : 15
+COIN : 40
+#
+NAME : 좀비
+LEVEL : 4
+hp : 40
+ATK : 6
+DEF : 4
+EXP : 20
+COIN : 30
+#
+NAME : 거미
+LEVEL : 5
+hp : 80
+ATK : 14
+DEF : 10
+EXP : 45
+COIN : 60
+#
+NAME : 하피
+LEVEL : 6
+hp : 90
+ATK : 16
+DEF : 12
+EXP : 60
+COIN : 75
+#
+NAME : 트롤
+LEVEL : 8
+hp : 120
+ATK : 20
+DEF : 15
+EXP : 100
+COIN : 120
+#
+NAME : 웨어울프
+LEVEL : 9
+hp : 110
+ATK : 25
+DEF : 18
+EXP : 90
+COIN : 100
+#
+NAME : 오크
+LEVEL : 10
+hp : 100
+ATK : 30
+DEF : 25 
+EXP : 200
+COIN : 300
+#
+NAME : 뱀파이어
+LEVEL : 12
+hp : 150
+ATK : 35
+DEF : 20
+EXP : 250
+COIN : 200
+#
+NAME : 골렘
+LEVEL : 15
+hp : 250
+ATK : 50
+DEF : 40
+EXP : 450
+COIN : 650
+#
+NAME : 히드라
+LEVEL : 18
+hp : 350
+ATK : 70
+DEF : 55
+EXP : 800
+COIN : 1100
+#
+NAME : 드래곤
+LEVEL : 20
+hp : 500
+ATK : 100
+DEF : 70
+EXP : 1000
+COIN : 1500
+#
+NAME : 데몬로드
+LEVEL : 25
+hp : 800
+ATK : 140
+DEF : 100
+EXP : 2000
+COIN : 2500
+#
+NAME : 미믹
+LEVEL : 7
+hp : 105
+ATK : 18
+DEF : 13
+EXP : 80
+COIN : 90
+#
+NAME : 나가
+LEVEL : 11
+hp : 130
+ATK : 32
+DEF : 23
+EXP : 230
+COIN : 180
+#
+NAME : 미노타우로스
+LEVEL : 13
+hp : 180
+ATK : 40
+DEF : 28
+EXP : 300
+COIN : 350
+#
+NAME : 사이렌
+LEVEL : 14
+hp : 200
+ATK : 45
+DEF : 30
+EXP : 350
+COIN : 400
+#
+NAME : 키메라
+LEVEL : 16
+hp : 280
+ATK : 55
+DEF : 45
+EXP : 500
+COIN : 700
+#
+NAME : 바실리스크
+LEVEL : 17
+hp : 300
+ATK : 60
+DEF : 50
+EXP : 650
+COIN : 900
+#
+NAME : 피닉스
+LEVEL : 19
+hp : 380
+ATK : 80
+DEF : 60
+EXP : 900
+COIN : 1200
+#
+NAME : 리치
+LEVEL : 21
+hp : 420
+ATK : 110
+DEF : 75
+EXP : 1200
+COIN : 1700
+#
+NAME : 서큐버스
+LEVEL : 22
+hp : 450
+ATK : 115
+DEF : 78
+EXP : 1300
+COIN : 1800
+#
+NAME : 베헤모스
+LEVEL : 23
+hp : 480
+ATK : 120
+DEF : 82
+EXP : 1400
+COIN : 1900
+#
+NAME : 크라켄
+LEVEL : 24
+hp : 550
+ATK : 130
+DEF : 88
+EXP : 1600
+COIN : 2100
+#
+NAME : 사이클롭스
+LEVEL : 26
+hp : 850
+ATK : 150
+DEF : 105
+EXP : 2300
+COIN : 2700
+#
+NAME : 네크로맨서
+LEVEL : 27
+hp : 900
+ATK : 160
+DEF : 110
+EXP : 2500
+COIN : 3000
+#
+NAME : 타이탄
+LEVEL : 28
+hp : 1000
+ATK : 170
+DEF : 115
+EXP : 2800
+COIN : 3500
+#
+NAME : 아크엔젤
+LEVEL : 29
+hp : 1100
+ATK : 180
+DEF : 120
+EXP : 3200
+COIN : 3800
+#
+NAME : 월드이터
+LEVEL : 30
+hp : 1300
+ATK : 200
+DEF : 130
+EXP : 4000
+COIN : 4500
+#
+NAME : 카오스 드래곤
+LEVEL : 5
+hp : 220
+ATK : 35
+DEF : 22
+EXP : 180
+COIN : 200
+#
+NAME : 엠페러 리치
+LEVEL : 10
+hp : 300
+ATK : 75
+DEF : 50
+EXP : 600
+COIN : 900
+#
+NAME : 엘더 갓
+LEVEL : 15
+hp : 750
+ATK : 130
+DEF : 85
+EXP : 1500
+COIN : 2000
+#
+NAME : 카오스 타이탄
+LEVEL : 20
+hp : 1400
+ATK : 230
+DEF : 140
+EXP : 3000
+COIN : 4500
+#
+NAME : 아포칼립스 드래곤
+LEVEL : 25
+hp : 2100
+ATK : 320
+DEF : 210
+EXP : 5000
+COIN : 6000
+#
+NAME : 킹갓제네럴 Ω-오블리비온
+LEVEL : 100
+hp : 10000000
+ATK : 25000
+DEF : 12000
+EXP : 100000000
+COIN : 50000000
+#
+
+
+
