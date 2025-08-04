@@ -51,8 +51,6 @@ namespace newgame
                 DrawMap(width, height);
                 DrawPlayer();
 
-                RoomEvent((RoomType)map[playerY][playerX]);
-
                 // 키 입력 받기
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
@@ -71,6 +69,8 @@ namespace newgame
                     playerX = newX;
                     playerY = newY;
                 }
+
+                RoomEvent((RoomType)map[playerY][playerX]);
             }
 
         }
@@ -96,7 +96,7 @@ namespace newgame
         void RoomEvent(RoomType playerRoom)
         {
             RoomType room = (RoomType)map[playerY][playerX];
-            Console.Clear();
+            Console.SetCursorPosition(0, map.Count + 1);
             switch (room)
             {
                 case RoomType.Monster:
