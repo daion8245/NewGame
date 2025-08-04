@@ -7,21 +7,23 @@ namespace newgame
 
         enum RoomType
         {
-            Wall,
-            Empty,
-            Ladder,
-            Monster,
-            Treasure,
-            Shop,
-            Event,
-            Boss,
-            Exit
+            Wall, //0
+            Empty, //1
+            Ladder, //2
+            Monster, //3
+            Treasure, //4
+            Shop, //5
+            Event, //6
+            Boss, //7
+            Exit //8
         }
+
+        public static int floor = 1; // 현재 층수
 
         public void Start()
         {
             Console.Clear();
-            LoadMapData();
+            LoadMapData(floor);
             SetDungeon();
         }
 
@@ -29,10 +31,10 @@ namespace newgame
 
         // 맵 데이터 (2차원 배열)
         List<List<int>> map = new List<List<int>>();
-
-        void LoadMapData()
+        void LoadMapData(int number)
         {
-            map = GameManager.Instance.GetDungeonMap(1);
+            map = GameManager.Instance.GetDungeonMap(number);
+            NormalizeToRectangle(); // 맵을 직사각형으로 정규화
         }
 
         // 플레이어 위치
@@ -50,8 +52,6 @@ namespace newgame
 
                 DrawMap(width, height);
                 DrawPlayer();
-
-                RoomEvent((RoomType)map[playerY][playerX]);
 
                 // 키 입력 받기
                 ConsoleKeyInfo key = Console.ReadKey(true);
@@ -71,6 +71,8 @@ namespace newgame
                     playerX = newX;
                     playerY = newY;
                 }
+
+                RoomEvent((RoomType)map[playerY][playerX]);
             }
 
         }
@@ -96,12 +98,13 @@ namespace newgame
         void RoomEvent(RoomType playerRoom)
         {
             RoomType room = (RoomType)map[playerY][playerX];
-            Console.Clear();
+            Console.SetCursorPosition(0, map.Count + 1);
             switch (room)
             {
+                #region 몬스터
                 case RoomType.Monster:
                     {
-                        Console.WriteLine("");
+                        Console.Clear();
                         UiHelper.TxtOut(new string[]
                         {
                             "몬스터 방에 진입했습니다.",""
@@ -123,8 +126,7 @@ namespace newgame
                             int randomChance = new Random().Next(1, 101);
                             if (randomChance <= 35) // 35% 확률로 도망 성공
                             {
-                                Console.WriteLine("도망에 성공했습니다!");
-                                Console.WriteLine();
+                                UiHelper.WaitForInput("몬스터 방에서 도망치는데 성공했습니다!  [ENTER를 눌러 계속]");
                             }
                             else
                             {
@@ -136,6 +138,7 @@ namespace newgame
                         RoomDelete(); // 이벤트 처리 후 방 삭제
                         break;
                     }
+                #endregion
                 case (RoomType.Treasure):
                     {
                         // 보물 획득 로직 추가
@@ -151,16 +154,45 @@ namespace newgame
                         // 이벤트 로직 추가
                         break;
                     }
+                case (RoomType.Ladder):
+                    {
+                        Console.Clear();
+                        UiHelper.WaitForInput($"사다리를 타고 다음 층({floor + 1}층) 으로 이동합니다. [ENTER를 눌러 계속]");
+                        floor++; // 층수 증가
+                        LoadMapData(floor); // 다음 층 맵 데이터 로드
+                        playerX = 1; // 플레이어 위치 초기화
+                        playerY = 1; // 플레이어 위치 초기화
+                        break;
+                    }
                 case (RoomType.Boss):
                     {
                         BossCreate(); // 보스 몬스터 생성
                         break;
                     }
-                case(RoomType.Exit):
+                #region 마을로 돌아가기
+                case (RoomType.Exit):
                     {
-                        // 게임 종료 또는 다음 단계로 이동
+                        Console.Clear();
+                        UiHelper.TxtOut(["던전에서 나가 마을로 돌아가시겠습니까?", ""]);
+                        int sel = UiHelper.SelectMenu(["돌아가기","계속하기"]);
+                        Console.WriteLine();
+                        if (sel == 0)
+                        {
+                            UiHelper.WaitForInput("마을로 돌아갑니다. [ENTER를 눌러 계속]");
+                            playerX = 1; // 플레이어 위치 초기화
+                            playerY = 1; // 플레이어 위치 초기화
+                            Lobby lobby = new Lobby();
+                            lobby.Start();
+                        }
+                        else
+                        {
+                            UiHelper.WaitForInput("던전 탐험을 계속합니다. [ENTER를 눌러 계속]");
+                            playerX = 1; // 플레이어 위치 초기화
+                            playerY = 1; // 플레이어 위치 초기화
+                        }
                         break;
                     }
+                #endregion
                 default:
                     {
                         break;
@@ -189,9 +221,9 @@ namespace newgame
 
         void DrawMap(int width, int height)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < map.Count; y++)
             {
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < map[y].Count; x++)
                 {
                     Console.Write(GetRoomSymbol((RoomType)map[y][x]));
                 }
@@ -199,23 +231,40 @@ namespace newgame
             }
 
             Console.WriteLine();
+            Console.WriteLine("현제 층: " + floor);
             Console.WriteLine("현재 방: " + GetRoomName((RoomType)map[playerY][playerX]));
             Console.WriteLine();
-
+            Console.WriteLine("[■ = 벽] [ = 빈 방] [▲ 사다리] [M = 몬스터] [T = 보물] [S = 상점] [E = 이벤트] [B = 보스] [X = 출구]");
+            Console.WriteLine();
             // 인접 방 경계 체크
-            Console.WriteLine($"\t↑{GetRoomName(GetRoomTypeSafe(playerY + 1, playerX))}");
+            Console.WriteLine($"\t↑{GetRoomName(GetRoomTypeSafe(playerY - 1, playerX))}");
             Console.WriteLine($"←{GetRoomName(GetRoomTypeSafe(playerY, playerX - 1))}" +
                               $"\t\t→{GetRoomName(GetRoomTypeSafe(playerY, playerX + 1))}");
-            Console.WriteLine($"\t↓{GetRoomName(GetRoomTypeSafe(playerY - 1, playerX))}");
+            Console.WriteLine($"\t↓{GetRoomName(GetRoomTypeSafe(playerY + 1, playerX))}");
         }
 
-        // 맵 경계 체크 함수 추가
         RoomType GetRoomTypeSafe(int y, int x)
         {
-            if (y >= 0 && y < map.Count && x >= 0 && x < map[0].Count)
-                return (RoomType)map[y][x];
-            return RoomType.Wall; // 경계 밖은 벽으로 처리
+            if (y >= 0 && y < map.Count)
+            {
+                if (x >= 0 && x < map[y].Count)
+                    return (RoomType)map[y][x];
+                return RoomType.Empty;
+            }
+
+            return RoomType.Wall;
         }
+
+        void NormalizeToRectangle()
+        {
+            int maxWidth = map.Max(r => r.Count);
+            for (int i = 0; i < map.Count; i++)
+            {
+                while (map[i].Count < maxWidth)
+                    map[i].Add((int)RoomType.Empty); // 비어 있는 칸으로 채움
+            }
+        }
+
 
         void DrawPlayer()
         {
@@ -227,7 +276,7 @@ namespace newgame
 
         void RoomDelete()
         {
-            if (playerY >= 0 && playerY < map.Count && playerX >= 0 && playerX < map[playerY].Count && (RoomType)map[playerY][playerX] != RoomType.Empty)
+            if (playerY >= 0 && playerY < map.Count && playerX >= 0 && playerX < map[playerY].Count && (RoomType)map[playerY][playerX] != RoomType.Empty && (RoomType)map[playerY][playerX] != RoomType.Exit)
             {
                 map[playerY][playerX] = (int)RoomType.Empty;
             }

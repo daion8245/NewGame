@@ -17,16 +17,33 @@ namespace newgame
 
         public bool IsDead = false;
         public bool isbattleRun = false;
-        public virtual string Attack(Character target)
+        public virtual string[] Attack(Character target)
         {
             target.Status.hp -= MyStatus.ATK;
 
             if (target.Status.hp <= 0)
             {
+                Console.WriteLine();
+                Console.WriteLine($"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: 0");
+                Thread.Sleep(1000);
+                Console.WriteLine();
                 target.Dead(this);
+                return new string[] { " ", " " };
             }
 
-            return ($"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.hp}");
+            // 0번: 플레이어 메시지, 1번: 몬스터 메시지
+            string[] messages = new string[2];
+            if (this == GameManager.Instance.player)
+            {
+                messages[0] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.hp}";
+                messages[1] = "";
+            }
+            else
+            {
+                messages[0] = "";
+                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.hp}";
+            }
+            return messages;
         }
 
         public virtual void Dead(Character target)
@@ -35,12 +52,10 @@ namespace newgame
 
             if (target == GameManager.Instance.player)
             {
-                UiHelper.TxtOut([$"{Status.Name}은 쓰러졌다!",$"{Status.Name} 에게서 승리했다!",$"+{Status.exp}Exp , +{Status.gold}골드 를 획득했다!"]);
+                UiHelper.TxtOut([$"{Status.Name}은 쓰러졌다!", $"{Status.Name} 에게서 승리했다!", $"+{Status.exp}Exp , +{Status.gold}골드 를 획득했다!",$"다음 레벨까지 : {target.Status.exp}/{target.Status.nextEXP}", ""]);
+                target.Status.LevelUp();
                 Console.WriteLine();
                 UiHelper.WaitForInput("[Enter]를 눌러 계속");
-
-                Dungeon dungeon = new Dungeon();
-                dungeon.Start();
             }
             else
             {

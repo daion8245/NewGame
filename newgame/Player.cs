@@ -83,7 +83,7 @@ namespace newgame
         #endregion
 
         #region 플레이어 전투
-        public override string Attack(Character target)
+        public override string[] Attack(Character target)
         {
             string[] battleLog = new string[2];
             battleLog[0] = " ";
@@ -96,7 +96,7 @@ namespace newgame
             {
                 case 0:
                     {
-                        battleLog[0] = base.Attack(target);
+                        battleLog = base.Attack(target);
                         ShowBattleInfo(target, battleLog);
                         break;
                     }

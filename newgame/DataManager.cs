@@ -305,6 +305,8 @@ namespace newgame
                 GameManager.Instance.SetDungeonMapInfo(mapRows);
         }
 
+
+
         #endregion
     }
 }

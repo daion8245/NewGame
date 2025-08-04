@@ -4,7 +4,7 @@
     {
         public Battle()
         {
-            Start();
+            // 생성자에서 전투를 바로 시작하지 않는다.
         }
 
         public void Start()

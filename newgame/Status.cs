@@ -166,6 +166,26 @@ namespace newgame
             }
         }
 
+        public void LevelUp()
+        {
+            if(exp >= nextEXP)
+            {
+                level++;
+                maxHp += 10;
+                hp = maxHp;
+                mp += 5;
+                nextEXP += 10;
+                ATK += 3;
+                DEF += 2;
+
+                Console.WriteLine($"{Name} 레벨업! 현재 레벨 : {level - 1} -> {level}");
+                Console.WriteLine($"체력 : {maxHp - 10} -> {maxHp}");
+                Console.WriteLine($"마나 : {mp - 5} -> {mp}");
+                Console.WriteLine($"공격력 : {ATK - 3} -> {ATK}");
+                Console.WriteLine($"방어력 : {DEF - 2} -> {DEF}");
+            }
+
+        }
 
         void SetEquip(int sel)
         {
