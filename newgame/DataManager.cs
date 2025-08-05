@@ -105,15 +105,15 @@ namespace newgame
         /// </summary>
         public void LoadAllEquipData()
         {
-            // exe 파일 실행 경로
-            string exePath = AppDomain.CurrentDomain.BaseDirectory;
+            // 데이터 폴더 경로
+            string dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
 
-            for(int i = 1; i < (int)EquipType.MAX; i++)
+            for (int i = 1; i < (int)EquipType.MAX; i++)
             {
                 // 텍스트 파일 이름
                 string fileName = $"Equip_{(EquipType)i}.txt";
                 // 텍스트 파일 경로
-                string filePath = Path.Combine(exePath, fileName);
+                string filePath = Path.Combine(dataPath, fileName);
 
                 // 텍스트 파일 존재 유무 판단
                 if(!File.Exists(filePath))
@@ -178,12 +178,12 @@ namespace newgame
         #region 몬스터
         public void LoadEnemyData()
         {
-            string exePath = AppDomain.CurrentDomain.BaseDirectory;
+            string dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
 
             // 텍스트 파일 이름
             string fileName = $"Monster.txt";
             // 텍스트 파일 경로
-            string filePath = Path.Combine(exePath, fileName);
+            string filePath = Path.Combine(dataPath, fileName);
 
             // 파일 체크
             if(File.Exists(filePath) == false)
@@ -263,9 +263,9 @@ namespace newgame
         #region 던전 맵
         public void LoadDungeonMap()
         {
-            string exePath = AppDomain.CurrentDomain.BaseDirectory;
+            string dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
             string fileName = $"Dungeon_Map.txt";
-            string filePath = Path.Combine(exePath, fileName);
+            string filePath = Path.Combine(dataPath, fileName);
 
             if (File.Exists(filePath) == false)
             {
