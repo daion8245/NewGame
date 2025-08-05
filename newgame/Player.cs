@@ -220,7 +220,7 @@ namespace newgame
         #endregion
 
         #region 플레이어&적 정보
-        void ShowBattleInfo(Character target, string[] battleLog)
+        public void ShowBattleInfo(Character target, string[] battleLog)
         {
             Console.Clear();
             Console.WriteLine($"Name.{MyStatus.Name} \t Name.{target.MyStatus.Name} \t {battleLog[0]}");
