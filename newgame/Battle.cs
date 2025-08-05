@@ -28,7 +28,12 @@
             while (true)
             {
                 int nextIndex = (currentIndex + 1) % charac.Length;
-                charac[currentIndex].Attack(charac[nextIndex]);
+                string[] battleLog = charac[currentIndex].Attack(charac[nextIndex]);
+
+                if (charac[currentIndex] == GameManager.Instance.monster)
+                {
+                    GameManager.Instance.player.ShowBattleInfo(GameManager.Instance.monster, battleLog);
+                }
 
                 if (charac[currentIndex].isbattleRun == true)
                 {
