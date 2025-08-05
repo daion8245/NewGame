@@ -229,7 +229,11 @@ namespace newgame
             Console.Clear();
             Console.WriteLine($"Name.{MyStatus.Name} \t Name.{target.MyStatus.Name} \t {battleLog[0]}");
             Console.WriteLine($"Lv.{MyStatus.level} \t\t Lv.{target.MyStatus.level} \t\t {battleLog[1]}");
-            Console.WriteLine($"Hp.{MyStatus.hp} \t\t Hp.{target.MyStatus.hp}");
+
+
+            Console.WriteLine
+                
+                ($"Hp.{MyStatus.hp} \t\t Hp.{target.MyStatus.hp}");
         }
         #endregion
         #endregion

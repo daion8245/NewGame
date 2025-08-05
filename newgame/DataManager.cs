@@ -260,6 +260,91 @@ namespace newgame
         }
         #endregion 
 
+        #region 보스
+        public void LoadBossData()
+        {
+            string dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+
+            // 텍스트 파일 이름
+            string fileName = $"Boss.txt";
+            // 텍스트 파일 경로
+            string filePath = Path.Combine(dataPath, fileName);
+
+            // 파일 체크
+            if (File.Exists(filePath) == false)
+            {
+                // 파일이 없는 경우
+                Console.WriteLine($"해당 경로 [{filePath}]가 존재하지 않습니다. ");
+                Console.WriteLine($"[{fileName}] 파일을 확인해주세요.");
+                return;
+            }
+
+            SetBossData(filePath);
+        }
+
+        void SetBossData(string filePath)
+        {
+            try
+            {
+                // 텍스트 파일에서 모든 라인 읽어오기
+                string[] lines = File.ReadAllLines(filePath);
+
+                Status BossStat = new Status();
+
+                foreach (string line in lines)
+                {
+                    if (line == "#")
+                    {
+                        // GameManager 에서 monster 리스트에 등록하기
+                        GameManager.Instance.SetBossInfo(BossStat);
+                        BossStat = new Status();
+                        continue;
+                    }
+
+                    // 문자열 자르기 ( 해당 형식은 ":" 를 기준으로 문자열을 구분하고 있음 )
+                    string[] curLine = line.Split(':');
+                    //if (curLine[0].Trim() == "TYPE")                 // Type 일 때
+                    //{
+                    //    monStat.charType = (CharType)Enum.Parse(typeof(CharType), curLine[1].Trim());
+                    //}
+                    if (curLine[0].Trim() == "NAME")           // NAME 일 때
+                    {
+                        BossStat.Name = curLine[1].Trim();
+                    }
+                    else if (curLine[0].Trim() == "LEVEL")           // STAT 일 때
+                    {
+                        BossStat.level = int.Parse(curLine[1].Trim());
+                    }
+                    else if (curLine[0].Trim() == "hp")          // PRICE 일 때
+                    {
+                        BossStat.hp = int.Parse(curLine[1].Trim());
+                        BossStat.maxHp = BossStat.hp;
+                    }
+                    else if (curLine[0].Trim() == "ATK")
+                    {
+                        BossStat.ATK = int.Parse(curLine[1].Trim());
+                    }
+                    else if (curLine[0].Trim() == "DEF")
+                    {
+                        BossStat.DEF = int.Parse(curLine[1].Trim());
+                    }
+                    else if (curLine[0].Trim() == "EXP")
+                    {
+                        BossStat.exp = int.Parse(curLine[1].Trim());
+                    }
+                    else if (curLine[0].Trim() == "gold")
+                    {
+                        BossStat.gold = int.Parse(curLine[1].Trim());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[오류] : 파일 읽기 실패 ({ex.Message})");
+            }
+        }
+        #endregion 
+
         #region 던전 맵
         public void LoadDungeonMap()
         {

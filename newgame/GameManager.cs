@@ -23,10 +23,17 @@ namespace newgame
 
         #region 몬스터 정보
         Dictionary<int, Status> monsterInfo = new Dictionary<int, Status>();
+        List<int> bossCount = new List<int>();
 
         public void SetMonsterInfo(Status _stat)
         {
             int key = monsterInfo.Count + 1;
+            monsterInfo.Add(key, _stat);
+        }
+
+        public void SetBossInfo(Status _stat)
+        {
+            int key = 100 + (bossCount.Count);
             monsterInfo.Add(key, _stat);
         }
 
@@ -40,7 +47,6 @@ namespace newgame
 
             return monsterInfo[_key].Clone();
         }
-
 
         #endregion
 
