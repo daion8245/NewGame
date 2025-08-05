@@ -17,6 +17,8 @@ namespace newgame
 
         public bool IsDead = false;
         public bool isbattleRun = false;
+
+        private static string BattleInfoStr = "";
         public virtual string[] Attack(Character target)
         {
             target.Status.hp -= MyStatus.ATK;
@@ -36,11 +38,19 @@ namespace newgame
             if (this == GameManager.Instance.player)
             {
                 messages[0] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.hp}";
+                BattleInfoStr = messages[0];
                 messages[1] = "";
             }
             else
             {
-                messages[0] = "";
+                if(BattleInfoStr != "")
+                {
+                    messages[0] = BattleInfoStr;
+                }
+                else
+                {
+                    messages[0] = "";
+                }
                 messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.hp}";
             }
             return messages;

@@ -96,6 +96,8 @@ namespace newgame
             {
                 case 0:
                     {
+                        beforHP[0] = MyStatus.hp;
+                        beforHP[1] = target.MyStatus.hp;
                         battleLog = base.Attack(target);
                         ShowBattleInfo(target, battleLog);
                         break;
@@ -220,7 +222,9 @@ namespace newgame
         #endregion
 
         #region 플레이어&적 정보
-        void ShowBattleInfo(Character target, string[] battleLog)
+        int[] beforHP = new int[2];
+
+        public void ShowBattleInfo(Character target, string[] battleLog)
         {
             Console.Clear();
             Console.WriteLine($"Name.{MyStatus.Name} \t Name.{target.MyStatus.Name} \t {battleLog[0]}");
