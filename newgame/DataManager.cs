@@ -393,5 +393,76 @@ namespace newgame
 
 
         #endregion
+
+        #region 스킬p
+
+        public void LoadSkillData()
+        {
+            string dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+
+            // 텍스트 파일 이름
+            string fileName = $"Skill.txt";
+            // 텍스트 파일 경로
+            string filePath = Path.Combine(dataPath, fileName);
+
+            // 파일 체크
+            if (File.Exists(filePath) == false)
+            {
+                // 파일이 없는 경우
+                Console.WriteLine($"해당 경로 [{filePath}]가 존재하지 않습니다. ");
+                Console.WriteLine($"[{fileName}] 파일을 확인해주세요.");
+                return;
+            }
+
+            SetSkillData(filePath);
+        }
+
+        void SetSkillData(string filePath)
+        {
+            try
+            {
+                // 텍스트 파일에서 모든 라인 읽어오기
+                string[] lines = File.ReadAllLines(filePath);
+
+                SkillType skills = new SkillType();
+
+                foreach (string line in lines)
+                {
+                    if (line == "#")
+                    {
+                        GameManager.Instance.SetSkill(skills);
+                        skills = new SkillType();
+                        continue;
+                    }
+                    string[] curLine = line.Split(':');
+
+                    if (curLine[0].Trim() == "NAME")
+                    {
+                        skills.name = curLine[1].Trim();
+                    }
+                    else if(curLine[0].Trim() == "ID")
+                    {
+                        skills.skillId = int.Parse(curLine[1].Trim());
+                    }
+                    else if(curLine[0].Trim() == "DAMAGE")
+                    {
+                        skills.skillDamage = int.Parse(curLine[1].Trim());
+                    }
+                    else if(curLine[0].Trim() == "MANA")
+                    {
+                        skills.skillMana = int.Parse(curLine[1].Trim());
+                    }
+                    else if (curLine[0].Trim() == "DURATION")
+                    {
+                        skills.skillTrun = int.Parse(curLine[1].Trim());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[오류] : 파일 읽기 실패 ({ex.Message})");
+            }
+        }
+        #endregion
     }
 }
