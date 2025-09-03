@@ -56,6 +56,42 @@ namespace newgame
             return messages;
         }
 
+        public virtual string[] UseAttackSkill(Character target , int skillNum)
+        {
+            target.Status.hp -= MyStatus.ATK;
+
+            if (target.Status.hp <= 0)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: 0");
+                Thread.Sleep(1000);
+                Console.WriteLine();
+                target.Dead(this);
+                return new string[] { " ", " " };
+            }
+
+            // 0번: 플레이어 메시지, 1번: 몬스터 메시지
+            string[] messages = new string[2];
+            if (this == GameManager.Instance.player)
+            {
+                messages[0] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.hp}";
+                BattleInfoStr = messages[0];
+                messages[1] = "";
+            }
+            else
+            {
+                if (BattleInfoStr != "")
+                {
+                    messages[0] = BattleInfoStr;
+                }
+                else
+                {
+                    messages[0] = "";
+                }
+                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.hp}";
+            }
+            return messages;
+        }
         public virtual void Dead(Character target)
         {
             IsDead = true;

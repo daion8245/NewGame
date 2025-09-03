@@ -6,10 +6,19 @@ using System.Threading.Tasks;
 
 namespace newgame
 {
+    public struct SkillType()
+    {
+        public string name;
+        public int skillId;
+        public int skillMana;
+        public int skillDamage;
+        public int skillTrun;
+    }
+
     // 해당 클래스는 RPG 게임에서 캐릭터의 기술을 정의하는 클래스입니다.
     internal class Skills
     {
-        
+
         //공격 스킬과 유틸 스킬을 정의합니다.
     }
 }
