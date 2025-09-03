@@ -59,6 +59,14 @@ namespace newgame
         List<SkillType> canUseSkill = new List<SkillType>();
 
         public void AddCanUseSkill(SkillType skills) => canUseSkill.Add(skills);
+        public void AddCanUseSkill(string name)
+        {
+            var skill = GameManager.Instance.FindSkillByName(name);
+            if (skill != null)
+            {
+                canUseSkill.Add(skill.Value);
+            }
+        }
         public void ClearAllCanUseSkills() => canUseSkill.Clear();
 
         public void RemoveCanUseSkill(int idx)

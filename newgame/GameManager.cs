@@ -158,6 +158,18 @@ namespace newgame
             }
         }
 
+        public SkillType? FindSkillByName(string name)
+        {
+            foreach (var skill in Skills)
+            {
+                if (skill.GetName == name)
+                {
+                    return skill;
+                }
+            }
+            return null;
+        }
+
         public bool HasSkill(SkillType skill)
         {
             return Skills.Contains(skill);
