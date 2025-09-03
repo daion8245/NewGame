@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using SkiaSharp;
 
 namespace newgame
 {
     internal class Player : Character
     {
+        List<SkillType> skills = new List<SkillType>();
+        public List<SkillType> Skills => skills;
 
         public void Start()
         {
@@ -16,6 +19,7 @@ namespace newgame
             GameManager.Instance.player.MyStatus = new Status();
             MyStatus.charType = CharType.PLAYER;
             SetPlayerStarterItem();
+            SetPlayerStarterSkill();
 
             Console.Clear();
         }
@@ -79,6 +83,20 @@ namespace newgame
             }
 
             Inventory.Instance.ShowEquipList();
+        }
+        #endregion
+
+        #region 기본스킬 설정
+        void SetPlayerStarterSkill()
+        {
+            foreach (var skill in GameManager.Instance.GetSkills())
+            {
+                if (skill.GetName == "파이어볼")
+                {
+                    skills.Add(skill);
+                    break;
+                }
+            }
         }
         #endregion
 
