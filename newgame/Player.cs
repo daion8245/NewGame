@@ -89,13 +89,10 @@ namespace newgame
         #region 기본스킬 설정
         void SetPlayerStarterSkill()
         {
-            foreach (var skill in GameManager.Instance.GetSkills())
+            var fireball = GameManager.Instance.FindSkillByName("파이어볼");
+            if (fireball != null)
             {
-                if (skill.GetName == "파이어볼")
-                {
-                    skills.Add(skill);
-                    break;
-                }
+                skills.Add(fireball.Value);
             }
         }
         #endregion
