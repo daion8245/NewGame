@@ -137,5 +137,36 @@ namespace newgame
             return copy;
         }
         #endregion
+
+        #region 스킬
+
+        private List<SkillType> Skills = new List<SkillType>();
+        
+        public void SetSkill(SkillType skill)
+        {
+            if (!Skills.Contains(skill))
+            {
+                Skills.Add(skill);
+            }
+        }
+
+        public void RemoveSkill(SkillType skill)
+        {
+            if (Skills.Contains(skill))
+            {
+                Skills.Remove(skill);
+            }
+        }
+
+        public bool HasSkill(SkillType skill)
+        {
+            return Skills.Contains(skill);
+        }
+
+        public List<SkillType> GetSkills()
+        {
+            return new List<SkillType>(Skills);
+        }
+        #endregion
     }
 }

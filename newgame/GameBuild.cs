@@ -1,6 +1,7 @@
 ﻿using newgame;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -207,6 +208,9 @@ namespace NewGame
         {
 
         }
+        #endregion
+
+        #region 플레이어 기본 스킬 설정
         #endregion
     }
 }

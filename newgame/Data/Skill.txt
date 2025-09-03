@@ -1,0 +1,6 @@
+﻿NAME:파이어볼
+ID:0
+MANA:1
+DAMAGE:10
+DURATION:0
+#

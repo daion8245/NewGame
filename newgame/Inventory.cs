@@ -42,12 +42,12 @@ namespace newgame
 
         [JsonProperty]
         Dictionary<ItemType, string> itemNames = new Dictionary<ItemType, string>()
-        {
-            {ItemType.F_POTION_HP, "회복 물약" },
-            {ItemType.T_POTION_EXPUP, "경험치 획득량 증가" },
-            {ItemType.T_POTION_ATKUP, "공격력 증가" },
-            {ItemType.F_ETC_RESETNAME, "닉네임 변경" }
-        };
+                {
+                    {ItemType.F_POTION_HP, "회복 물약" },
+                    {ItemType.T_POTION_EXPUP, "경험치 획득량 증가" },
+                    {ItemType.T_POTION_ATKUP, "공격력 증가" },
+                    {ItemType.F_ETC_RESETNAME, "닉네임 변경" }
+                };
 
         public string GetItemName(ItemType _type)
         {
@@ -199,8 +199,6 @@ namespace newgame
                 equipItemList.Add($"{canEquips[i].GetEquipName} -> {upType}+{canEquips[i].GetEquipStat} 증가");
                 //equipItemList.Add($"┃ {canEquips[i].GetEquipName} ");
             }
-
-            List<string> equipList = new List<string>();
 
             Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
             Console.WriteLine("┃          인벤토리            ┃");

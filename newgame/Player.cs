@@ -90,6 +90,7 @@ namespace newgame
             battleLog[1] = " ";
 
             ShowBattleInfo(target, battleLog);
+            
             int input = SelectBattleAction();
 
             switch (input)
@@ -231,9 +232,14 @@ namespace newgame
             Console.WriteLine($"Lv.{MyStatus.level} \t\t Lv.{target.MyStatus.level} \t\t {battleLog[1]}");
 
 
-            Console.WriteLine
-                
-                ($"Hp.{MyStatus.hp} \t\t Hp.{target.MyStatus.hp}");
+            Console.WriteLine($"Hp.{MyStatus.hp} \t\t Hp.{target.MyStatus.hp}");
+        }
+        #endregion
+
+        #region 스킬포인트 표시
+        void ShowSkillPointInfo()
+        {
+            
         }
         #endregion
         #endregion
