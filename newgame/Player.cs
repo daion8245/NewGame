@@ -89,13 +89,10 @@ namespace newgame
         #region 기본스킬 설정
         void SetPlayerStarterSkill()
         {
-            foreach (var skill in GameManager.Instance.GetSkills())
+            var fireball = GameManager.Instance.FindSkillByName("파이어볼");
+            if (fireball != null)
             {
-                if (skill.GetName == "파이어볼")
-                {
-                    skills.Add(skill);
-                    break;
-                }
+                skills.Add(fireball.Value);
             }
         }
         #endregion
@@ -152,6 +149,8 @@ namespace newgame
             return null;
         }
 
+        #region 도망치기
+
         void BattleRun()
         {
             Random random = new Random();
@@ -167,6 +166,8 @@ namespace newgame
                 isbattleRun = false;
             }
         }
+
+        #endregion
 
         #region 전투 액션 선택
         int SelectBattleAction()
@@ -254,12 +255,13 @@ namespace newgame
         }
         #endregion
 
-        #region 스킬포인트 표시
-        void ShowSkillPointInfo()
-        {
-            
-        }
+        #region 스킬 사용
+
+
+
         #endregion
+
+
         #endregion
     }
 }
