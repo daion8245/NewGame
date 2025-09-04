@@ -162,7 +162,7 @@ namespace newgame
         {
             foreach (var skill in Skills)
             {
-                if (skill.GetName == name)
+                if (skill.name == name)
                 {
                     return skill;
                 }

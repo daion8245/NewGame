@@ -454,7 +454,7 @@ namespace newgame
                     }
                     else if (curLine[0].Trim() == "DURATION")
                     {
-                        skills.skillTrun = int.Parse(curLine[1].Trim());
+                        skills.skillTurn = int.Parse(curLine[1].Trim());
                     }
                 }
             }
