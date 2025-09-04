@@ -6,8 +6,7 @@ namespace newgame
 {
     internal class Player : Character
     {
-        List<SkillType> skills = new List<SkillType>();
-        public List<SkillType> Skills => skills;
+        private readonly Skills skillSystem = new Skills();
 
         public void Start()
         {
@@ -92,8 +91,15 @@ namespace newgame
             var fireball = GameManager.Instance.FindSkillByName("파이어볼");
             if (fireball != null)
             {
-                skills.Add(fireball.Value);
+                skillSystem.AddCanUseSkill(fireball.Value);
             }
+        }
+        #endregion
+
+        #region 스킬 리스트 표시
+        public int ShowSkillList()
+        {
+            return skillSystem.ShowCanUseSkill();
         }
         #endregion
 
@@ -120,7 +126,7 @@ namespace newgame
                     }
                 case 1:
                     {
-                        //스킬 시스템 구현
+                        ShowSkillList();
                         break;
                     }
                 case 2:
@@ -257,10 +263,13 @@ namespace newgame
 
         #region 스킬 사용
 
+        void BattleSkillLogic()
+        {
+            int useSkillNum = ShowSkillList();
 
+        }
 
         #endregion
-
 
         #endregion
     }
