@@ -1,3 +1,5 @@
+﻿using System.Text.Json.Serialization.Metadata;
+
 namespace newgame
 {
     internal class GameManager
@@ -160,7 +162,7 @@ namespace newgame
         {
             foreach (var skill in Skills)
             {
-                if (skill.name == name)
+                if (skill.GetName == name)
                 {
                     return skill;
                 }

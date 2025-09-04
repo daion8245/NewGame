@@ -126,7 +126,7 @@ namespace newgame
                     }
                 case 1:
                     {
-                        var skill = ShowSkillList();
+                        ShowSkillList();
                         break;
                     }
                 case 2:
@@ -274,4 +274,3 @@ namespace newgame
         #endregion
     }
 }
-

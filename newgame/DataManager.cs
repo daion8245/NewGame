@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Reflection.Metadata;
 
 namespace newgame
 {
@@ -453,7 +454,7 @@ namespace newgame
                     }
                     else if (curLine[0].Trim() == "DURATION")
                     {
-                        skills.skillTurn = int.Parse(curLine[1].Trim());
+                        skills.skillTrun = int.Parse(curLine[1].Trim());
                     }
                 }
             }

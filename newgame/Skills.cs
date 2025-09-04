@@ -1,15 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace newgame
 {
-    public struct SkillType
+    public struct SkillType()
     {
         public string name;
         public int skillId;
         public int skillMana;
         public int skillDamage;
-        public int skillTurn;
+        public int skillTrun;
+
+        #region Get 프로퍼티
+
+        public string GetName
+        {
+            get => name;
+            private set => name = value;
+        }
+
+        public int GetSkillID
+        {
+            get => skillId;
+            private set => skillId = value;
+        }
+
+        public int GetSkillMana
+        {
+            get => skillMana;
+            private set => skillMana = value;
+        }
+
+        public int GetSkillDamage
+        {
+            get => skillDamage;
+            private set => skillDamage = value;
+        }
+
+        public int GetSkillTurn
+        {
+            get => skillTrun;
+            private set => skillTrun = value;
+        }
+
+        #endregion
     }
 
 
@@ -47,7 +84,7 @@ namespace newgame
 
         public SkillType? ShowCanUseSkill()
         {
-            if (canUseSkill.Count == 0)
+            if (canUseSkill == null || canUseSkill.Count == 0)
             {
                 return null;
             }
@@ -56,18 +93,17 @@ namespace newgame
 
             for (int i = 0; i < canUseSkill.Count; i++)
             {
-                var skill = canUseSkill[i];
-                string extra = string.Empty;
-                if (skill.skillDamage != 0)
+                string? upType = null;
+                if (canUseSkill[i].GetSkillDamage != 0)
                 {
-                    extra = $" , 데미지: {skill.skillDamage}";
+                    upType = $" , 데미지: {canUseSkill[i].GetSkillDamage}";
                 }
-                else if (skill.skillTurn != 0)
+                else if (canUseSkill[i].GetSkillTurn != 0)
                 {
-                    extra = $" , 효과 지속 시간: {skill.skillTurn}";
+                    upType = $" , 효과 지속 시간: {canUseSkill[i].GetSkillTurn}";
                 }
 
-                canUseSkillList.Add($"{skill.name} --- 마나 사용량 : {skill.skillMana}{extra}");
+                canUseSkillList.Add($"{canUseSkill[i].GetName} --- 마나 사용량 : {canUseSkill[i].GetSkillMana}" + upType);
             }
 
             int selected = UiHelper.SelectMenu(canUseSkillList.ToArray());
