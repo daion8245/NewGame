@@ -45,11 +45,11 @@ namespace newgame
             Console.WriteLine("해당 번호의 스킬이 존재하지 않습니다.");
         }
 
-        public int ShowCanUseSkill()
+        public SkillType? ShowCanUseSkill()
         {
             if (canUseSkill.Count == 0)
             {
-                return -1;
+                return null;
             }
 
             List<string> canUseSkillList = new List<string>();
@@ -70,8 +70,13 @@ namespace newgame
                 canUseSkillList.Add($"{skill.name} --- 마나 사용량 : {skill.skillMana}{extra}");
             }
 
-            int SelectSkill = UiHelper.SelectMenu(canUseSkillList.ToArray());
-            return SelectSkill;
+            int selected = UiHelper.SelectMenu(canUseSkillList.ToArray());
+            if (selected >= 0 && selected < canUseSkill.Count)
+            {
+                return canUseSkill[selected];
+            }
+
+            return null;
         }
         #endregion
 
