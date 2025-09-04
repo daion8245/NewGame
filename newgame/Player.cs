@@ -97,7 +97,7 @@ namespace newgame
         #endregion
 
         #region 스킬 리스트 표시
-        public int ShowSkillList()
+        public SkillType? ShowSkillList()
         {
             return skillSystem.ShowCanUseSkill();
         }
@@ -126,7 +126,7 @@ namespace newgame
                     }
                 case 1:
                     {
-                        ShowSkillList();
+                        var skill = ShowSkillList();
                         break;
                     }
                 case 2:
@@ -265,7 +265,7 @@ namespace newgame
 
         void BattleSkillLogic()
         {
-            int useSkillNum = ShowSkillList();
+            var useSkill = ShowSkillList();
 
         }
 
@@ -274,3 +274,4 @@ namespace newgame
         #endregion
     }
 }
+
