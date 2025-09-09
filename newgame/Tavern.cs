@@ -117,9 +117,9 @@ namespace newgame
                                 Console.WriteLine("z");
                                 Thread.Sleep(1000);
 
-                                playerstat.hp = playerstat.maxHp;
+                                playerstat.Hp = playerstat.maxHp;
                                 UiHelper.TxtOut(["체력이 최대치로 회복되었다!",
-                                               $"체력 : {playerstat.hp}/{playerstat.maxHp}"]);
+                                               $"체력 : {playerstat.Hp}/{playerstat.maxHp}"]);
 
                                 UiHelper.WaitForInput("[Enter]를 눌러 계속");
                                 Start();

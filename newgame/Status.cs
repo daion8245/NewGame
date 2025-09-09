@@ -68,7 +68,15 @@ namespace newgame
             }
             set => def = value;
         }
-        public int hp;
+
+        private int _hp;
+
+        public int Hp
+        {
+            get => _hp;
+            set => _hp = (value < 0) ? 0 : value; // set은 return 금지, value를 필드에 대입
+        }
+
         public int maxHp;
         public int mp;
         public int maxMp;
@@ -109,12 +117,12 @@ namespace newgame
             UiHelper.TxtOut([
                 $"이름 : {Name}",
                 $"  레벨 : {level}",
-                $"  체력 : {hp}/{maxHp}",
+                $"  체력 : {_hp}/{maxHp}",
                 $"  공격력 : {atk}",
                 $"  방어력 : {def}",
                 $"  마나 : {mp}/{maxMp}",
                 $"  골드 : {gold}",
-                $"  경험치 : {hp} / {nextEXP}"
+                $"  경험치 : {exp} / {nextEXP}"
                 ]);
         }
 
@@ -172,7 +180,7 @@ namespace newgame
             {
                 level++;
                 maxHp += 10;
-                hp = maxHp;
+                _hp = maxHp;
                 mp += 5;
                 nextEXP += 10;
                 ATK += 3;

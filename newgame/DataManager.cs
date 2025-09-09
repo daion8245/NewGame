@@ -232,8 +232,8 @@ namespace newgame
                     }
                     else if (curLine[0].Trim() == "hp")          // PRICE 일 때
                     {
-                        monStat.hp = int.Parse(curLine[1].Trim());
-                        monStat.maxHp = monStat.hp;
+                        monStat.Hp = int.Parse(curLine[1].Trim());
+                        monStat.maxHp = monStat.Hp;
                     }
                     else if (curLine[0].Trim() == "ATK")
                     {
@@ -317,8 +317,8 @@ namespace newgame
                     }
                     else if (curLine[0].Trim() == "hp")          // PRICE 일 때
                     {
-                        BossStat.hp = int.Parse(curLine[1].Trim());
-                        BossStat.maxHp = BossStat.hp;
+                        BossStat.Hp = int.Parse(curLine[1].Trim());
+                        BossStat.maxHp = BossStat.Hp;
                     }
                     else if (curLine[0].Trim() == "ATK")
                     {
@@ -352,7 +352,7 @@ namespace newgame
             string fileName = $"Dungeon_Map.txt";
             string filePath = Path.Combine(dataPath, fileName);
 
-            if (File.Exists(filePath) == false)
+            if (!File.Exists(filePath))
             {
                 // 파일이 없는 경우
                 Console.WriteLine($"해당 경로 [{filePath}]가 존재하지 않습니다. ");

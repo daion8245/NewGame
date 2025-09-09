@@ -2,7 +2,7 @@ NAME : 슬라임
 LEVEL : 1
 hp : 20
 ATK : 2
-DEF : 3 
+DEF : 3
 EXP : 5
 COIN : 10
 #

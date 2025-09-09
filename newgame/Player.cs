@@ -8,10 +8,15 @@ namespace newgame
     {
         private readonly Skills skillSystem = new Skills();
 
+        string[] battleLog = new string[2] {"",""};
+
+        #region 플레이어 초기 설정
+
         public void Start()
         {
             Create();
         }
+
         #region 플레이어 생성
         void Create()
         {
@@ -43,7 +48,7 @@ namespace newgame
             MyStatus.level = 1;
             MyStatus.ATK = 8 + atk;
             MyStatus.maxHp = 45 + (hp * 10);
-            MyStatus.hp = MyStatus.maxHp;
+            MyStatus.Hp = MyStatus.maxHp;
             MyStatus.DEF = 2 + def;
             MyStatus.maxMp = 30 + (mp * 2);
             MyStatus.mp = MyStatus.maxMp;
@@ -63,7 +68,7 @@ namespace newgame
             UiHelper.TxtOut(new string[] {
                     $"이름 : {MyStatus.Name}",
                     $"  레벨 : {MyStatus.level}",
-                    $"  체력 : {MyStatus.hp}/{MyStatus.maxHp}",
+                    $"  체력 : {MyStatus.Hp}/{MyStatus.maxHp}",
                     $"  공격력 : {MyStatus.ATK}",
                     $"  방어력 : {MyStatus.DEF}",
                     $"  마나 : {MyStatus.mp}/{MyStatus.maxMp}",
@@ -93,91 +98,9 @@ namespace newgame
         }
         #endregion
 
-        #region 스킬 리스트 표시
-        public SkillType ShowSkillList()
-        {
-            return skillSystem.ShowCanUseSkill();
-        }
-        #endregion
-
-        #region 스킬 사용
-        public void PlayerUseSkill(SkillType skillType, Character Target)
-        {
-            skillSystem.UseSkill(skillType, Target);
-        }
         #endregion
 
         #region 플레이어 전투
-        public override string[] Attack(Character target)
-        {
-            string[] battleLog = new string[2];
-            battleLog[0] = " ";
-            battleLog[1] = " ";
-
-            ShowBattleInfo(target, battleLog);
-
-            int input = SelectBattleAction();
-
-            switch (input)
-            {
-                case 0:
-                    {
-                        beforHP[0] = MyStatus.hp;
-                        beforHP[1] = target.MyStatus.hp;
-                        battleLog = base.Attack(target);
-                        ShowBattleInfo(target, battleLog);
-                        break;
-                    }
-                case 1:
-                    {
-                        BattleSkillLogic(target);
-                        break;
-                    }
-                case 2:
-                    {
-                        UseItem();
-                        break;
-                    }
-                case 3:
-                    {
-                        Console.Clear();
-                        Console.WriteLine("탐색 중...");
-                        // 탐색 로직 구현
-                        break;
-                    }
-                case 4:
-                    {
-                        BattleRun();
-                        break;
-                    }
-                default:
-                    {
-                        break;
-                    }
-            }
-
-            return null;
-        }
-
-        #region 도망치기
-
-        void BattleRun()
-        {
-            Random random = new Random();
-            int chance = random.Next(1, 101);
-            if (chance >= 50)
-            {
-                isbattleRun = true;
-                Console.Clear();
-                Console.WriteLine("전투에서 탈출했다");
-
-                Lobby lobby = new Lobby();
-                lobby.Start();
-                isbattleRun = false;
-            }
-        }
-
-        #endregion
 
         #region 전투 액션 선택
         int SelectBattleAction()
@@ -251,26 +174,80 @@ namespace newgame
         }
         #endregion
 
-        #region 플레이어&적 정보
-        int[] beforHP = new int[2];
-
-        public void ShowBattleInfo(Character target, string[] battleLog)
+        #region 플레이어 기본공격
+        public override string[] Attack(Character target)
         {
-            Console.Clear();
-            Console.WriteLine($"Name.{MyStatus.Name} \t Name.{target.MyStatus.Name} \t {battleLog[0]}");
-            Console.WriteLine($"Lv.{MyStatus.level} \t\t Lv.{target.MyStatus.level} \t\t {battleLog[1]}");
+            battleLog[0] = "";
+            battleLog[1] = "";
 
+            ShowBattleInfo(target, battleLog);
 
-            Console.WriteLine($"Hp.{MyStatus.hp} \t\t Hp.{target.MyStatus.hp}");
+            int input = SelectBattleAction();
+
+            switch (input)
+            {
+                
+                case 0:
+                    {
+                        beforHP[0] = MyStatus.Hp;
+                        beforHP[1] = target.MyStatus.Hp;
+                        battleLog = base.Attack(target);
+                        ShowBattleInfo(target, battleLog);
+                        break;
+                    }
+                case 1:
+                    {
+                        BattleSkillLogic(target);
+                        ShowBattleInfo(target, battleLog);
+                        break;
+                    }
+                case 2:
+                    {
+                        UseItem();
+                        break;
+                    }
+                case 3:
+                    {
+                        Console.Clear();
+                        Console.WriteLine("탐색 중...");
+                        // 탐색 로직 구현
+                        break;
+                    }
+                case 4:
+                    {
+                        BattleRun();
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+
+            return null;
         }
         #endregion
 
         #region 스킬 사용
 
+        #region 스킬 리스트 표시
+        public SkillType ShowSkillList()
+        {
+            return skillSystem.ShowCanUseSkill();
+        }
+        #endregion
+
+        //스킬 클래스에서 스킬을 가져와 사용하는 함수
+
         void BattleSkillLogic(Character target)
         {
+            battleLog[0] = "";
+            battleLog[1] = "";
+
             SkillType useSkill = ShowSkillList();
-            PlayerUseSkill(useSkill, target);
+            battleLog = UseAttackSkill(target, useSkill);
+
+            ShowBattleInfo(target, battleLog);
 
             // 스킬 특수효과 추가 처리
             if (useSkill.name == null) return;
@@ -279,7 +256,7 @@ namespace newgame
             {
                 case "파이어볼":
                     {
-                        AddTickSkill(useSkill.name,useSkill.skillTurn);
+                        AddTickSkill(useSkill.name, useSkill.skillTurn);
                         break;
                     }
                 case "아쿠아 볼":
@@ -292,14 +269,45 @@ namespace newgame
                         break;
                     }
             }
-
-            Console.WriteLine("계속하려면 아무 키나 누르세요...");
-            Console.ReadKey(true);
         }
 
         #endregion
 
+        #region 도망치기
+
+        void BattleRun()
+        {
+            Random random = new Random();
+            int chance = random.Next(1, 101);
+            if (chance >= 50)
+            {
+                isbattleRun = true;
+                Console.Clear();
+                Console.WriteLine("전투에서 탈출했다");
+
+                Lobby lobby = new Lobby();
+                lobby.Start();
+                isbattleRun = false;
+            }
+        }
+
         #endregion
+
+        #region 플레이어&적 정보
+        int[] beforHP = new int[2];
+
+        public void ShowBattleInfo(Character target, string[] battleLog)
+        {
+            Console.Clear();
+            Console.WriteLine($"Name.{MyStatus.Name} \t Name.{target.MyStatus.Name} \t {battleLog[0]}");
+            Console.WriteLine($"Lv.{MyStatus.level} \t\t Lv.{target.MyStatus.level} \t\t {battleLog[1]}");
+
+
+            Console.WriteLine($"Hp.{MyStatus.Hp} \t\t Hp.{target.MyStatus.Hp}");
+        }
+        #endregion
+
+        #endregion 플레이어 전투
     }
 }
 

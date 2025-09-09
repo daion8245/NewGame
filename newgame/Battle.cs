@@ -14,41 +14,46 @@
             Start_Battle();
         }
 
-        void Start_Battle()
+        private static void Start_Battle()
         {
-            Character[] charac = new Character[]
-            {
-                GameManager.Instance.player,
-                GameManager.Instance.monster,
-            };
+            Character player = GameManager.Instance.player;
+            Character monster = GameManager.Instance.monster;
 
-            GameManager.Instance.player.isbattleRun = false;
+            Character[] chars = new Character[] { player, monster };
 
-            int currentIndex = 0;
+            player.isbattleRun = false;     // 필요시 monster도 false 초기화
+
+            int current = 0; // 0: player, 1: monster
             while (true)
             {
-                int nextIndex = (currentIndex + 1) % charac.Length;
-                string[] battleLog = charac[currentIndex].Attack(charac[nextIndex]);
+                int attackerIdx = current;
+                int defenderIdx = (current + 1) % chars.Length;
 
-                if (charac[currentIndex] == GameManager.Instance.monster)
-                {
-                    GameManager.Instance.player.ShowBattleInfo(GameManager.Instance.monster, battleLog);
-                }
+                Character attacker = chars[attackerIdx];
+                Character defender = chars[defenderIdx];
 
-                if (charac[currentIndex].isbattleRun == true)
-                {
+                string[] log = attacker.Attack(defender);
+
+                //// 둘 다 보여주고 싶으면 if 제거
+                //if (attacker == monster)
+                //{
+                //    GameManager.Instance.player.ShowBattleInfo(GameManager.Instance.monster,bo);
+                //}
+
+                // 1) 공격자가 '도주' 선택했으면 종료
+                if (attacker.isbattleRun)
                     break;
-                }
 
-                currentIndex = nextIndex;
+                // 2) 피격자가 죽었으면 즉시 종료
+                if (defender.IsDead)
+                    break;
+
+                // 턴 교대
+                current = defenderIdx;
 
                 Thread.Sleep(1000);
-
-                if (charac[currentIndex].IsDead == true)
-                {
-                    break;
-                }
             }
         }
+
     }
 }

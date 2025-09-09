@@ -22,7 +22,7 @@ namespace newgame
             ConsumeType = GetConsumeType(item.ItemType); // 종류별로 설정
         }
 
-        private ConsumeType GetConsumeType(ItemType type)
+        private static ConsumeType GetConsumeType(ItemType type)
         {
             switch (type)
             {

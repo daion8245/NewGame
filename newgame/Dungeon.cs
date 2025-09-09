@@ -133,7 +133,7 @@ namespace newgame
                             else
                             {
                                 UiHelper.WaitForInput("도망에 실패했습니다! 체력의 30%를 잃고 몬스터와 전투를 시작합니다!  [ENTER를 눌러 계속]");
-                                GameManager.Instance.player.MyStatus.hp -= (int)(GameManager.Instance.player.MyStatus.maxHp * 0.3);
+                                GameManager.Instance.player.MyStatus.Hp -= (int)(GameManager.Instance.player.MyStatus.maxHp * 0.3);
                                 MonsterCreate();
                             }
                         }

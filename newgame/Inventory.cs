@@ -25,12 +25,12 @@ namespace newgame
         private Dictionary<EquipType, Equipment> equips =
             new Dictionary<EquipType, Equipment>()
             {
-                {EquipType.WEAPON, null },
-                {EquipType.HELMET, null },
-                {EquipType.SHIRT, null },
-                {EquipType.PANTS, null },
-                {EquipType.GLOVE, null },
-                {EquipType.SHOES, null }
+                {EquipType.WEAPON, null! },
+                {EquipType.HELMET, null! },
+                {EquipType.SHIRT, null!},
+                {EquipType.PANTS, null! },
+                {EquipType.GLOVE, null! },
+                {EquipType.SHOES, null! }
             };
 
         //착용 가능한 장비

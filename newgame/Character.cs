@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Data;
 
@@ -15,22 +16,34 @@ namespace newgame
             protected set => Status = value;
         }
 
+        //현제 활성화 되어있는 포션 효과
         private List<ActiveItemEffect> activeEffects = new();
+        //현제 지속되고 있는 스킬의 지속 효과
         protected Dictionary<string, int> activeSkills = new Dictionary<string, int>();
-
+        
+        //플레이어가 죽었는지
         public bool IsDead = false;
+        //플레이어가 전투에서 도망쳤는지
         public bool isbattleRun = false;
 
+        //전투 중 발생하는 안내·로그 문구를 모든 객체가 함께 쓰는 정적 문자열 버퍼로 모아두는 변수
         private static string BattleInfoStr = "";
+
+        #region 기본공격
+        /// <summary>
+        /// 플레이어 기본공격 메서드
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
         public virtual string[] Attack(Character target)
         {
-            TickSkillTurns();
-            target.Status.hp -= MyStatus.ATK;
+            TickSkillTurns(target);
+            int damage = Damage(target, MyStatus.ATK);
 
-            if (target.Status.hp <= 0)
+            if (target.Status.Hp <= 0)
             {
                 Console.WriteLine();
-                Console.WriteLine($"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: 0");
+                Console.WriteLine($"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: 0");
                 Thread.Sleep(1000);
                 Console.WriteLine();
                 target.Dead(this);
@@ -41,7 +54,7 @@ namespace newgame
             string[] messages = new string[2];
             if (this == GameManager.Instance.player)
             {
-                messages[0] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.hp}";
+                messages[0] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.Hp}";
                 BattleInfoStr = messages[0];
                 messages[1] = "";
             }
@@ -55,53 +68,69 @@ namespace newgame
                 {
                     messages[0] = "";
                 }
-                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.hp}";
+                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.Hp}";
             }
             return messages;
         }
+        #endregion
 
-        public virtual string[] UseAttackSkill(Character target , int skillNum)
+        #region 스킬 공격
+        /// <summary>
+        /// 스킬 사용 기본 메서드
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="skillNum"></param>
+        /// <returns></returns>
+        public virtual string[] UseAttackSkill(Character target, SkillType skill)
         {
-            target.Status.hp -= MyStatus.ATK;
-            TickSkillTurns();
+            int damage = Damage(target, skill.skillDamage);
+            TickSkillTurns(target);
 
-            if (target.Status.hp <= 0)
+            // ② 틱으로 죽었을 수도 있으니 즉시 체크
+            if (target.Status.Hp <= 0)
             {
-                Console.WriteLine();
-                Console.WriteLine($"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: 0");
-                Thread.Sleep(1000);
-                Console.WriteLine();
                 target.Dead(this);
                 return new string[] { " ", " " };
             }
 
-            // 0번: 플레이어 메시지, 1번: 몬스터 메시지
+            if (target.Status.Hp <= 0)
+            {
+                // 죽는 경우 메시지
+                string killMsg = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: 0";
+                Console.WriteLine(); Console.WriteLine(killMsg); Thread.Sleep(1000); Console.WriteLine();
+                target.Dead(this);
+                return new[] { " ", " " };
+            }
+
             string[] messages = new string[2];
             if (this == GameManager.Instance.player)
             {
-                messages[0] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.hp}";
+                messages[0] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.Hp}";
                 BattleInfoStr = messages[0];
                 messages[1] = "";
             }
             else
             {
-                if (BattleInfoStr != "")
-                {
-                    messages[0] = BattleInfoStr;
-                }
-                else
-                {
-                    messages[0] = "";
-                }
-                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {MyStatus.ATK} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.hp}";
+                messages[0] = string.IsNullOrEmpty(BattleInfoStr) ? "" : BattleInfoStr;
+                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.Hp}";
             }
-            
             return messages;
         }
+        #endregion
+
+        #region 사망
+        /// <summary>
+        /// 사망 메서드
+        /// </summary>
+        /// <param name="target"></param>
         public virtual void Dead(Character target)
         {
-            IsDead = true;
+            if (IsDead == true) { return; }
 
+            IsDead = true;
+            activeSkills.Clear();
+            target.activeSkills.Clear();
+            
             if (target == GameManager.Instance.player)
             {
                 UiHelper.TxtOut([$"{Status.Name}은 쓰러졌다!", $"{Status.Name} 에게서 승리했다!", $"+{Status.exp}Exp , +{Status.gold}골드 를 획득했다!",$"다음 레벨까지 : {target.Status.exp}/{target.Status.nextEXP}", ""]);
@@ -117,7 +146,10 @@ namespace newgame
                 Tavern tavern = new Tavern();
                 tavern.Start();
             }
+
+            return;
         }
+        #endregion
 
         #region 아이템 관련 추가
         [JsonProperty]
@@ -267,31 +299,12 @@ namespace newgame
         #region 스킬 지속 효과
 
         //이름과 지속 턴을 받아서 딕셔너리에 추가
-        protected void AddTickSkill(string skillName, int duration)
+        protected virtual void AddTickSkill(string skillName, int duration)
         {
             activeSkills[skillName] = duration;
         }
 
-        // 계획(의사코드):
-        // 1) TickSkillTurns:
-        //    - activeSkills 딕셔너리의 키 목록을 복사해서 안전하게 순회한다.
-        //    - 각 스킬에 대해 먼저 남은 턴을 1 감소시킨다.
-        //    - 감소 후 현재 남은 턴을 출력한다.
-        //    - 해당 스킬에 대해 매턴 발동되는 효과를 처리하기 위해 SkillTickEffact(skillName)를 호출한다.
-        //    - 만약 감소 후 남은 턴이 0 이하이면 딕셔너리에서 해당 스킬을 제거하고 종료 메시지를 출력한다.
-        //    - 루프 중 딕셔너리를 직접 수정하므로 복사한 키 목록으로만 순회한다.
-        //
-        // 2) SkillTickEffact(skillName):
-        //    - 전달된 스킬 이름에 따라 매턴 발동되는 효과를 분기한다.
-        //    - 현재 구현에서는 부작용을 최소화하기 위해 로그를 남기고,
-        //      필요하면 여기에 실제 상태 변경(예: HP 감소, 버프 적용)을 추가할 수 있다.
-        //    - 예: "파이어볼"의 경우 매 턴마다 화상 데미지/로그를 남김.
-        //
-        // 주의:
-        // - 스킬 효과가 상태를 변경할 경우(예: ATK 증감) 중복 적용을 피하기 위한 별도 플래그나 저장 구조가 필요하다.
-        // - 현재 activeSkills는 턴 수만 관리하므로 추가적인 수치/데이터는 별도 구조로 관리해야 안전하다.
-
-        protected void TickSkillTurns()
+        protected virtual void TickSkillTurns(Character target)
         {
             var keys = new List<string>(activeSkills.Keys);
 
@@ -303,9 +316,9 @@ namespace newgame
                 activeSkills[skillName] = activeSkills[skillName] - 1;
                 Console.WriteLine($"{skillName} 의 지속 턴이 1 감소했습니다. → 남은 턴: {activeSkills[skillName]}");
 
-                SkillTickEffact(skillName);
+                SkillTickEffact(skillName,target);
 
-                if (activeSkills[skillName] <= 0)
+                if (activeSkills.ContainsKey(skillName) && activeSkills[skillName] <= 0)
                 {
                     activeSkills.Remove(skillName);
                     Console.WriteLine($"{skillName} 효과가 종료되었습니다.");
@@ -314,25 +327,42 @@ namespace newgame
         }
 
         #region 스킬 효과
-        protected void SkillTickEffact(string skill)
+
+        // ④ 틱 효과로 죽을 수 있게 처리 (소유자 this가 가해자 역할)
+        protected virtual void SkillTickEffact(string skill, Character target)
         {
             switch (skill)
             {
                 case "파이어볼":
+                    UiHelper.TxtOut([$"{target.MyStatus.Name} 은/는 화상 데미지를 입었다! (체력 -1)"]);
+                    target.MyStatus.Hp--;
+                    if (target.MyStatus.Hp <= 0)
                     {
-                        Console.WriteLine($"{MyStatus.Name}의 {skill} 효과가 발동했다! (화염의 불씨가 타오른다.)");
-                        break;
+                        target.Dead(this);
                     }
+                    break;
                 default:
-                    {
-                        // 알려지지 않은 스킬은 로그만 남긴다.
-                        Console.WriteLine($"{skill} 에 대해 처리할 매턴 효과가 없습니다.");
-                        break;
-                    }
+                    Console.WriteLine($"{skill} 에 대해 처리할 매턴 효과가 없습니다.");
+                    break;
             }
         }
         #endregion
 
         #endregion
+
+
+        protected int Damage(Character target, int damage)
+        {
+            // A: 공격자 공격력, D: 대상 방어력, K: 고정값(데미지가 절반이 되는 지점, 예: 100 : 받는 데미지 50%)
+            int A = MyStatus.ATK;
+            int D = target.Status.DEF;
+            int K = 50;
+
+            // 데미지 공식: max(1, round(A * K / (D + K)))
+            int totaldamage = Math.Max(1, (int)Math.Round(A * K / (double)(D + K)));
+
+            target.Status.Hp -= totaldamage;
+            return totaldamage;
+        }
     }
 }

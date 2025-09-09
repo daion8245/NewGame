@@ -104,18 +104,5 @@ namespace newgame
             return default(SkillType);
         }
         #endregion
-
-        #region 스킬 사용
-        /// <summary>
-        /// 스킬과 적 타입을 받아 데미지와 특수효과를 계산하는 함수.
-        /// </summary>
-        /// <param name="skill"></param>
-        /// <param name="target"></param>
-        public void UseSkill(SkillType skill, Character target)
-        {
-            Console.WriteLine($"{skill.name}! 이 {target.MyStatus.Name} 에게 적중!");
-            target.MyStatus.hp -= skill.skillDamage;
-        }
-        #endregion
     }
 }
