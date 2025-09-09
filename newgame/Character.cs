@@ -14,6 +14,9 @@ namespace newgame
         }
 
         private List<ActiveItemEffect> activeEffects = new();
+        protected Dictionary<string, int> activeSkills = new();
+
+        public IReadOnlyDictionary<string, int> ActiveSkills => activeSkills;
 
         public bool IsDead = false;
         public bool isbattleRun = false;
@@ -256,6 +259,28 @@ namespace newgame
             return total;
         }
 
+        #endregion
+
+        #region 스킬 지속 효과
+        public void UseSkill(string skillName, int duration)
+        {
+            activeSkills[skillName] = duration;
+        }
+
+        public void TickSkillTurns()
+        {
+            List<string> expired = new();
+
+            foreach (var kv in activeSkills)
+            {
+                activeSkills[kv.Key]--;
+                if (activeSkills[kv.Key] <= 0)
+                    expired.Add(kv.Key);
+            }
+
+            foreach (var name in expired)
+                activeSkills.Remove(name);
+        }
         #endregion
     }
 }
