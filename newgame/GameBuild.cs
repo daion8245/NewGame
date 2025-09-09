@@ -168,6 +168,7 @@ namespace NewGame
 
             while (statcoin > 0)
             {
+                Console.Clear();
                 Console.WriteLine($"남은 포인트 : {statcoin}");
 
                 int selstat = UiHelper.SelectMenu(new[] { "공격력", "체력", "방어력" });

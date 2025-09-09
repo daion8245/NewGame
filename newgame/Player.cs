@@ -61,15 +61,15 @@ namespace newgame
             TextDisplayConfig.SlowTxtLineTime = 0;
 
             UiHelper.TxtOut(new string[] {
-                $"이름 : {MyStatus.Name}",
-                $"  레벨 : {MyStatus.level}",
-                $"  체력 : {MyStatus.hp}/{MyStatus.maxHp}",
-                $"  공격력 : {MyStatus.ATK}",
-                $"  방어력 : {MyStatus.DEF}",
-                $"  마나 : {MyStatus.mp}/{MyStatus.maxMp}",
-                $"  골드 : {MyStatus.gold}",
-                $"  경험치 : {MyStatus.exp}/{MyStatus.nextEXP}"
-            });
+                    $"이름 : {MyStatus.Name}",
+                    $"  레벨 : {MyStatus.level}",
+                    $"  체력 : {MyStatus.hp}/{MyStatus.maxHp}",
+                    $"  공격력 : {MyStatus.ATK}",
+                    $"  방어력 : {MyStatus.DEF}",
+                    $"  마나 : {MyStatus.mp}/{MyStatus.maxMp}",
+                    $"  골드 : {MyStatus.gold}",
+                    $"  경험치 : {MyStatus.exp}/{MyStatus.nextEXP}"
+                });
         }
         #endregion
 
@@ -88,18 +88,22 @@ namespace newgame
         #region 기본스킬 설정
         void SetPlayerStarterSkill()
         {
-            var fireball = GameManager.Instance.FindSkillByName("파이어볼");
-            if (fireball != null)
-            {
-                skillSystem.AddCanUseSkill(fireball.Value);
-            }
+            skillSystem.AddCanUseSkill("파이어볼");
+            skillSystem.AddCanUseSkill("아쿠아 볼");
         }
         #endregion
 
         #region 스킬 리스트 표시
-        public SkillType? ShowSkillList()
+        public SkillType ShowSkillList()
         {
             return skillSystem.ShowCanUseSkill();
+        }
+        #endregion
+
+        #region 스킬 사용
+        public void PlayerUseSkill(SkillType skillType, Character Target)
+        {
+            skillSystem.UseSkill(skillType, Target);
         }
         #endregion
 
@@ -111,7 +115,7 @@ namespace newgame
             battleLog[1] = " ";
 
             ShowBattleInfo(target, battleLog);
-            
+
             int input = SelectBattleAction();
 
             switch (input)
@@ -126,7 +130,7 @@ namespace newgame
                     }
                 case 1:
                     {
-                        var skill = ShowSkillList();
+                        BattleSkillLogic(target);
                         break;
                     }
                 case 2:
@@ -263,10 +267,34 @@ namespace newgame
 
         #region 스킬 사용
 
-        void BattleSkillLogic()
+        void BattleSkillLogic(Character target)
         {
-            var useSkill = ShowSkillList();
+            SkillType useSkill = ShowSkillList();
+            PlayerUseSkill(useSkill, target);
 
+            // 스킬 특수효과 추가 처리
+            if (useSkill.name == null) return;
+
+            switch (useSkill.name)
+            {
+                case "파이어볼":
+                    {
+                        AddTickSkill(useSkill.name,useSkill.skillTurn);
+                        break;
+                    }
+                case "아쿠아 볼":
+                    {
+                        AddTickSkill(useSkill.name, useSkill.skillTurn);
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+
+            Console.WriteLine("계속하려면 아무 키나 누르세요...");
+            Console.ReadKey(true);
         }
 
         #endregion
