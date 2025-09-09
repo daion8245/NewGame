@@ -14,6 +14,7 @@ namespace newgame
         }
 
         private List<ActiveItemEffect> activeEffects = new();
+        private List<ActiveSkillEffect> activeSkillEffects = new();
 
         public bool IsDead = false;
         public bool isbattleRun = false;
@@ -256,6 +257,49 @@ namespace newgame
             return total;
         }
 
+        #endregion
+
+        #region 스킬 관련 추가
+        public void AddSkillEffect(SkillType skill)
+        {
+            var effect = activeSkillEffects.Find(e => e.SkillId == skill.skillId);
+            if (effect != null)
+            {
+                effect.RemainingTurn = skill.skillTurn;
+                effect.TotalPower += skill.skillDamage;
+            }
+            else
+            {
+                activeSkillEffects.Add(new ActiveSkillEffect(skill));
+            }
+        }
+
+        public void OnSkillTurnPassed()
+        {
+            for (int i = activeSkillEffects.Count - 1; i >= 0; i--)
+            {
+                var effect = activeSkillEffects[i];
+                effect.RemainingTurn--;
+
+                if (effect.RemainingTurn <= 0)
+                {
+                    activeSkillEffects.RemoveAt(i);
+                }
+            }
+        }
+
+        public int GetTotalSkillPower(int skillId)
+        {
+            int total = 0;
+            foreach (var effect in activeSkillEffects)
+            {
+                if (effect.SkillId == skillId)
+                {
+                    total += effect.TotalPower;
+                }
+            }
+            return total;
+        }
         #endregion
     }
 }
