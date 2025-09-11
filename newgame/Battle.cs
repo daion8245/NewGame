@@ -34,11 +34,10 @@
 
                 string[] log = attacker.Attack(defender);
 
-                //// 둘 다 보여주고 싶으면 if 제거
-                //if (attacker == monster)
-                //{
-                //    GameManager.Instance.player.ShowBattleInfo(GameManager.Instance.monster,bo);
-                //}
+                if (log != null)
+                {
+                    GameManager.Instance.player.ShowBattleInfo(GameManager.Instance.monster, log);
+                }
 
                 // 1) 공격자가 '도주' 선택했으면 종료
                 if (attacker.isbattleRun)

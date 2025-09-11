@@ -177,9 +177,6 @@ namespace newgame
         #region 플레이어 기본공격
         public override string[] Attack(Character target)
         {
-            battleLog[0] = "";
-            battleLog[1] = "";
-
             ShowBattleInfo(target, battleLog);
 
             int input = SelectBattleAction();
@@ -241,9 +238,6 @@ namespace newgame
 
         void BattleSkillLogic(Character target)
         {
-            battleLog[0] = "";
-            battleLog[1] = "";
-
             SkillType useSkill = ShowSkillList();
             battleLog = UseAttackSkill(target, useSkill);
 
@@ -299,6 +293,7 @@ namespace newgame
         public void ShowBattleInfo(Character target, string[] battleLog)
         {
             Console.Clear();
+
             Console.WriteLine($"Name.{MyStatus.Name} \t Name.{target.MyStatus.Name} \t {battleLog[0]}");
             Console.WriteLine($"Lv.{MyStatus.level} \t\t Lv.{target.MyStatus.level} \t\t {battleLog[1]}");
 
