@@ -24,6 +24,9 @@
             player.isbattleRun = false;     // 필요시 monster도 false 초기화
 
             int current = 0; // 0: player, 1: monster
+
+            player.EnteringBattle(monster);
+            monster.EnteringBattle(player);
             while (true)
             {
                 int attackerIdx = current;
@@ -31,13 +34,19 @@
 
                 Character attacker = chars[attackerIdx];
                 Character defender = chars[defenderIdx];
-
-                string[] log = attacker.Attack(defender);
-
-                if (log != null)
+                if (attacker is Player playerActor)
                 {
-                    GameManager.Instance.player.ShowBattleInfo(GameManager.Instance.monster, log);
+                    playerActor.PerformAction(defender);
                 }
+                else
+                {
+                    attacker.Attack(defender);
+                }
+
+                //if (log != null)
+                //{
+                //    GameManager.Instance.player.ShowBattleInfo(GameManager.Instance.monster, log);
+                //}
 
                 // 1) 공격자가 '도주' 선택했으면 종료
                 if (attacker.isbattleRun)

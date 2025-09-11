@@ -29,6 +29,17 @@ namespace newgame
         //전투 중 발생하는 안내·로그 문구를 모든 객체가 함께 쓰는 정적 문자열 버퍼로 모아두는 변수
         private static string BattleInfoStr = "";
 
+        protected static string[] battleLog = new string[2];
+
+        #region 전투 진입
+        Character target;
+
+        public void EnteringBattle(Character target)
+        {
+            this.target = target;
+        }
+        #endregion
+
         #region 기본공격
         /// <summary>
         /// 플레이어 기본공격 메서드
@@ -37,6 +48,8 @@ namespace newgame
         /// <returns></returns>
         public virtual string[] Attack(Character target)
         {
+            battleLog[0] = "";
+            battleLog[1] = "";
             TickSkillTurns(target);
             int damage = Damage(target, MyStatus.ATK);
 
@@ -68,8 +81,14 @@ namespace newgame
                 {
                     messages[0] = "";
                 }
-                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.Hp}";
+                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name}은 {damage} 만큼의 데미지를 받았다 {target.Status.Name}의 남은 체력: {target.Status.Hp}";
             }
+
+            beforHP[0] = MyStatus.Hp;
+            beforHP[1] = target.MyStatus.Hp;
+            battleLog = messages;
+
+            ShowBattleInfo(target, messages);
             return messages;
         }
         #endregion
@@ -81,10 +100,11 @@ namespace newgame
         /// <param name="target"></param>
         /// <param name="skillNum"></param>
         /// <returns></returns>
-        public virtual string[] UseAttackSkill(Character target, SkillType skill)
+        public virtual string[] UseAttackSkill(SkillType skill)
         {
             int damage = Damage(target, skill.skillDamage);
             TickSkillTurns(target);
+            ShowBattleInfo(target, battleLog);
 
             // ② 틱으로 죽었을 수도 있으니 즉시 체크
             if (target.Status.Hp <= 0)
@@ -130,7 +150,9 @@ namespace newgame
             IsDead = true;
             activeSkills.Clear();
             target.activeSkills.Clear();
-            
+            battleLog[0] = "";
+            battleLog[1] = "";
+
             if (target == GameManager.Instance.player)
             {
                 UiHelper.TxtOut([$"{Status.Name}은 쓰러졌다!", $"{Status.Name} 에게서 승리했다!", $"+{Status.exp}Exp , +{Status.gold}골드 를 획득했다!",$"다음 레벨까지 : {target.Status.exp}/{target.Status.nextEXP}", ""]);
@@ -350,7 +372,7 @@ namespace newgame
 
         #endregion
 
-
+        #region 데미지 계산
         protected int Damage(Character target, int damage)
         {
             // A: 공격자 공격력, D: 대상 방어력, K: 고정값(데미지가 절반이 되는 지점, 예: 100 : 받는 데미지 50%)
@@ -364,5 +386,19 @@ namespace newgame
             target.Status.Hp -= totaldamage;
             return totaldamage;
         }
+        #endregion
+
+        #region 플레이어&적 정보
+        protected int[] beforHP = new int[2];
+
+        public void ShowBattleInfo(Character target, string[] log)
+        {
+            Console.Clear();
+
+            Console.WriteLine($"Name.{MyStatus.Name} \t Name.{target.MyStatus.Name} \t {log[0]}");
+            Console.WriteLine($"Lv.{MyStatus.level} \t\t Lv.{target.MyStatus.level} \t\t {log[1]}");
+            Console.WriteLine($"Hp.{MyStatus.Hp} \t\t Hp.{target.MyStatus.Hp}");
+        }
+        #endregion
     }
 }
