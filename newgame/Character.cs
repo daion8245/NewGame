@@ -20,7 +20,7 @@ namespace newgame
         private List<ActiveItemEffect> activeEffects = new();
         //현제 지속되고 있는 스킬의 지속 효과
         protected Dictionary<string, int> activeSkills = new Dictionary<string, int>();
-        
+
         //플레이어가 죽었는지
         public bool IsDead = false;
         //플레이어가 전투에서 도망쳤는지
@@ -32,7 +32,7 @@ namespace newgame
         protected static string[] battleLog = new string[2];
 
         #region 전투 진입
-        Character target;
+        Character? target;
 
         public void EnteringBattle(Character target)
         {
@@ -50,8 +50,8 @@ namespace newgame
         {
             battleLog[0] = "";
             battleLog[1] = "";
-            TickSkillTurns(target);
             int damage = Damage(target, MyStatus.ATK);
+            TickSkillTurns();
 
             if (target.Status.Hp <= 0)
             {
@@ -73,7 +73,7 @@ namespace newgame
             }
             else
             {
-                if(BattleInfoStr != "")
+                if (BattleInfoStr != "")
                 {
                     messages[0] = BattleInfoStr;
                 }
@@ -103,8 +103,8 @@ namespace newgame
         public virtual string[] UseAttackSkill(SkillType skill)
         {
             int damage = Damage(target, skill.skillDamage);
-            TickSkillTurns(target);
             ShowBattleInfo(target, battleLog);
+            TickSkillTurns();
 
             // ② 틱으로 죽었을 수도 있으니 즉시 체크
             if (target.Status.Hp <= 0)
@@ -116,7 +116,7 @@ namespace newgame
             if (target.Status.Hp <= 0)
             {
                 // 죽는 경우 메시지
-                string killMsg = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: 0";
+                string killMsg = $"{MyStatus.Name}의 공격! {target.Status.Name}은 {damage} 만큼의 데미지를 받았다 {target.Status.Name}의 남은 체력: 0";
                 Console.WriteLine(); Console.WriteLine(killMsg); Thread.Sleep(1000); Console.WriteLine();
                 target.Dead(this);
                 return new[] { " ", " " };
@@ -125,14 +125,14 @@ namespace newgame
             string[] messages = new string[2];
             if (this == GameManager.Instance.player)
             {
-                messages[0] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.Hp}";
+                messages[0] = $"{MyStatus.Name}의 공격! {target.Status.Name}은 {damage} 만큼의 데미지를 받았다 {target.Status.Name}의 남은 체력: {target.Status.Hp}";
                 BattleInfoStr = messages[0];
                 messages[1] = "";
             }
             else
             {
                 messages[0] = string.IsNullOrEmpty(BattleInfoStr) ? "" : BattleInfoStr;
-                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.Hp}";
+                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name}은 {damage} 만큼의 데미지를 받았다 {target.Status.Name}의 남은 체력: {target.Status.Hp}";
             }
             return messages;
         }
@@ -155,7 +155,7 @@ namespace newgame
 
             if (target == GameManager.Instance.player)
             {
-                UiHelper.TxtOut([$"{Status.Name}은 쓰러졌다!", $"{Status.Name} 에게서 승리했다!", $"+{Status.exp}Exp , +{Status.gold}골드 를 획득했다!",$"다음 레벨까지 : {target.Status.exp}/{target.Status.nextEXP}", ""]);
+                UiHelper.TxtOut([$"{Status.Name}은 쓰러졌다!", $"{Status.Name}에게서 승리했다!", $"+{Status.exp}Exp , +{Status.gold}골드 를 획득했다!", $"다음 레벨까지 : {target.Status.exp}/{target.Status.nextEXP}", ""]);
                 target.Status.LevelUp();
                 Console.WriteLine();
                 UiHelper.WaitForInput("[Enter]를 눌러 계속");
@@ -179,12 +179,12 @@ namespace newgame
 
         [JsonProperty]
         Dictionary<ItemType, string> itemNames = new Dictionary<ItemType, string>()
-        {
-            {ItemType.F_POTION_HP, "회복 물약" },
-            {ItemType.T_POTION_EXPUP, "경험치 획득량 증가" },
-            {ItemType.T_POTION_ATKUP, "공격력 증가" },
-            {ItemType.F_ETC_RESETNAME, "닉네임 변경" }
-        };
+            {
+                {ItemType.F_POTION_HP, "회복 물약" },
+                {ItemType.T_POTION_EXPUP, "경험치 획득량 증가" },
+                {ItemType.T_POTION_ATKUP, "공격력 증가" },
+                {ItemType.F_ETC_RESETNAME, "닉네임 변경" }
+            };
 
         public string GetItemName(ItemType _type)
         {
@@ -323,10 +323,15 @@ namespace newgame
         //이름과 지속 턴을 받아서 딕셔너리에 추가
         protected virtual void AddTickSkill(string skillName, int duration)
         {
-            activeSkills[skillName] = duration;
+            this.activeSkills[skillName] = duration;
         }
 
-        protected virtual void TickSkillTurns(Character target)
+        protected virtual void EnemyAddTickSkill(string skillName, int duration)
+        {
+            target.activeSkills[skillName] = duration;
+        }
+
+        protected virtual void TickSkillTurns()
         {
             var keys = new List<string>(activeSkills.Keys);
 
@@ -335,10 +340,11 @@ namespace newgame
                 if (!activeSkills.ContainsKey(skillName))
                     continue;
 
+                Console.WriteLine();
                 activeSkills[skillName] = activeSkills[skillName] - 1;
                 Console.WriteLine($"{skillName} 의 지속 턴이 1 감소했습니다. → 남은 턴: {activeSkills[skillName]}");
 
-                SkillTickEffact(skillName,target);
+                SkillTickEffact(skillName);
 
                 if (activeSkills.ContainsKey(skillName) && activeSkills[skillName] <= 0)
                 {
@@ -349,23 +355,23 @@ namespace newgame
         }
 
         #region 스킬 효과
-
-        // ④ 틱 효과로 죽을 수 있게 처리 (소유자 this가 가해자 역할)
-        protected virtual void SkillTickEffact(string skill, Character target)
+        protected virtual void SkillTickEffact(string skill)
         {
+            Console.WriteLine();
             switch (skill)
             {
                 case "파이어볼":
-                    UiHelper.TxtOut([$"{target.MyStatus.Name} 은/는 화상 데미지를 입었다! (체력 -1)"]);
-                    target.MyStatus.Hp--;
-                    if (target.MyStatus.Hp <= 0)
-                    {
-                        target.Dead(this);
-                    }
+                    Console.WriteLine($"{MyStatus.Name} 은/는 화상 데미지를 입었다! (체력 -1)");
+                    MyStatus.Hp--;
                     break;
                 default:
                     Console.WriteLine($"{skill} 에 대해 처리할 매턴 효과가 없습니다.");
                     break;
+            }
+
+            if (MyStatus.Hp <= 0)
+            {
+                Dead(target);
             }
         }
         #endregion
@@ -376,7 +382,7 @@ namespace newgame
         protected int Damage(Character target, int damage)
         {
             // A: 공격자 공격력, D: 대상 방어력, K: 고정값(데미지가 절반이 되는 지점, 예: 100 : 받는 데미지 50%)
-            int A = MyStatus.ATK;
+            int A = damage;
             int D = target.Status.DEF;
             int K = 50;
 
@@ -391,13 +397,45 @@ namespace newgame
         #region 플레이어&적 정보
         protected int[] beforHP = new int[2];
 
+        // Character 클래스 내 ShowBattleInfo 메서드 교체
         public void ShowBattleInfo(Character target, string[] log)
         {
+            // ============================================================
+            // 개편 목표 (Pseudocode):
+            // 1. 좌/우(공통) 레이아웃 통일
+            // 2. 중복 if 블록 제거
+            // 3. 고정 폭 컬럼 정렬 (Name / Lv / Hp)
+            // 4. log[0], log[1] 를 우측 메시지 영역에 자연스럽게 표시
+            // 5. 널/범위 안전 처리
+            // ============================================================
+
             Console.Clear();
 
-            Console.WriteLine($"Name.{MyStatus.Name} \t Name.{target.MyStatus.Name} \t {log[0]}");
-            Console.WriteLine($"Lv.{MyStatus.level} \t\t Lv.{target.MyStatus.level} \t\t {log[1]}");
-            Console.WriteLine($"Hp.{MyStatus.Hp} \t\t Hp.{target.MyStatus.Hp}");
+            // 안전 처리
+            log ??= Array.Empty<string>();
+            string msg0 = log.Length > 0 ? log[0] ?? "" : "";
+            string msg1 = log.Length > 1 ? log[1] ?? "" : "";
+
+            // 좌측/우측 캐릭터 결정
+            // 기존 로직 유지: target 이 Monster 이면 (플레이어 vs 몬스터) 형태 출력
+            bool leftIsThis = target is Monster;
+            Character left = leftIsThis ? this : target;
+            Character right = leftIsThis ? target : this;
+
+            // 컬럼 폭 정의
+            const int colWidth = 22;
+            string Col(string text) => text.Length >= colWidth ? text[..(colWidth - 1)] + " " : text.PadRight(colWidth);
+
+            // 1줄: 이름 + 메시지(log[0])
+            // 2줄: 레벨 + 메시지(log[1])
+            // 3줄: HP
+            var line1 = $"{Col($"Name.{left.MyStatus.Name}")}{Col($"Name.{right.MyStatus.Name}")}{msg0}";
+            var line2 = $"{Col($"Lv.{left.MyStatus.level}")}{Col($"Lv.{right.MyStatus.level}")}{msg1}";
+            var line3 = $"{Col($"Hp.{left.MyStatus.Hp}")}{Col($"Hp.{right.MyStatus.Hp}")}";
+
+            Console.WriteLine(line1);
+            Console.WriteLine(line2);
+            Console.WriteLine(line3);
         }
         #endregion
     }

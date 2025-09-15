@@ -27,6 +27,7 @@
 
             player.EnteringBattle(monster);
             monster.EnteringBattle(player);
+
             while (true)
             {
                 int attackerIdx = current;
@@ -42,11 +43,6 @@
                 {
                     attacker.Attack(defender);
                 }
-
-                //if (log != null)
-                //{
-                //    GameManager.Instance.player.ShowBattleInfo(GameManager.Instance.monster, log);
-                //}
 
                 // 1) 공격자가 '도주' 선택했으면 종료
                 if (attacker.isbattleRun)

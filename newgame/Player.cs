@@ -14,7 +14,7 @@ namespace newgame
         {
             Create();
         }
-        
+
         #region 플레이어 생성
         void Create()
         {
@@ -59,20 +59,16 @@ namespace newgame
         #region 스텟 표시
         public void ShowStat()
         {
-            TextDisplayConfig.SlowTxtOut = true;
-            TextDisplayConfig.SlowTxtOutTime = 1;
-            TextDisplayConfig.SlowTxtLineTime = 0;
-
             UiHelper.TxtOut(new string[] {
-                    $"이름 : {MyStatus.Name}",
-                    $"  레벨 : {MyStatus.level}",
-                    $"  체력 : {MyStatus.Hp}/{MyStatus.maxHp}",
-                    $"  공격력 : {MyStatus.ATK}",
-                    $"  방어력 : {MyStatus.DEF}",
-                    $"  마나 : {MyStatus.mp}/{MyStatus.maxMp}",
-                    $"  골드 : {MyStatus.gold}",
-                    $"  경험치 : {MyStatus.exp}/{MyStatus.nextEXP}"
-                });
+                        $"이름 : {MyStatus.Name}",
+                        $"  레벨 : {MyStatus.level}",
+                        $"  체력 : {MyStatus.Hp}/{MyStatus.maxHp}",
+                        $"  공격력 : {MyStatus.ATK}",
+                        $"  방어력 : {MyStatus.DEF}",
+                        $"  마나 : {MyStatus.mp}/{MyStatus.maxMp}",
+                        $"  골드 : {MyStatus.gold}",
+                        $"  경험치 : {MyStatus.exp}/{MyStatus.nextEXP}"
+                    }, SlowTxtOut: true, SlowTxtLineTime: 0, SlowTxtOutTime: 1);
         }
         #endregion
 
@@ -120,11 +116,11 @@ namespace newgame
             //선택메뉴에 띄울 옵션들
             string[] menuOptions = new string[]
             {
-                "공격",
-                "스킬",
-                "아이템",
-                "탐색",
-                "포기"
+                    "공격",
+                    "스킬",
+                    "아이템",
+                    "탐색",
+                    "포기"
             };
 
             //플레이어가 선택지를 선택(Enter)할때까지 반복
@@ -261,7 +257,7 @@ namespace newgame
             {
                 case "파이어볼":
                     {
-                        AddTickSkill(useSkill.name, useSkill.skillTurn);
+                        EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
                         break;
                     }
                 case "아쿠아 볼":
@@ -293,6 +289,13 @@ namespace newgame
                 Lobby lobby = new Lobby();
                 lobby.Start();
                 isbattleRun = false;
+            }
+            //만약 실패할시 플레이어에게 실패 메세지를 띄움
+            else
+            {
+                isbattleRun = false;
+                Console.WriteLine("도망치는데 실패했다");
+                UiHelper.WaitForInput("[ENTER]를 눌러 계속");
             }
         }
 

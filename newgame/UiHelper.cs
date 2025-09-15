@@ -6,20 +6,32 @@ namespace newgame
     {
 
         #region 선택 메뉴
-        public static int SelectMenu(string[] options)
+        public static int SelectMenu(string[] options, string? upTxt = null)
         {
             int lineCoordinate;
             int selected = 0;
             bool firstRun = false;
+            int test = 0;
 
             ConsoleKey key;
 
             lineCoordinate = Console.CursorTop + options.Length;
 
+            if (upTxt != null)
+            {
+                Console.WriteLine(upTxt + test);
+                lineCoordinate++;
+            }
+
             do
             {
                 if (firstRun)
                 {
+                    if (upTxt != null)
+                    {
+                        Console.WriteLine(upTxt + test);
+                        test++;
+                    }
                     ClearMenuLines(options.Length, lineCoordinate);
                 }
                 else
@@ -73,44 +85,38 @@ namespace newgame
         #endregion
 
         #region 텍스트 고급 출력
-        public static void TxtOut(string[] str)
+        public static void TxtOut(string[] str, bool SlowTxtOut = true, int SlowTxtOutTime = 30, int SlowTxtLineTime = 0)
         {
             foreach (string line in str)
             {
-                if (TextDisplayConfig.SlowTxtOut)
+                if (SlowTxtOut)
                 {
                     for (int i = 0; i < line.Length; i++)
                     {
                         Console.Write(line[i]);
-                        Thread.Sleep(TextDisplayConfig.SlowTxtOutTime);
+                        Thread.Sleep(SlowTxtOutTime);
                     }
 
                     Console.WriteLine();
-                    Thread.Sleep(TextDisplayConfig.SlowTxtLineTime);
+                    Thread.Sleep(SlowTxtLineTime);
                 }
                 else
                 {
                     Console.WriteLine(line);
-                    Thread.Sleep(TextDisplayConfig.SlowTxtLineTime);
+                    Thread.Sleep(SlowTxtLineTime);
                 }
             }
         }
         #endregion
 
         #region 입력 대기
-        public static void WaitForInput(string message)
+        public static void WaitForInput(string message = "[ENTER]를 눌러 계속")
         {
             Console.WriteLine(message);
             Console.ReadKey();
+            return;
         }
         #endregion
 
-    }
-
-    public static class TextDisplayConfig
-    {
-        public static bool SlowTxtOut = false;
-        public static int SlowTxtOutTime = 0;
-        public static int SlowTxtLineTime = 0;
     }
 }

@@ -110,10 +110,6 @@ namespace newgame
 
         public void ShowStatus()
         {
-            TextDisplayConfig.SlowTxtOut = true;
-            TextDisplayConfig.SlowTxtOutTime = 1;
-            TextDisplayConfig.SlowTxtLineTime = 0;
-
             UiHelper.TxtOut([
                 $"이름 : {Name}",
                 $"  레벨 : {level}",
@@ -123,7 +119,7 @@ namespace newgame
                 $"  마나 : {mp}/{maxMp}",
                 $"  골드 : {gold}",
                 $"  경험치 : {exp} / {nextEXP}"
-                ]);
+                ],true,1,0);
         }
 
         public void ShowInventory()

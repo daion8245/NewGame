@@ -15,7 +15,8 @@
             }
             Console.Clear();
 
-            MyStatus.ShowStatus();
+            UiHelper.TxtOut([$"{MyStatus.Name}이(가) 나타났다!",""]);
+            UiHelper.WaitForInput();
         }
 
         public override void Dead(Character target)//override = 상속 (상속받은 dead 함수를 호출한다 다른 대상은 target으로 설정한다)
