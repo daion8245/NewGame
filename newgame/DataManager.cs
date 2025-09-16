@@ -210,46 +210,46 @@ namespace newgame
                 {
                     if (line == "#")
                     {
-                        // GameManager 에서 monster 리스트에 등록하기
+                        monStat.charType = CharType.MONSTER;
                         GameManager.Instance.SetMonsterInfo(monStat);
                         monStat = new Status();
                         continue;
                     }
 
-                    // 문자열 자르기 ( 해당 형식은 ":" 를 기준으로 문자열을 구분하고 있음 )
                     string[] curLine = line.Split(':');
-                    //if (curLine[0].Trim() == "TYPE")                 // Type 일 때
-                    //{
-                    //    monStat.charType = (CharType)Enum.Parse(typeof(CharType), curLine[1].Trim());
-                    //}
-                    if (curLine[0].Trim() == "NAME")           // NAME 일 때
+                    if (curLine.Length < 2)
                     {
-                        monStat.Name = curLine[1].Trim();
+                        continue;
                     }
-                    else if (curLine[0].Trim() == "LEVEL")           // STAT 일 때
+
+                    string key = curLine[0].Trim().ToUpperInvariant();
+                    string value = curLine[1].Trim();
+
+                    switch (key)
                     {
-                        monStat.level = int.Parse(curLine[1].Trim());
-                    }
-                    else if (curLine[0].Trim() == "hp")          // PRICE 일 때
-                    {
-                        monStat.Hp = int.Parse(curLine[1].Trim());
-                        monStat.maxHp = monStat.Hp;
-                    }
-                    else if (curLine[0].Trim() == "ATK")
-                    {
-                        monStat.ATK = int.Parse(curLine[1].Trim());
-                    }
-                    else if (curLine[0].Trim() == "DEF")
-                    {
-                        monStat.DEF = int.Parse(curLine[1].Trim());
-                    }
-                    else if (curLine[0].Trim() == "EXP")
-                    {
-                        monStat.exp = int.Parse(curLine[1].Trim());
-                    }
-                    else if (curLine[0].Trim() == "gold")
-                    {
-                        monStat.gold = int.Parse(curLine[1].Trim());
+                        case "NAME":
+                            monStat.Name = value;
+                            break;
+                        case "LEVEL":
+                            monStat.level = int.Parse(value);
+                            break;
+                        case "HP":
+                            monStat.Hp = int.Parse(value);
+                            monStat.maxHp = monStat.Hp;
+                            break;
+                        case "ATK":
+                            monStat.ATK = int.Parse(value);
+                            break;
+                        case "DEF":
+                            monStat.DEF = int.Parse(value);
+                            break;
+                        case "EXP":
+                            monStat.exp = int.Parse(value);
+                            break;
+                        case "GOLD":
+                        case "COIN":
+                            monStat.gold = int.Parse(value);
+                            break;
                     }
                 }
             }
@@ -290,51 +290,57 @@ namespace newgame
                 string[] lines = File.ReadAllLines(filePath);
 
                 Status BossStat = new Status();
+                List<string> skillNames = new List<string>();
 
                 foreach (string line in lines)
                 {
                     if (line == "#")
                     {
-                        // GameManager 에서 monster 리스트에 등록하기
-                        GameManager.Instance.SetBossInfo(BossStat);
+                        BossStat.charType = CharType.MONSTER;
+                        int bossKey = GameManager.Instance.SetBossInfo(BossStat);
+                        GameManager.Instance.SetBossSkills(bossKey, skillNames);
                         BossStat = new Status();
+                        skillNames = new List<string>();
                         continue;
                     }
 
-                    // 문자열 자르기 ( 해당 형식은 ":" 를 기준으로 문자열을 구분하고 있음 )
                     string[] curLine = line.Split(':');
-                    //if (curLine[0].Trim() == "TYPE")                 // Type 일 때
-                    //{
-                    //    monStat.charType = (CharType)Enum.Parse(typeof(CharType), curLine[1].Trim());
-                    //}
-                    if (curLine[0].Trim() == "NAME")           // NAME 일 때
+                    if (curLine.Length < 2)
                     {
-                        BossStat.Name = curLine[1].Trim();
+                        continue;
                     }
-                    else if (curLine[0].Trim() == "LEVEL")           // STAT 일 때
+
+                    string key = curLine[0].Trim().ToUpperInvariant();
+                    string value = curLine[1].Trim();
+
+                    switch (key)
                     {
-                        BossStat.level = int.Parse(curLine[1].Trim());
-                    }
-                    else if (curLine[0].Trim() == "hp")          // PRICE 일 때
-                    {
-                        BossStat.Hp = int.Parse(curLine[1].Trim());
-                        BossStat.maxHp = BossStat.Hp;
-                    }
-                    else if (curLine[0].Trim() == "ATK")
-                    {
-                        BossStat.ATK = int.Parse(curLine[1].Trim());
-                    }
-                    else if (curLine[0].Trim() == "DEF")
-                    {
-                        BossStat.DEF = int.Parse(curLine[1].Trim());
-                    }
-                    else if (curLine[0].Trim() == "EXP")
-                    {
-                        BossStat.exp = int.Parse(curLine[1].Trim());
-                    }
-                    else if (curLine[0].Trim() == "gold")
-                    {
-                        BossStat.gold = int.Parse(curLine[1].Trim());
+                        case "NAME":
+                            BossStat.Name = value;
+                            break;
+                        case "LEVEL":
+                            BossStat.level = int.Parse(value);
+                            break;
+                        case "HP":
+                            BossStat.Hp = int.Parse(value);
+                            BossStat.maxHp = BossStat.Hp;
+                            break;
+                        case "ATK":
+                            BossStat.ATK = int.Parse(value);
+                            break;
+                        case "DEF":
+                            BossStat.DEF = int.Parse(value);
+                            break;
+                        case "EXP":
+                            BossStat.exp = int.Parse(value);
+                            break;
+                        case "GOLD":
+                        case "COIN":
+                            BossStat.gold = int.Parse(value);
+                            break;
+                        case "SKILL":
+                            skillNames.Add(value);
+                            break;
                     }
                 }
             }

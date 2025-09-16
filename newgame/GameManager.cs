@@ -23,7 +23,8 @@ namespace newgame
 
         #region 몬스터 정보
         Dictionary<int, Status> monsterInfo = new Dictionary<int, Status>();
-        List<int> bossCount = new List<int>();
+        int bossCount = 1;
+        readonly Dictionary<int, List<string>> bossSkills = new Dictionary<int, List<string>>();
 
         public void SetMonsterInfo(Status _stat)
         {
@@ -31,10 +32,53 @@ namespace newgame
             monsterInfo.Add(key, _stat);
         }
 
-        public void SetBossInfo(Status _stat)
+        public int SetBossInfo(Status _stat)
         {
-            int key = 100 + (bossCount.Count);
+            int key = 100 + bossCount;
             monsterInfo.Add(key, _stat);
+            bossCount++;
+            return key;
+        }
+
+        public void SetBossSkills(int bossKey, IEnumerable<string> skillNames)
+        {
+            List<string> names = new List<string>();
+            foreach (string name in skillNames)
+            {
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    names.Add(name.Trim());
+                }
+            }
+
+            if (names.Count > 0)
+            {
+                bossSkills[bossKey] = names;
+            }
+        }
+
+        public List<SkillType> GetBossSkills(int bossKey)
+        {
+            List<SkillType> results = new List<SkillType>();
+
+            if (bossSkills.TryGetValue(bossKey, out List<string>? names) && names != null)
+            {
+                foreach (string name in names)
+                {
+                    var skill = FindSkillByName(name);
+                    if (skill != null)
+                    {
+                        results.Add(skill.Value);
+                    }
+                }
+            }
+
+            if (results.Count == 0)
+            {
+                results.AddRange(GetSkills());
+            }
+
+            return results;
         }
 
         public Status GetMonsterStat(int _key)
