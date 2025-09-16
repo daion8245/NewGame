@@ -1,8 +1,10 @@
-﻿NAME : 스켈레톤
+NAME : 스켈레톤
 LEVEL : 2
 hp : 30
 ATK : 4
 DEF : 3
 EXP : 10
 COIN : 15
+SKILL : 파이어볼
+SKILL : 아쿠아 볼
 #

@@ -17,6 +17,7 @@ namespace newgame
         {
             DataManager.Instance.LoadAllEquipData();
             DataManager.Instance.LoadEnemyData();
+            DataManager.Instance.LoadBossData();
             DataManager.Instance.LoadDungeonMap();
             DataManager.Instance.LoadSkillData();
             GameManager.Instance.SetItemList();
