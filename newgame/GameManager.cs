@@ -4,7 +4,7 @@ namespace newgame
 {
     internal class GameManager
     {
-        static GameManager instance;
+        static GameManager? instance;
 
         public static GameManager Instance
         {
@@ -18,8 +18,8 @@ namespace newgame
             }
         }
 
-        public Player player;
-        public Monster monster;
+        public Player? player;
+        public Monster? monster;
 
         #region 몬스터 정보
         Dictionary<int, Status> monsterInfo = new Dictionary<int, Status>();

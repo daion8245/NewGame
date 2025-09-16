@@ -8,11 +8,11 @@ namespace newgame
     //능력치를 가지고 있는 모든 캐릭터의 부모 클래스
     internal class Character
     {
-        Status Status;
+        Status? Status;
 
         public Status MyStatus
         {
-            get => Status;
+            get => Status ?? new Status();
             protected set => Status = value;
         }
 

@@ -6,7 +6,7 @@ namespace newgame
 {
     public class DataManager
     {
-        static DataManager instance;
+        static DataManager? instance;
         public static DataManager Instance
         {
             get
