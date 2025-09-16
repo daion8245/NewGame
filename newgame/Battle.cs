@@ -48,7 +48,11 @@
                 if (attacker.isbattleRun)
                     break;
 
-                // 2) 피격자가 죽었으면 즉시 종료
+                // 2) 행동자가 지속 피해 등으로 쓰러졌으면 종료
+                if (attacker.IsDead)
+                    break;
+
+                // 3) 피격자가 죽었으면 즉시 종료
                 if (defender.IsDead)
                     break;
 

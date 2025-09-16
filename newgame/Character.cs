@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 
 namespace newgame
@@ -27,6 +29,11 @@ namespace newgame
         public bool isbattleRun = false;
 
         protected static readonly string[] battleLog = new string[2];
+        private static readonly List<string>[] pendingEffectLogs =
+        {
+            new List<string>(),
+            new List<string>()
+        };
 
         protected static string[] SnapshotBattleLog()
         {
@@ -41,6 +48,46 @@ namespace newgame
         {
             battleLog[0] = string.Empty;
             battleLog[1] = string.Empty;
+
+            pendingEffectLogs[0].Clear();
+            pendingEffectLogs[1].Clear();
+        }
+
+        private static int GetBattleLogIndex(Character actor)
+        {
+            return IsPlayer(actor) ? 0 : 1;
+        }
+
+        private static void AppendEffectMessage(Character attacker, string message)
+        {
+            message = string.IsNullOrWhiteSpace(message) ? string.Empty : message.Trim();
+            if (string.IsNullOrEmpty(message))
+            {
+                return;
+            }
+
+            int index = GetBattleLogIndex(attacker);
+            pendingEffectLogs[index].Add(message);
+        }
+
+        private static string ComposeLogMessage(string? baseMessage, List<string> extras)
+        {
+            List<string> segments = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(baseMessage))
+            {
+                segments.Add(baseMessage.Trim());
+            }
+
+            foreach (string extra in extras)
+            {
+                if (!string.IsNullOrWhiteSpace(extra))
+                {
+                    segments.Add(extra.Trim());
+                }
+            }
+
+            return segments.Count == 0 ? string.Empty : string.Join(Environment.NewLine, segments);
         }
 
         protected static bool IsPlayer(Character actor)
@@ -52,21 +99,14 @@ namespace newgame
         {
             message ??= string.Empty;
 
-            if (IsPlayer(attacker))
+            int index = GetBattleLogIndex(attacker);
+            int opponentIndex = (index + 1) % battleLog.Length;
+
+            battleLog[index] = message;
+
+            if (clearOpponentMessage)
             {
-                battleLog[0] = message;
-                if (clearOpponentMessage)
-                {
-                    battleLog[1] = string.Empty;
-                }
-            }
-            else
-            {
-                battleLog[1] = message;
-                if (clearOpponentMessage)
-                {
-                    battleLog[0] = string.Empty;
-                }
+                battleLog[opponentIndex] = string.Empty;
             }
         }
 
@@ -111,8 +151,12 @@ namespace newgame
                 return SnapshotBattleLog();
             }
 
+            if (!ResolveSkillTicks())
+            {
+                return SnapshotBattleLog();
+            }
+
             int damage = Damage(target, MyStatus.ATK);
-            TickSkillTurns();
 
             bool defeated = target.Status.Hp <= 0;
             string message = BuildActionMessage(this, target, damage, null, defeated);
@@ -125,13 +169,13 @@ namespace newgame
             if (defeated)
             {
                 Thread.Sleep(1000);
-                target.Dead(this); 
+                target.Dead(this);
                 // 여기서 Dead를 호출한 후에도 함수는 계속 진행됨
             }
-            
+
             beforHP[0] = MyStatus.Hp;
             beforHP[1] = target.MyStatus.Hp;
-            
+
             return SnapshotBattleLog(); // 함수가 정상 종료됨
         }
         #endregion
@@ -150,8 +194,12 @@ namespace newgame
                 return SnapshotBattleLog();
             }
 
+            if (!ResolveSkillTicks())
+            {
+                return SnapshotBattleLog();
+            }
+
             int damage = Damage(target, skill.skillDamage);
-            TickSkillTurns();
 
             bool defeated = target.Status.Hp <= 0;
             string message = BuildActionMessage(this, target, damage, skill.name, defeated);
@@ -355,12 +403,55 @@ namespace newgame
         //이름과 지속 턴을 받아서 딕셔너리에 추가
         protected virtual void AddTickSkill(string skillName, int duration)
         {
+            if (duration <= 0)
+            {
+                return;
+            }
+
             this.activeSkills[skillName] = duration;
         }
 
         protected virtual void EnemyAddTickSkill(string skillName, int duration)
         {
+            if (target == null || duration <= 0)
+            {
+                return;
+            }
+
             target.activeSkills[skillName] = duration;
+        }
+
+        private bool ResolveSkillTicks()
+        {
+            if (IsDead || MyStatus.Hp <= 0)
+            {
+                return false;
+            }
+
+            if (activeSkills.Count == 0)
+            {
+                return true;
+            }
+
+            TickSkillTurns();
+
+            if (MyStatus.Hp <= 0)
+            {
+                Character attacker = target ?? this;
+
+                ShowBattleInfo(attacker, battleLog);
+
+                Thread.Sleep(1000);
+
+                if (!IsDead)
+                {
+                    Dead(attacker);
+                }
+
+                return false;
+            }
+
+            return !IsDead && MyStatus.Hp > 0;
         }
 
         protected virtual void TickSkillTurns()
@@ -370,13 +461,14 @@ namespace newgame
             foreach (var skillName in keys)
             {
                 if (!activeSkills.ContainsKey(skillName))
+                {
                     continue;
+                }
 
-                Console.WriteLine();
-                activeSkills[skillName] = activeSkills[skillName] - 1;
-                Console.WriteLine($"{skillName} 의 지속 턴이 1 감소했습니다. → 남은 턴: {activeSkills[skillName]}");
+                int remainingTurn = activeSkills[skillName] - 1;
+                activeSkills[skillName] = remainingTurn;
 
-                SkillTickEffact(skillName);
+                SkillTickEffact(skillName, remainingTurn);
 
                 if (activeSkills.ContainsKey(skillName) && activeSkills[skillName] <= 0)
                 {
@@ -387,24 +479,34 @@ namespace newgame
         }
 
         #region 스킬 효과
-        protected virtual void SkillTickEffact(string skill)
+        protected virtual void SkillTickEffact(string skill, int remainingTurn)
         {
-            Console.WriteLine();
             switch (skill)
             {
                 case "파이어볼":
-                    Console.WriteLine($"{MyStatus.Name} 은/는 화상 데미지를 입었다! (체력 -1)");
-                    MyStatus.Hp--;
+                    ApplyOverTimeDamage(skill, 1, remainingTurn);
                     break;
                 default:
-                    Console.WriteLine($"{skill} 에 대해 처리할 매턴 효과가 없습니다.");
                     break;
             }
+        }
 
-            if (MyStatus.Hp <= 0)
+        private void ApplyOverTimeDamage(string skillName, int rawDamage, int remainingTurn)
+        {
+            if (rawDamage <= 0)
             {
-                Dead(target);
+                return;
             }
+
+            int damage = Damage(this, rawDamage);
+            Character attacker = this.target ?? this;
+            bool defeated = MyStatus.Hp <= 0;
+
+            string turnInfo = remainingTurn > 0 ? $" (남은 턴: {remainingTurn})" : string.Empty;
+            string labelBase = string.IsNullOrWhiteSpace(skillName) ? "지속 효과" : $"{skillName} 지속 피해";
+            string message = BuildActionMessage(attacker, this, damage, labelBase + turnInfo, defeated);
+
+            AppendEffectMessage(attacker, message);
         }
         #endregion
 
@@ -486,17 +588,54 @@ namespace newgame
 
             string playerLine = FormatStatus("플레이어", playerStatus);
             string monsterLine = FormatStatus("몬스터  ", monsterStatus);
-            string playerMsg = $"플레이어 ▶ {msg0}";
-            string monsterMsg = $"몬스터   ▶ {msg1}";
+            string combinedPlayerMsg = ComposeLogMessage(msg0, pendingEffectLogs[0]);
+            string combinedMonsterMsg = ComposeLogMessage(msg1, pendingEffectLogs[1]);
 
             Console.WriteLine(border);
             Console.WriteLine(Fit(playerLine, width));
             Console.WriteLine(Fit(monsterLine, width));
             Console.WriteLine(divider);
-            Console.WriteLine(Fit(playerMsg, width));
-            Console.WriteLine(Fit(monsterMsg, width));
+            WriteLogBlock("플레이어", combinedPlayerMsg, width);
+            WriteLogBlock("몬스터  ", combinedMonsterMsg, width);
+            pendingEffectLogs[0].Clear();
+            pendingEffectLogs[1].Clear();
             Console.WriteLine(border);
             Console.WriteLine();
+
+            static void WriteLogBlock(string label, string message, int width)
+            {
+                string baseLabel = $"{label} ▶";
+
+                if (string.IsNullOrWhiteSpace(message))
+                {
+                    Console.WriteLine(Fit(baseLabel, width));
+                    return;
+                }
+
+                string[] lines = message.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+
+                if (lines.Length == 0)
+                {
+                    Console.WriteLine(Fit(baseLabel, width));
+                    return;
+                }
+
+                string firstContent = lines[0].Trim();
+                Console.WriteLine(Fit($"{baseLabel} -> {firstContent}", width));
+
+                string continuationLabel = new string(' ', baseLabel.Length);
+
+                for (int i = 1; i < lines.Length; i++)
+                {
+                    string content = lines[i].Trim();
+                    if (string.IsNullOrEmpty(content))
+                    {
+                        continue;
+                    }
+
+                    Console.WriteLine(Fit($"{continuationLabel} -> {content}", width));
+                }
+            }
         }
         #endregion
     }
