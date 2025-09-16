@@ -16,7 +16,7 @@ namespace newgame
     {
         #region Status
         public CharType charType;
-        public string Name;
+        public string Name = "";
         public int level;
         [JsonProperty]
         int atk;
@@ -27,7 +27,7 @@ namespace newgame
             {
                 if (charType == CharType.PLAYER)
                 {
-                    Equipment equip = null;
+                    Equipment? equip = null;
 
                     equip = Inventory.Instance.GetEquip(EquipType.HELMET);
                     int helmet = equip == null ? 0 : equip.GetEquipStat;
@@ -54,7 +54,7 @@ namespace newgame
             {
                 if (charType == CharType.PLAYER)
                 {
-                    Equipment equip = null;
+                    Equipment? equip = null;
 
                     equip = Inventory.Instance.GetEquip(EquipType.SHIRT);
                     int shirt = equip == null ? 0 : equip.GetEquipStat;
@@ -91,7 +91,7 @@ namespace newgame
         }
         int GetStrAtk()
         {
-            Equipment equip = null;
+            Equipment? equip = null;
 
             equip = Inventory.Instance.GetEquip(EquipType.WEAPON);
             int weapon = equip == null ? 0 : equip.GetEquipStat;

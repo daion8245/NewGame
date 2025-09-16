@@ -6,7 +6,7 @@ namespace newgame
     [JsonObject(MemberSerialization.Fields)]
     internal class Inventory
     {
-        static Inventory instance;
+        static Inventory? instance;
         //외부에서 접근할 수 있도록 static 형식으로 자신을 호출할 때 사용한다.
         //Instance = 싱글톤 이라고도 한다.
         public static Inventory Instance
@@ -144,7 +144,6 @@ namespace newgame
                 }
 
                 string equipName = "없음";
-                string? upType = null;
                 if (equips.ContainsKey(type) && equips[type] != null)
                 {
                     equipName = equips[type].GetEquipName;
