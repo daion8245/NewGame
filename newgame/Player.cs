@@ -190,13 +190,11 @@ namespace newgame
                 case 0:
                     {
                         Attack(target);
-                        ShowBattleInfo(target, battleLog);
                         break;
                     }
                 case 1:
                     {
                         BattleSkillLogic(target);
-                        ShowBattleInfo(target, battleLog);
                         break;
                     }
                 case 2:
@@ -243,15 +241,13 @@ namespace newgame
 
         void BattleSkillLogic(Character target)
         {
-            battleLog[0] = "";
-            battleLog[1] = "";
             SkillType useSkill = ShowSkillList();
-            battleLog = UseAttackSkill(useSkill);
+            if (string.IsNullOrWhiteSpace(useSkill.name))
+            {
+                return;
+            }
 
-            ShowBattleInfo(target, battleLog);
-
-            // 스킬 특수효과 추가 처리
-            if (useSkill.name == null) return;
+            UseAttackSkill(useSkill);
 
             switch (useSkill.name)
             {

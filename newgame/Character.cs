@@ -26,10 +26,63 @@ namespace newgame
         //플레이어가 전투에서 도망쳤는지
         public bool isbattleRun = false;
 
-        //전투 중 발생하는 안내·로그 문구를 모든 객체가 함께 쓰는 정적 문자열 버퍼로 모아두는 변수
-        private static string BattleInfoStr = "";
+        protected static readonly string[] battleLog = new string[2];
 
-        protected static string[] battleLog = new string[2];
+        protected static string[] SnapshotBattleLog()
+        {
+            return new[]
+            {
+                battleLog[0] ?? string.Empty,
+                battleLog[1] ?? string.Empty
+            };
+        }
+
+        protected static void ResetBattleLog()
+        {
+            battleLog[0] = string.Empty;
+            battleLog[1] = string.Empty;
+        }
+
+        protected static bool IsPlayer(Character actor)
+        {
+            return ReferenceEquals(actor, GameManager.Instance.player);
+        }
+
+        private void UpdateBattleMessage(Character attacker, string message, bool clearOpponentMessage)
+        {
+            message ??= string.Empty;
+
+            if (IsPlayer(attacker))
+            {
+                battleLog[0] = message;
+                if (clearOpponentMessage)
+                {
+                    battleLog[1] = string.Empty;
+                }
+            }
+            else
+            {
+                battleLog[1] = message;
+                if (clearOpponentMessage)
+                {
+                    battleLog[0] = string.Empty;
+                }
+            }
+        }
+
+        private static string BuildActionMessage(Character attacker, Character defender, int damage, string? actionName, bool targetDefeated)
+        {
+            string label = string.IsNullOrWhiteSpace(actionName) ? "공격" : actionName!;
+            string prefix = $"{attacker.MyStatus.Name}의 {label}!";
+            string suffix = $"{defender.MyStatus.Name}은 {damage}의 피해를 입었다. 남은 체력: {defender.MyStatus.Hp}/{defender.MyStatus.maxHp}";
+
+            if (targetDefeated)
+            {
+                suffix += " (쓰러짐)";
+            }
+
+            return $"{prefix} {suffix}";
+        }
 
         #region 전투 진입
         Character? target;
@@ -37,6 +90,11 @@ namespace newgame
         public void EnteringBattle(Character target)
         {
             this.target = target;
+
+            if (IsPlayer(this))
+            {
+                ResetBattleLog();
+            }
         }
         #endregion
 
@@ -48,48 +106,32 @@ namespace newgame
         /// <returns></returns>
         public virtual string[] Attack(Character target)
         {
-            battleLog[0] = "";
-            battleLog[1] = "";
+            if (target == null)
+            {
+                return SnapshotBattleLog();
+            }
+
             int damage = Damage(target, MyStatus.ATK);
             TickSkillTurns();
 
-            if (target.Status.Hp <= 0)
-            {
-                Console.WriteLine();
-                Console.WriteLine($"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: 0");
-                Thread.Sleep(1000);
-                Console.WriteLine();
-                target.Dead(this);
-                return new string[] { " ", " " };
-            }
+            bool defeated = target.Status.Hp <= 0;
+            string message = BuildActionMessage(this, target, damage, null, defeated);
 
-            // 0번: 플레이어 메시지, 1번: 몬스터 메시지
-            string[] messages = new string[2];
-            if (this == GameManager.Instance.player)
+            bool clearOpponent = IsPlayer(this);
+            UpdateBattleMessage(this, message, clearOpponent);
+
+            ShowBattleInfo(target, battleLog);
+
+            if (defeated)
             {
-                messages[0] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.Hp}";
-                BattleInfoStr = messages[0];
-                messages[1] = "";
-            }
-            else
-            {
-                if (BattleInfoStr != "")
-                {
-                    messages[0] = BattleInfoStr;
-                }
-                else
-                {
-                    messages[0] = "";
-                }
-                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name}은 {damage} 만큼의 데미지를 받았다 {target.Status.Name}의 남은 체력: {target.Status.Hp}";
+                Thread.Sleep(1000);
+                target.Dead(this);
             }
 
             beforHP[0] = MyStatus.Hp;
             beforHP[1] = target.MyStatus.Hp;
-            battleLog = messages;
 
-            ShowBattleInfo(target, messages);
-            return messages;
+            return SnapshotBattleLog();
         }
         #endregion
 
@@ -102,39 +144,29 @@ namespace newgame
         /// <returns></returns>
         public virtual string[] UseAttackSkill(SkillType skill)
         {
+            if (target == null || string.IsNullOrWhiteSpace(skill.name))
+            {
+                return SnapshotBattleLog();
+            }
+
             int damage = Damage(target, skill.skillDamage);
-            ShowBattleInfo(target, battleLog);
             TickSkillTurns();
 
-            // ② 틱으로 죽었을 수도 있으니 즉시 체크
-            if (target.Status.Hp <= 0)
+            bool defeated = target.Status.Hp <= 0;
+            string message = BuildActionMessage(this, target, damage, skill.name, defeated);
+
+            bool clearOpponent = IsPlayer(this);
+            UpdateBattleMessage(this, message, clearOpponent);
+
+            ShowBattleInfo(target, battleLog);
+
+            if (defeated)
             {
+                Thread.Sleep(1000);
                 target.Dead(this);
-                return new string[] { " ", " " };
             }
 
-            if (target.Status.Hp <= 0)
-            {
-                // 죽는 경우 메시지
-                string killMsg = $"{MyStatus.Name}의 공격! {target.Status.Name}은 {damage} 만큼의 데미지를 받았다 {target.Status.Name}의 남은 체력: 0";
-                Console.WriteLine(); Console.WriteLine(killMsg); Thread.Sleep(1000); Console.WriteLine();
-                target.Dead(this);
-                return new[] { " ", " " };
-            }
-
-            string[] messages = new string[2];
-            if (this == GameManager.Instance.player)
-            {
-                messages[0] = $"{MyStatus.Name}의 공격! {target.Status.Name}은 {damage} 만큼의 데미지를 받았다 {target.Status.Name}의 남은 체력: {target.Status.Hp}";
-                BattleInfoStr = messages[0];
-                messages[1] = "";
-            }
-            else
-            {
-                messages[0] = string.IsNullOrEmpty(BattleInfoStr) ? "" : BattleInfoStr;
-                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name}은 {damage} 만큼의 데미지를 받았다 {target.Status.Name}의 남은 체력: {target.Status.Hp}";
-            }
-            return messages;
+            return SnapshotBattleLog();
         }
         #endregion
 
@@ -150,8 +182,7 @@ namespace newgame
             IsDead = true;
             activeSkills.Clear();
             target.activeSkills.Clear();
-            battleLog[0] = "";
-            battleLog[1] = "";
+            ResetBattleLog();
 
             if (target == GameManager.Instance.player)
             {
@@ -400,42 +431,71 @@ namespace newgame
         // Character 클래스 내 ShowBattleInfo 메서드 교체
         public void ShowBattleInfo(Character target, string[] log)
         {
-            // ============================================================
-            // 개편 목표 (Pseudocode):
-            // 1. 좌/우(공통) 레이아웃 통일
-            // 2. 중복 if 블록 제거
-            // 3. 고정 폭 컬럼 정렬 (Name / Lv / Hp)
-            // 4. log[0], log[1] 를 우측 메시지 영역에 자연스럽게 표시
-            // 5. 널/범위 안전 처리
-            // ============================================================
-
             Console.Clear();
 
-            // 안전 처리
             log ??= Array.Empty<string>();
-            string msg0 = log.Length > 0 ? log[0] ?? "" : "";
-            string msg1 = log.Length > 1 ? log[1] ?? "" : "";
+            string msg0 = log.Length > 0 ? log[0] ?? string.Empty : string.Empty;
+            string msg1 = log.Length > 1 ? log[1] ?? string.Empty : string.Empty;
 
-            // 좌측/우측 캐릭터 결정
-            // 기존 로직 유지: target 이 Monster 이면 (플레이어 vs 몬스터) 형태 출력
-            bool leftIsThis = target is Monster;
-            Character left = leftIsThis ? this : target;
-            Character right = leftIsThis ? target : this;
+            Character? playerChar = GameManager.Instance.player;
+            Character? monsterChar = GameManager.Instance.monster;
 
-            // 컬럼 폭 정의
-            const int colWidth = 22;
-            string Col(string text) => text.Length >= colWidth ? text[..(colWidth - 1)] + " " : text.PadRight(colWidth);
+            if (playerChar == null)
+            {
+                if (this is Player)
+                {
+                    playerChar = this;
+                }
+                else if (target is Player)
+                {
+                    playerChar = target;
+                }
+            }
 
-            // 1줄: 이름 + 메시지(log[0])
-            // 2줄: 레벨 + 메시지(log[1])
-            // 3줄: HP
-            var line1 = $"{Col($"Name.{left.MyStatus.Name}")}{Col($"Name.{right.MyStatus.Name}")}{msg0}";
-            var line2 = $"{Col($"Lv.{left.MyStatus.level}")}{Col($"Lv.{right.MyStatus.level}")}{msg1}";
-            var line3 = $"{Col($"Hp.{left.MyStatus.Hp}")}{Col($"Hp.{right.MyStatus.Hp}")}";
+            if (monsterChar == null)
+            {
+                if (this is Monster)
+                {
+                    monsterChar = this;
+                }
+                else if (target is Monster)
+                {
+                    monsterChar = target;
+                }
+            }
 
-            Console.WriteLine(line1);
-            Console.WriteLine(line2);
-            Console.WriteLine(line3);
+            Status playerStatus = playerChar?.MyStatus ?? this.MyStatus;
+            Status monsterStatus = monsterChar?.MyStatus ?? (target?.MyStatus ?? this.MyStatus);
+
+            const int width = 68;
+            string border = new string('=', width);
+            string divider = new string('-', width);
+
+            static string Fit(string text, int width)
+            {
+                text ??= string.Empty;
+                return text.Length > width ? text[..(width - 3)] + "..." : text.PadRight(width);
+            }
+
+            static string FormatStatus(string label, Status status)
+            {
+                string name = string.IsNullOrWhiteSpace(status.Name) ? "??" : status.Name;
+                return $"{label} : {name}  Lv.{status.level}  HP {status.Hp}/{status.maxHp}";
+            }
+
+            string playerLine = FormatStatus("플레이어", playerStatus);
+            string monsterLine = FormatStatus("몬스터  ", monsterStatus);
+            string playerMsg = $"플레이어 ▶ {msg0}";
+            string monsterMsg = $"몬스터   ▶ {msg1}";
+
+            Console.WriteLine(border);
+            Console.WriteLine(Fit(playerLine, width));
+            Console.WriteLine(Fit(monsterLine, width));
+            Console.WriteLine(divider);
+            Console.WriteLine(Fit(playerMsg, width));
+            Console.WriteLine(Fit(monsterMsg, width));
+            Console.WriteLine(border);
+            Console.WriteLine();
         }
         #endregion
     }
