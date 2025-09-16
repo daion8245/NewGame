@@ -301,9 +301,9 @@ namespace newgame
 
         void BossCreate()
         {
-            Monster monster = new Monster();
-            GameManager.Instance.monster = monster;
-            monster.Start(100 + floor);
+            Boss boss = new Boss();
+            GameManager.Instance.monster = boss;
+            boss.StartBoss(100 + floor);
             Battle battle = new Battle();
             battle.Start();
         }
