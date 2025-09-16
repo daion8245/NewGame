@@ -38,7 +38,7 @@ namespace newgame
                 "새로운 게임",
                 "게임 불러오기",
                 "게임 종료",
-            ],$"테스트");
+            ]);
 
             Console.Clear();
             switch (sel)

@@ -8,67 +8,62 @@ namespace newgame
         #region 선택 메뉴
         public static int SelectMenu(string[] options, string? upTxt = null)
         {
-            int lineCoordinate;
             int selected = 0;
-            bool firstRun = false;
-            int test = 0;
+            int menuStartLine = Console.CursorTop;
 
-            ConsoleKey key;
-
-            lineCoordinate = Console.CursorTop + options.Length;
-
+            // Display upTxt only once at the beginning if provided
             if (upTxt != null)
             {
-                Console.WriteLine(upTxt + test);
-                lineCoordinate++;
+                Console.WriteLine(upTxt);
+                menuStartLine = Console.CursorTop;
             }
 
+            // Initial menu draw
+            DrawMenu(options, selected);
+
+            ConsoleKey key;
             do
             {
-                if (firstRun)
-                {
-                    if (upTxt != null)
-                    {
-                        Console.WriteLine(upTxt + test);
-                        test++;
-                    }
-                    ClearMenuLines(options.Length, lineCoordinate);
-                }
-                else
-                {
-                    firstRun = true;
-                }
-                for (int i = 0; i < options.Length; i++)
-                {
-                    if (i == selected)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"> {options[i]}");
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        Console.WriteLine($"  {options[i]}");
-                    }
-                }
-
                 key = Console.ReadKey(true).Key;
 
                 if (key == ConsoleKey.UpArrow)
                 {
                     selected = (selected - 1 + options.Length) % options.Length;
+                    RedrawMenu(options, selected, menuStartLine);
                 }
                 else if (key == ConsoleKey.DownArrow)
                 {
                     selected = (selected + 1) % options.Length;
+                    RedrawMenu(options, selected, menuStartLine);
                 }
 
             } while (key != ConsoleKey.Enter);
 
             Console.ResetColor();
-
             return selected;
+        }
 
+        private static void DrawMenu(string[] options, int selected)
+        {
+            for (int i = 0; i < options.Length; i++)
+            {
+                if (i == selected)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"> {options[i]}");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.WriteLine($"  {options[i]}");
+                }
+            }
+        }
+
+        private static void RedrawMenu(string[] options, int selected, int startLine)
+        {
+            Console.SetCursorPosition(0, startLine);
+            DrawMenu(options, selected);
         }
 
         const string Esc = "\u001b[";
