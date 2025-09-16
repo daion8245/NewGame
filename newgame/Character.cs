@@ -26,10 +26,43 @@ namespace newgame
         //플레이어가 전투에서 도망쳤는지
         public bool isbattleRun = false;
 
-        //전투 중 발생하는 안내·로그 문구를 모든 객체가 함께 쓰는 정적 문자열 버퍼로 모아두는 변수
-        private static string BattleInfoStr = "";
-
         protected static string[] battleLog = new string[2];
+
+        protected static string BuildBattleMessage(string attackerName, string defenderName, int damage, int remainHp, string? actionName = null)
+        {
+            string actionLabel = string.IsNullOrWhiteSpace(actionName) ? "공격" : $"[{actionName}]";
+            string baseMessage = $"{attackerName}의 {actionLabel}! {defenderName}에게 {damage}의 피해를 입혔다.";
+            return remainHp <= 0
+                ? $"{baseMessage} {defenderName}의 체력이 0이 되었다!"
+                : $"{baseMessage} (남은 체력: {remainHp})";
+        }
+
+        protected static void ApplyBattleMessage(string message, bool attackerIsPlayer)
+        {
+            if (attackerIsPlayer)
+            {
+                battleLog[0] = message;
+                battleLog[1] = string.Empty;
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(battleLog[0]))
+                {
+                    battleLog[0] = message;
+                    battleLog[1] = string.Empty;
+                }
+                else
+                {
+                    battleLog[1] = message;
+                }
+            }
+        }
+
+        internal static void ResetBattleLog()
+        {
+            battleLog[0] = string.Empty;
+            battleLog[1] = string.Empty;
+        }
 
         #region 전투 진입
         Character? target;
@@ -48,48 +81,26 @@ namespace newgame
         /// <returns></returns>
         public virtual string[] Attack(Character target)
         {
-            battleLog[0] = "";
-            battleLog[1] = "";
             int damage = Damage(target, MyStatus.ATK);
             TickSkillTurns();
 
-            if (target.Status.Hp <= 0)
-            {
-                Console.WriteLine();
-                Console.WriteLine($"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: 0");
-                Thread.Sleep(1000);
-                Console.WriteLine();
-                target.Dead(this);
-                return new string[] { " ", " " };
-            }
+            int remainHp = Math.Max(target.Status.Hp, 0);
+            bool attackerIsPlayer = ReferenceEquals(this, GameManager.Instance.player);
+            string message = BuildBattleMessage(MyStatus.Name, target.Status.Name, damage, remainHp);
 
-            // 0번: 플레이어 메시지, 1번: 몬스터 메시지
-            string[] messages = new string[2];
-            if (this == GameManager.Instance.player)
-            {
-                messages[0] = $"{MyStatus.Name}의 공격! {target.Status.Name} 은 {damage} 만큼의 데미지를 받았다 {target.Status.Name} 의 남은 체력: {target.Status.Hp}";
-                BattleInfoStr = messages[0];
-                messages[1] = "";
-            }
-            else
-            {
-                if (BattleInfoStr != "")
-                {
-                    messages[0] = BattleInfoStr;
-                }
-                else
-                {
-                    messages[0] = "";
-                }
-                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name}은 {damage} 만큼의 데미지를 받았다 {target.Status.Name}의 남은 체력: {target.Status.Hp}";
-            }
+            ApplyBattleMessage(message, attackerIsPlayer);
 
             beforHP[0] = MyStatus.Hp;
             beforHP[1] = target.MyStatus.Hp;
-            battleLog = messages;
 
-            ShowBattleInfo(target, messages);
-            return messages;
+            ShowBattleInfo(target, battleLog);
+
+            if (target.Status.Hp <= 0)
+            {
+                target.Dead(this);
+            }
+
+            return battleLog;
         }
         #endregion
 
@@ -102,39 +113,28 @@ namespace newgame
         /// <returns></returns>
         public virtual string[] UseAttackSkill(SkillType skill)
         {
+            if (string.IsNullOrWhiteSpace(skill.name))
+            {
+                return battleLog;
+            }
+
             int damage = Damage(target, skill.skillDamage);
-            ShowBattleInfo(target, battleLog);
             TickSkillTurns();
 
-            // ② 틱으로 죽었을 수도 있으니 즉시 체크
-            if (target.Status.Hp <= 0)
-            {
-                target.Dead(this);
-                return new string[] { " ", " " };
-            }
+            int remainHp = Math.Max(target.Status.Hp, 0);
+            bool attackerIsPlayer = ReferenceEquals(this, GameManager.Instance.player);
+            string message = BuildBattleMessage(MyStatus.Name, target.Status.Name, damage, remainHp, skill.name);
+
+            ApplyBattleMessage(message, attackerIsPlayer);
+
+            ShowBattleInfo(target, battleLog);
 
             if (target.Status.Hp <= 0)
             {
-                // 죽는 경우 메시지
-                string killMsg = $"{MyStatus.Name}의 공격! {target.Status.Name}은 {damage} 만큼의 데미지를 받았다 {target.Status.Name}의 남은 체력: 0";
-                Console.WriteLine(); Console.WriteLine(killMsg); Thread.Sleep(1000); Console.WriteLine();
                 target.Dead(this);
-                return new[] { " ", " " };
             }
 
-            string[] messages = new string[2];
-            if (this == GameManager.Instance.player)
-            {
-                messages[0] = $"{MyStatus.Name}의 공격! {target.Status.Name}은 {damage} 만큼의 데미지를 받았다 {target.Status.Name}의 남은 체력: {target.Status.Hp}";
-                BattleInfoStr = messages[0];
-                messages[1] = "";
-            }
-            else
-            {
-                messages[0] = string.IsNullOrEmpty(BattleInfoStr) ? "" : BattleInfoStr;
-                messages[1] = $"{MyStatus.Name}의 공격! {target.Status.Name}은 {damage} 만큼의 데미지를 받았다 {target.Status.Name}의 남은 체력: {target.Status.Hp}";
-            }
-            return messages;
+            return battleLog;
         }
         #endregion
 
@@ -150,8 +150,7 @@ namespace newgame
             IsDead = true;
             activeSkills.Clear();
             target.activeSkills.Clear();
-            battleLog[0] = "";
-            battleLog[1] = "";
+            ResetBattleLog();
 
             if (target == GameManager.Instance.player)
             {

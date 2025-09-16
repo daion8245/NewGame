@@ -21,6 +21,8 @@
 
             Character[] chars = new Character[] { player, monster };
 
+            Character.ResetBattleLog();
+
             player.isbattleRun = false;     // 필요시 monster도 false 초기화
 
             int current = 0; // 0: player, 1: monster
