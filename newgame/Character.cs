@@ -20,6 +20,7 @@ namespace newgame
         private List<ActiveItemEffect> activeEffects = new();
         //현제 지속되고 있는 스킬의 지속 효과
         protected Dictionary<string, int> activeSkills = new Dictionary<string, int>();
+        protected Dictionary<string, Character> activeSkillCasters = new();
 
         //플레이어가 죽었는지
         public bool IsDead = false;
@@ -111,13 +112,28 @@ namespace newgame
                 return SnapshotBattleLog();
             }
 
+            List<SkillTickLog> tickLogs = TickSkillTurns();
+            foreach (var log in tickLogs)
+            {
+                UpdateBattleMessage(log.Actor, log.Message, log.ClearOpponent);
+            }
+
+            bool attackerDiedFromTick = tickLogs.Any(log => ReferenceEquals(log.Target, this) && log.TargetDefeated);
+            bool preserveOpponentLog = tickLogs.Any(log => IsPlayer(log.Actor) != IsPlayer(this));
+
+            if (attackerDiedFromTick)
+            {
+                ShowBattleInfo(target, battleLog);
+                ResolveTickDeaths(tickLogs);
+                return SnapshotBattleLog();
+            }
+
             int damage = Damage(target, MyStatus.ATK);
-            TickSkillTurns();
 
             bool defeated = target.Status.Hp <= 0;
             string message = BuildActionMessage(this, target, damage, null, defeated);
 
-            bool clearOpponent = IsPlayer(this);
+            bool clearOpponent = IsPlayer(this) && !preserveOpponentLog;
             UpdateBattleMessage(this, message, clearOpponent);
 
             ShowBattleInfo(target, battleLog);
@@ -125,13 +141,15 @@ namespace newgame
             if (defeated)
             {
                 Thread.Sleep(1000);
-                target.Dead(this); 
+                target.Dead(this);
                 // 여기서 Dead를 호출한 후에도 함수는 계속 진행됨
             }
-            
+
+            ResolveTickDeaths(tickLogs);
+
             beforHP[0] = MyStatus.Hp;
             beforHP[1] = target.MyStatus.Hp;
-            
+
             return SnapshotBattleLog(); // 함수가 정상 종료됨
         }
         #endregion
@@ -150,13 +168,28 @@ namespace newgame
                 return SnapshotBattleLog();
             }
 
+            List<SkillTickLog> tickLogs = TickSkillTurns();
+            foreach (var log in tickLogs)
+            {
+                UpdateBattleMessage(log.Actor, log.Message, log.ClearOpponent);
+            }
+
+            bool attackerDiedFromTick = tickLogs.Any(log => ReferenceEquals(log.Target, this) && log.TargetDefeated);
+            bool preserveOpponentLog = tickLogs.Any(log => IsPlayer(log.Actor) != IsPlayer(this));
+
+            if (attackerDiedFromTick)
+            {
+                ShowBattleInfo(target, battleLog);
+                ResolveTickDeaths(tickLogs);
+                return SnapshotBattleLog();
+            }
+
             int damage = Damage(target, skill.skillDamage);
-            TickSkillTurns();
 
             bool defeated = target.Status.Hp <= 0;
             string message = BuildActionMessage(this, target, damage, skill.name, defeated);
 
-            bool clearOpponent = IsPlayer(this);
+            bool clearOpponent = IsPlayer(this) && !preserveOpponentLog;
             UpdateBattleMessage(this, message, clearOpponent);
 
             ShowBattleInfo(target, battleLog);
@@ -166,6 +199,8 @@ namespace newgame
                 Thread.Sleep(1000);
                 target.Dead(this);
             }
+
+            ResolveTickDeaths(tickLogs);
 
             return SnapshotBattleLog();
         }
@@ -182,7 +217,9 @@ namespace newgame
 
             IsDead = true;
             activeSkills.Clear();
+            activeSkillCasters.Clear();
             target.activeSkills.Clear();
+            target.activeSkillCasters.Clear();
             ResetBattleLog();
 
             if (target == GameManager.Instance.player)
@@ -352,58 +389,121 @@ namespace newgame
 
         #region 스킬 지속 효과
 
+        protected struct SkillTickLog
+        {
+            public SkillTickLog(Character actor, Character target, string message, bool targetDefeated, bool clearOpponent = false)
+            {
+                Actor = actor;
+                Target = target;
+                Message = message;
+                TargetDefeated = targetDefeated;
+                ClearOpponent = clearOpponent;
+            }
+
+            public Character Actor { get; }
+            public Character Target { get; }
+            public string Message { get; }
+            public bool TargetDefeated { get; }
+            public bool ClearOpponent { get; }
+        }
+
         //이름과 지속 턴을 받아서 딕셔너리에 추가
         protected virtual void AddTickSkill(string skillName, int duration)
         {
-            this.activeSkills[skillName] = duration;
+            activeSkills[skillName] = duration;
+            activeSkillCasters[skillName] = this;
         }
 
         protected virtual void EnemyAddTickSkill(string skillName, int duration)
         {
+            if (target == null)
+            {
+                return;
+            }
+
             target.activeSkills[skillName] = duration;
+            target.activeSkillCasters[skillName] = this;
         }
 
-        protected virtual void TickSkillTurns()
+        protected virtual List<SkillTickLog> TickSkillTurns()
         {
+            List<SkillTickLog> logs = new();
+
+            if (activeSkills.Count == 0)
+            {
+                return logs;
+            }
+
             var keys = new List<string>(activeSkills.Keys);
 
             foreach (var skillName in keys)
             {
-                if (!activeSkills.ContainsKey(skillName))
+                if (!activeSkills.TryGetValue(skillName, out int remain))
+                {
                     continue;
+                }
 
-                Console.WriteLine();
-                activeSkills[skillName] = activeSkills[skillName] - 1;
-                Console.WriteLine($"{skillName} 의 지속 턴이 1 감소했습니다. → 남은 턴: {activeSkills[skillName]}");
+                remain -= 1;
+                activeSkills[skillName] = remain;
 
-                SkillTickEffact(skillName);
+                Character caster = GetSkillCaster(skillName);
+                SkillTickLog? effectLog = SkillTickEffact(skillName, caster, Math.Max(remain, 0));
+                if (effectLog.HasValue)
+                {
+                    logs.Add(effectLog.Value);
+                }
 
-                if (activeSkills.ContainsKey(skillName) && activeSkills[skillName] <= 0)
+                if (activeSkills.TryGetValue(skillName, out int currentRemain) && currentRemain <= 0)
                 {
                     activeSkills.Remove(skillName);
-                    Console.WriteLine($"{skillName} 효과가 종료되었습니다.");
+                    activeSkillCasters.Remove(skillName);
+                    logs.Add(new SkillTickLog(caster, this, $"{skillName} 효과가 종료되었습니다.", false));
+                }
+            }
+
+            return logs;
+        }
+
+        private static void ResolveTickDeaths(IEnumerable<SkillTickLog> logs)
+        {
+            foreach (var log in logs)
+            {
+                if (log.TargetDefeated && !log.Target.IsDead)
+                {
+                    log.Target.Dead(log.Actor);
                 }
             }
         }
 
-        #region 스킬 효과
-        protected virtual void SkillTickEffact(string skill)
+        private Character GetSkillCaster(string skillName)
         {
-            Console.WriteLine();
+            if (activeSkillCasters.TryGetValue(skillName, out Character caster))
+            {
+                return caster;
+            }
+
+            return target ?? this;
+        }
+
+        #region 스킬 효과
+        protected virtual SkillTickLog? SkillTickEffact(string skill, Character caster, int remainingTurns)
+        {
             switch (skill)
             {
                 case "파이어볼":
-                    Console.WriteLine($"{MyStatus.Name} 은/는 화상 데미지를 입었다! (체력 -1)");
-                    MyStatus.Hp--;
-                    break;
+                    {
+                        int dotDamage = 1;
+                        MyStatus.Hp = Math.Max(0, MyStatus.Hp - dotDamage);
+                        bool defeated = MyStatus.Hp <= 0;
+                        int remain = Math.Max(remainingTurns, 0);
+                        string label = $"{skill}(지속)";
+                        string message = BuildActionMessage(caster, this, dotDamage, label, defeated) + $" (남은 턴: {remain})";
+                        return new SkillTickLog(caster, this, message, defeated);
+                    }
                 default:
-                    Console.WriteLine($"{skill} 에 대해 처리할 매턴 효과가 없습니다.");
-                    break;
-            }
-
-            if (MyStatus.Hp <= 0)
-            {
-                Dead(target);
+                    {
+                        return null;
+                    }
             }
         }
         #endregion
