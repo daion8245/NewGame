@@ -50,24 +50,92 @@ namespace newgame
             return ReferenceEquals(actor, GameManager.Instance.player);
         }
 
+        private static string FormatLogLine(string message, bool isFirstLine)
+        {
+            string content = (message ?? string.Empty).Trim();
+            if (string.IsNullOrEmpty(content))
+            {
+                return string.Empty;
+            }
+
+            string prefix = isFirstLine ? "->" : " ->";
+            return prefix + content;
+        }
+
         private void UpdateBattleMessage(Character attacker, string message, bool clearOpponentMessage)
         {
-            message ??= string.Empty;
+            bool isPlayer = IsPlayer(attacker);
+            int index = isPlayer ? 0 : 1;
 
-            if (IsPlayer(attacker))
+            string formatted = FormatLogLine(message, true);
+            battleLog[index] = formatted;
+
+            if (clearOpponentMessage)
             {
-                battleLog[0] = message;
-                if (clearOpponentMessage)
-                {
-                    battleLog[1] = string.Empty;
-                }
+                battleLog[isPlayer ? 1 : 0] = string.Empty;
             }
-            else
+        }
+
+        private void AppendBattleMessage(Character actor, string message)
+        {
+            bool isPlayer = IsPlayer(actor);
+            int index = isPlayer ? 0 : 1;
+
+            string existing = battleLog[index] ?? string.Empty;
+            bool isFirstLine = string.IsNullOrEmpty(existing);
+            string formatted = FormatLogLine(message, isFirstLine);
+
+            if (string.IsNullOrEmpty(formatted))
             {
-                battleLog[1] = message;
-                if (clearOpponentMessage)
+                return;
+            }
+
+            battleLog[index] = isFirstLine ? formatted : existing + "\n" + formatted;
+        }
+
+        private static void ClearBattleMessageForActor(Character actor)
+        {
+            if (actor == null)
+            {
+                return;
+            }
+
+            if (ReferenceEquals(actor, GameManager.Instance.player))
+            {
+                battleLog[0] = string.Empty;
+            }
+            else if (ReferenceEquals(actor, GameManager.Instance.monster))
+            {
+                battleLog[1] = string.Empty;
+            }
+        }
+
+        private static void ClearBattleMessageForOpponent(Character actor)
+        {
+            if (actor == null)
+            {
+                return;
+            }
+
+            if (ReferenceEquals(actor, GameManager.Instance.player))
+            {
+                battleLog[1] = string.Empty;
+            }
+            else if (ReferenceEquals(actor, GameManager.Instance.monster))
+            {
+                battleLog[0] = string.Empty;
+            }
+        }
+
+        private void ApplyTickLogs(IEnumerable<SkillTickLog> tickLogs)
+        {
+            foreach (var log in tickLogs)
+            {
+                AppendBattleMessage(log.Actor, log.Message);
+
+                if (log.ClearOpponent)
                 {
-                    battleLog[0] = string.Empty;
+                    ClearBattleMessageForOpponent(log.Actor);
                 }
             }
         }
@@ -110,33 +178,32 @@ namespace newgame
         public virtual string[] Attack(Character target)
         {
             if (target == null)
-            {
                 return SnapshotBattleLog();
-            }
+
+            ClearBattleMessageForActor(this);
 
             List<SkillTickLog> tickLogs = TickSkillTurns();
-            foreach (var log in tickLogs)
-            {
-                UpdateBattleMessage(log.Actor, log.Message, log.ClearOpponent);
-            }
 
-            bool attackerDiedFromTick = tickLogs.Any(log => ReferenceEquals(log.Target, this) && log.TargetDefeated);
-            bool preserveOpponentLog = tickLogs.Any(log => IsPlayer(log.Actor) != IsPlayer(this));
-
-            if (attackerDiedFromTick)
+            // 지속 피해로 사망자가 발생하면 즉시 처리 후 return
+            bool anyDeath = tickLogs.Any(log => log.TargetDefeated);
+            if (anyDeath)
             {
+                ApplyTickLogs(tickLogs);
                 ShowBattleInfo(target, battleLog);
                 ResolveTickDeaths(tickLogs);
                 return SnapshotBattleLog();
             }
 
+            // 사망자가 없을 때만 공격 데미지 계산
             int damage = Damage(target, MyStatus.ATK);
 
             bool defeated = target.Status.Hp <= 0;
             string message = BuildActionMessage(this, target, damage, null, defeated);
 
-            bool clearOpponent = IsPlayer(this) && !preserveOpponentLog;
+            bool clearOpponent = IsPlayer(this);
             UpdateBattleMessage(this, message, clearOpponent);
+
+            ApplyTickLogs(tickLogs);
 
             ShowBattleInfo(target, battleLog);
 
@@ -144,7 +211,6 @@ namespace newgame
             {
                 Thread.Sleep(1000);
                 target.Dead(this);
-                // 여기서 Dead를 호출한 후에도 함수는 계속 진행됨
             }
 
             ResolveTickDeaths(tickLogs);
@@ -152,7 +218,7 @@ namespace newgame
             beforHP[0] = MyStatus.Hp;
             beforHP[1] = target.MyStatus.Hp;
 
-            return SnapshotBattleLog(); // 함수가 정상 종료됨
+            return SnapshotBattleLog();
         }
         #endregion
 
@@ -170,17 +236,16 @@ namespace newgame
                 return SnapshotBattleLog();
             }
 
+            ClearBattleMessageForActor(this);
+
             List<SkillTickLog> tickLogs = TickSkillTurns();
-            foreach (var log in tickLogs)
-            {
-                UpdateBattleMessage(log.Actor, log.Message, log.ClearOpponent);
-            }
 
             bool attackerDiedFromTick = tickLogs.Any(log => ReferenceEquals(log.Target, this) && log.TargetDefeated);
             bool preserveOpponentLog = tickLogs.Any(log => IsPlayer(log.Actor) != IsPlayer(this));
 
             if (attackerDiedFromTick)
             {
+                ApplyTickLogs(tickLogs);
                 ShowBattleInfo(target, battleLog);
                 ResolveTickDeaths(tickLogs);
                 return SnapshotBattleLog();
@@ -193,6 +258,8 @@ namespace newgame
 
             bool clearOpponent = IsPlayer(this) && !preserveOpponentLog;
             UpdateBattleMessage(this, message, clearOpponent);
+
+            ApplyTickLogs(tickLogs);
 
             ShowBattleInfo(target, battleLog);
 
@@ -588,15 +655,35 @@ namespace newgame
 
             string playerLine = FormatStatus("플레이어", playerStatus);
             string monsterLine = FormatStatus("몬스터  ", monsterStatus);
-            string playerMsg = $"플레이어 ▶ {msg0}";
-            string monsterMsg = $"몬스터   ▶ {msg1}";
+            static void PrintLog(string label, string message, int width, Func<string, int, string> formatter)
+            {
+                string prefix = $"{label} ▶ ";
+                string indent = new string(' ', prefix.Length);
+
+                string[] lines = string.IsNullOrEmpty(message)
+                    ? Array.Empty<string>()
+                    : message.Split('\n');
+
+                if (lines.Length == 0)
+                {
+                    Console.WriteLine(formatter(prefix, width));
+                    return;
+                }
+
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    string linePrefix = i == 0 ? prefix : indent;
+                    string content = lines[i];
+                    Console.WriteLine(formatter(linePrefix + content, width));
+                }
+            }
 
             Console.WriteLine(border);
             Console.WriteLine(Fit(playerLine, width));
             Console.WriteLine(Fit(monsterLine, width));
             Console.WriteLine(divider);
-            Console.WriteLine(Fit(playerMsg, width));
-            Console.WriteLine(Fit(monsterMsg, width));
+            PrintLog("플레이어", msg0, width, Fit);
+            PrintLog("몬스터  ", msg1, width, Fit);
             Console.WriteLine(border);
             Console.WriteLine();
         }
