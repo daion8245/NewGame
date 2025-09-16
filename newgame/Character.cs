@@ -28,6 +28,7 @@ namespace newgame
 
         protected static readonly string[] battleLog = new string[2];
 
+        #region 로그 관련
         protected static string[] SnapshotBattleLog()
         {
             return new[]
@@ -83,6 +84,7 @@ namespace newgame
 
             return $"{prefix} {suffix}";
         }
+        #endregion
 
         #region 전투 진입
         Character? target;
