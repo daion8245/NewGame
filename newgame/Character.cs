@@ -287,32 +287,54 @@ namespace newgame
         /// <param name="target"></param>
         public virtual void Dead(Character target)
         {
-            if (IsDead == true) { return; }
+            if (IsDead)
+            {
+                return;
+            }
 
             IsDead = true;
             activeSkills.Clear();
             activeSkillCasters.Clear();
-            target.activeSkills.Clear();
-            target.activeSkillCasters.Clear();
+
+            if (target != null)
+            {
+                target.activeSkills.Clear();
+                target.activeSkillCasters.Clear();
+            }
+
             ResetBattleLog();
 
-            if (target == GameManager.Instance.player)
+            bool killedByPlayer = ReferenceEquals(target, GameManager.Instance.player);
+            bool playerDied = ReferenceEquals(this, GameManager.Instance.player);
+
+            if (killedByPlayer && !playerDied)
             {
-                UiHelper.TxtOut([$"{Status.Name}은 쓰러졌다!", $"{Status.Name}에게서 승리했다!", $"+{Status.exp}Exp , +{Status.gold}골드 를 획득했다!", $"다음 레벨까지 : {target.Status.exp}/{target.Status.nextEXP}", ""]);
+                UiHelper.TxtOut([
+                    $"{Status.Name}은 쓰러졌다!",
+                    $"{Status.Name}에게서 승리했다!",
+                    $"+{Status.exp}Exp , +{Status.gold}골드 를 획득했다!",
+                    $"다음 레벨까지 : {target.Status.exp}/{target.Status.nextEXP}",
+                    ""
+                ]);
                 target.Status.LevelUp();
                 Console.WriteLine();
                 UiHelper.WaitForInput("[Enter]를 눌러 계속");
+                return;
             }
-            else
+
+            if (playerDied)
             {
                 Console.WriteLine("전투에서 패배했다..");
                 Console.WriteLine("눈앞이 깜깜해졌다.");
                 Thread.Sleep(2000);
+
+                MyStatus.Hp = Math.Max(1, MyStatus.maxHp / 2);
+                MyStatus.mp = MyStatus.maxMp;
+                IsDead = false;
+
                 Tavern tavern = new Tavern();
                 tavern.Start();
             }
-
-            return;
         }
         #endregion
 

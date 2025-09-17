@@ -5,6 +5,13 @@ namespace newgame
 {
     internal class Dungeon
     {
+        private static readonly Dungeon _instance = new Dungeon();
+        public static Dungeon Instance { get { return _instance; } }
+
+        private Dungeon() { }
+
+        public int Floor { get; private set; } = 1;
+        public void NextFloor() { Floor++; }
 
         enum RoomType
         {

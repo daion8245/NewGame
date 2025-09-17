@@ -2,10 +2,8 @@
 
 namespace newgame
 {
-
     internal class Lobby
     {
-
         public void Start()
         {
             LobbyMenu();
@@ -51,8 +49,7 @@ namespace newgame
                 case 2:
                     {
                         Console.Clear();
-                        Dungeon dungeon = new Dungeon();
-                        dungeon.Start();
+                        Dungeon.Instance.Start();
                         break;
                     }
                 case 3:
