@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 
 namespace newgame
@@ -526,6 +527,43 @@ namespace newgame
             target.activeSkillCasters[skillName] = this;
         }
 
+        public string GetActiveSkillEffectDisplay()
+        {
+            if (activeSkills.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            List<string> labels = new List<string>();
+
+            foreach (var skillName in activeSkills.Keys)
+            {
+                string effectName = GetSkillEffectLabel(skillName);
+                if (string.IsNullOrWhiteSpace(effectName))
+                {
+                    continue;
+                }
+
+                labels.Add($"[{effectName}]");
+            }
+
+            if (labels.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            return $" [스킬 특수효과]{string.Join(string.Empty, labels)}";
+        }
+
+        protected virtual string GetSkillEffectLabel(string skillName)
+        {
+            return skillName switch
+            {
+                "파이어볼" => "화상",
+                _ => skillName
+            };
+        }
+
         protected virtual List<SkillTickLog> TickSkillTurns()
         {
             List<SkillTickLog> logs = new();
@@ -689,14 +727,15 @@ namespace newgame
                 return text.Length > width ? text[..(width - 3)] + "..." : text.PadRight(width);
             }
 
-            static string FormatStatus(string label, Status status)
+            static string FormatStatus(string label, Character? character, Status status)
             {
                 string name = string.IsNullOrWhiteSpace(status.Name) ? "??" : status.Name;
-                return $"{label} : {name}  Lv.{status.level}  HP {status.Hp}/{status.maxHp}";
+                string effectLabel = character?.GetActiveSkillEffectDisplay() ?? string.Empty;
+                return $"{label} : {name}{effectLabel}  Lv.{status.level}  HP {status.Hp}/{status.maxHp}";
             }
 
-            string playerLine = FormatStatus("플레이어", playerStatus);
-            string monsterLine = FormatStatus("몬스터  ", monsterStatus);
+            string playerLine = FormatStatus("플레이어", playerChar, playerStatus);
+            string monsterLine = FormatStatus("몬스터  ", monsterChar, monsterStatus);
             static void PrintLog(string label, string message, int width, Func<string, int, string> formatter)
             {
                 string prefix = $"{label} ▶ ";
