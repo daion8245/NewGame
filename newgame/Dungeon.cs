@@ -66,6 +66,7 @@ namespace newgame
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
                 RoomDelete();
+                GameManager.Instance.UpdateDungeonMap(floor, map);
                 // 이동 처리
                 int newX = player.X, newY = player.Y;
 
@@ -85,6 +86,7 @@ namespace newgame
 
                 if (playerDefeatedInDungeon)
                 {
+                    GameManager.Instance.UpdateDungeonMap(floor, map);
                     playerDefeatedInDungeon = false;
                     return;
                 }
@@ -187,6 +189,8 @@ namespace newgame
                     {
                         Console.Clear();
                         UiHelper.WaitForInput($"사다리를 타고 다음 층({floor + 1}층) 으로 이동합니다. [ENTER를 눌러 계속]");
+                        int currentFloor = floor;
+                        GameManager.Instance.UpdateDungeonMap(currentFloor, map);
                         floor++; // 층수 증가
                         LoadMapData(floor); // 다음 층 맵 데이터 로드
                         player.X = 1; // 플레이어 위치 초기화
@@ -208,6 +212,7 @@ namespace newgame
                         if (sel == 0)
                         {
                             UiHelper.WaitForInput("마을로 돌아갑니다. [ENTER를 눌러 계속]");
+                            GameManager.Instance.UpdateDungeonMap(floor, map);
                             player.X = 1; // 플레이어 위치 초기화
                             player.Y = 1; // 플레이어 위치 초기화
                             Lobby lobby = new Lobby();

@@ -214,6 +214,28 @@ namespace newgame
             }
             return copy;
         }
+
+        public void UpdateDungeonMap(int floor, List<List<int>> updatedMap)
+        {
+            if (updatedMap == null)
+            {
+                return;
+            }
+
+            var copy = new List<List<int>>();
+            foreach (var row in updatedMap)
+            {
+                if (row == null)
+                {
+                    copy.Add(new List<int>());
+                    continue;
+                }
+
+                copy.Add(new List<int>(row));
+            }
+
+            dungeonMapInfo[floor] = copy;
+        }
         #endregion
 
         #region 스킬
