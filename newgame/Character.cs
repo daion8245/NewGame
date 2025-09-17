@@ -13,17 +13,19 @@ namespace newgame
     {
         Status? Status;
 
+        public bool HasStatus => Status != null;
+
         public Status MyStatus
         {
-            get => Status ?? new Status();
-            protected set => Status = value;
+            get => Status ?? throw new InvalidOperationException("Status has not been initialized.");
+            protected set => Status = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         //현제 활성화 되어있는 포션 효과
         private List<ActiveItemEffect> activeEffects = new();
         //현제 지속되고 있는 스킬의 지속 효과
         protected Dictionary<string, int> activeSkills = new Dictionary<string, int>();
-        protected Dictionary<string, Character> activeSkillCasters = new();
+        protected Dictionary<string, Character?> activeSkillCasters = new();
 
         //플레이어가 죽었는지
         public bool IsDead = false;
@@ -52,7 +54,8 @@ namespace newgame
 
         protected static bool IsPlayer(Character actor)
         {
-            return ReferenceEquals(actor, GameManager.Instance.player);
+            Player? activePlayer = GameManager.Instance.player;
+            return activePlayer != null && ReferenceEquals(actor, activePlayer);
         }
 
         // 로그 한 줄을 표준 형식으로 만들어 반환한다.
@@ -115,11 +118,14 @@ namespace newgame
                 return;
             }
 
-            if (ReferenceEquals(actor, GameManager.Instance.player))
+            Player? activePlayer = GameManager.Instance.player;
+            Monster? activeMonster = GameManager.Instance.monster;
+
+            if (activePlayer != null && ReferenceEquals(actor, activePlayer))
             {
                 battleLog[0] = string.Empty;
             }
-            else if (ReferenceEquals(actor, GameManager.Instance.monster))
+            else if (activeMonster != null && ReferenceEquals(actor, activeMonster))
             {
                 battleLog[1] = string.Empty;
             }
@@ -134,11 +140,14 @@ namespace newgame
                 return;
             }
 
-            if (ReferenceEquals(actor, GameManager.Instance.player))
+            Player? activePlayer = GameManager.Instance.player;
+            Monster? activeMonster = GameManager.Instance.monster;
+
+            if (activePlayer != null && ReferenceEquals(actor, activePlayer))
             {
                 battleLog[1] = string.Empty;
             }
-            else if (ReferenceEquals(actor, GameManager.Instance.monster))
+            else if (activeMonster != null && ReferenceEquals(actor, activeMonster))
             {
                 battleLog[0] = string.Empty;
             }
@@ -209,6 +218,8 @@ namespace newgame
             if (target == null)
                 return SnapshotBattleLog();
 
+            Status targetStatus = target.MyStatus;
+
             ClearBattleMessageForActor(this);
 
             List<SkillTickLog> tickLogs = TickSkillTurns();
@@ -226,7 +237,7 @@ namespace newgame
             // 사망자가 없을 때만 공격 데미지 계산
             (int damage, bool isCritical) = Damage(target, MyStatus.ATK);
             MyStatus.mp = Math.Min(MyStatus.maxMp, MyStatus.mp + 10);
-            bool defeated = target.Status.Hp <= 0;
+            bool defeated = targetStatus.Hp <= 0;
             string message = BuildActionMessage(this, target, damage, null, defeated, isCritical);
 
             bool clearOpponent = IsPlayer(this);
@@ -245,7 +256,7 @@ namespace newgame
             ResolveTickDeaths(tickLogs);
 
             beforHP[0] = MyStatus.Hp;
-            beforHP[1] = target.MyStatus.Hp;
+            beforHP[1] = targetStatus.Hp;
 
             return SnapshotBattleLog();
         }
@@ -260,10 +271,13 @@ namespace newgame
         /// <returns></returns>
         public virtual string[] UseAttackSkill(SkillType skill)
         {
-            if (target == null || string.IsNullOrWhiteSpace(skill.name))
+            Character? targetCharacter = target;
+            if (targetCharacter == null || string.IsNullOrWhiteSpace(skill.name))
             {
                 return SnapshotBattleLog();
             }
+
+            Status targetStatus = targetCharacter.MyStatus;
 
             ClearBattleMessageForActor(this);
 
@@ -275,7 +289,7 @@ namespace newgame
             if (attackerDiedFromTick)
             {
                 ApplyTickLogs(tickLogs);
-                ShowBattleInfo(target, battleLog);
+                ShowBattleInfo(targetCharacter, battleLog);
                 ResolveTickDeaths(tickLogs);
                 return SnapshotBattleLog();
             }
@@ -285,22 +299,22 @@ namespace newgame
                 MyStatus.mp -= skill.skillMana;
             }
 
-            (int damage, bool isCritical) = Damage(target, skill.skillDamage);
+            (int damage, bool isCritical) = Damage(targetCharacter, skill.skillDamage);
 
-            bool defeated = target.Status.Hp <= 0;
-            string message = BuildActionMessage(this, target, damage, skill.name, defeated, isCritical);
+            bool defeated = targetStatus.Hp <= 0;
+            string message = BuildActionMessage(this, targetCharacter, damage, skill.name, defeated, isCritical);
 
             bool clearOpponent = IsPlayer(this) && !preserveOpponentLog;
             UpdateBattleMessage(this, message, clearOpponent);
 
             ApplyTickLogs(tickLogs);
 
-            ShowBattleInfo(target, battleLog);
+            ShowBattleInfo(targetCharacter, battleLog);
 
             if (defeated)
             {
                 Thread.Sleep(1000);
-                target.Dead(this);
+                targetCharacter.Dead(this);
             }
 
             ResolveTickDeaths(tickLogs);
@@ -333,19 +347,28 @@ namespace newgame
 
             ResetBattleLog();
 
-            bool killedByPlayer = ReferenceEquals(target, GameManager.Instance.player);
-            bool playerDied = ReferenceEquals(this, GameManager.Instance.player);
+            Player? activePlayer = GameManager.Instance.player;
+            bool killedByPlayer = activePlayer != null && ReferenceEquals(target, activePlayer);
+            bool playerDied = activePlayer != null && ReferenceEquals(this, activePlayer);
+
+            Status selfStatus = MyStatus;
+            Status? targetStatus = target?.HasStatus == true ? target.MyStatus : null;
 
             if (killedByPlayer && !playerDied)
             {
+                if (targetStatus == null)
+                {
+                    throw new InvalidOperationException("Target status is not initialized.");
+                }
+
                 UiHelper.TxtOut([
-                    $"{Status.Name}은 쓰러졌다!",
-                    $"{Status.Name}에게서 승리했다!",
-                    $"+{Status.exp}Exp , +{Status.gold}골드 를 획득했다!",
-                    $"다음 레벨까지 : {target.Status.exp}/{target.Status.nextEXP}",
+                    $"{selfStatus.Name}은 쓰러졌다!",
+                    $"{selfStatus.Name}에게서 승리했다!",
+                    $"+{selfStatus.exp}Exp , +{selfStatus.gold}골드 를 획득했다!",
+                    $"다음 레벨까지 : {targetStatus.exp}/{targetStatus.nextEXP}",
                     ""
                 ]);
-                target.Status.LevelUp();
+                targetStatus.LevelUp();
                 Console.WriteLine();
                 UiHelper.WaitForInput("[Enter]를 눌러 계속");
                 return;
@@ -403,7 +426,13 @@ namespace newgame
             }
 
             Console.Write("입력 : ");
-            string input = Console.ReadLine();
+            string? input = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.WriteLine("입력이 비어 있습니다.");
+                return;
+            }
+
             int idx = Inventory.Instance.SelectedItem(input);
             if (idx == -1)
             {
@@ -650,7 +679,7 @@ namespace newgame
 
         private Character GetSkillCaster(string skillName)
         {
-            if (activeSkillCasters.TryGetValue(skillName, out Character caster))
+            if (activeSkillCasters.TryGetValue(skillName, out Character? caster) && caster != null)
             {
                 return caster;
             }
@@ -668,7 +697,9 @@ namespace newgame
             {
                 case "파이어볼":
                     {
-                        int dotDamage = 1 + (target.Status.Hp / 20); // 화상 고정 피해(게임 밸런스에 따라 조정 가능)
+                        Character? targetCharacter = target;
+                        int referenceHp = targetCharacter?.HasStatus == true ? targetCharacter.MyStatus.Hp : MyStatus.Hp;
+                        int dotDamage = 1 + (referenceHp / 20); // 화상 고정 피해(게임 밸런스에 따라 조정 가능)
                         MyStatus.Hp = Math.Max(0, MyStatus.Hp - dotDamage);
                         bool defeated = MyStatus.Hp <= 0;
                         int remain = Math.Max(remainingTurns, 0); // 표시용 잔여 턴(음수 방지)
@@ -693,12 +724,15 @@ namespace newgame
         //   방어력이 높을수록 분모가 커져 피해가 점진적으로 감소(완만한 방어 효율 곡선)
         protected (int Damage, bool IsCritical) Damage(Character target, int damage)
         {
+            Status myStatus = MyStatus;
+            Status targetStatus = target.MyStatus;
+
             int A = damage;
-            int D = target.Status.DEF;
+            int D = targetStatus.DEF;
             int K = 50; // D ≈ K일 때 절반 수준으로 완화되는 기준점
 
-            int KC = this.Status.CriticalChance;  // 치명타 확률(%)
-            float KD = (float)this.Status.CriticalDamage; // 치명타 피해(%)
+            int KC = myStatus.CriticalChance;  // 치명타 확률(%)
+            float KD = (float)myStatus.CriticalDamage; // 치명타 피해(%)
             bool isCritical = false;
 
             // 치명타 판정 선행 → 증폭된 공격력으로 최종 방어 공식 적용
@@ -711,7 +745,7 @@ namespace newgame
             // 방어 기반 피해 완화 공식
             int totaldamage = Math.Max(1, (int)Math.Round(A * K / (double)(D + K)));
 
-            target.Status.Hp -= totaldamage;
+            targetStatus.Hp -= totaldamage;
             return (totaldamage, isCritical);
         }
         #endregion

@@ -15,7 +15,7 @@
             Console.WriteLine("2. 이전으로");
             Console.Write("선택: ");
 
-            string input = Console.ReadLine();
+            string? input = Console.ReadLine();
 
             if (input != "1")
             {
@@ -29,11 +29,12 @@
 
         void EquipUpgrade()
         {
-            Equipment equip = null;
+            Equipment? equip = null;
             for (int i = 1; i < (int)EquipType.MAX; i++)
             {
                 equip = Inventory.Instance.GetEquip((EquipType)i);
-                Console.WriteLine($"[{i}] {equip.GetEquipName}");
+                string equipName = equip?.GetEquipName ?? "없음";
+                Console.WriteLine($"[{i}] {equipName}");
             }
 
             Console.WriteLine("입력 : ");
@@ -47,6 +48,13 @@
             }
 
             equip = Inventory.Instance.GetEquip((EquipType)idx);
+            if (equip == null)
+            {
+                Console.WriteLine("장비가 없습니다.");
+                UiHelper.WaitForInput("[ENTER]를 눌러 계속");
+                return;
+            }
+
             equip.Upgrade();
         }
     }

@@ -24,7 +24,20 @@ namespace newgame
             get => player;
             set => player = value;
         }
+
+        public bool HasPlayer => player != null;
+
+        public Player RequirePlayer()
+        {
+            return player ?? throw new InvalidOperationException("Player has not been initialized yet.");
+        }
         public Monster? monster;
+        public bool HasMonster => monster != null;
+
+        public Monster RequireMonster()
+        {
+            return monster ?? throw new InvalidOperationException("Monster has not been initialized yet.");
+        }
 
         #region 몬스터 정보
         Dictionary<int, Status> monsterInfo = new Dictionary<int, Status>();
@@ -135,7 +148,7 @@ namespace newgame
 
         #region 아이템
         List<Item> items = new List<Item>();
-        public Item FindItem(ItemType _type)
+        public Item? FindItem(ItemType _type)
         {
             foreach (Item item in items)
             {
@@ -163,7 +176,7 @@ namespace newgame
         #region 장비 상태 확인
         List<Equipment> equips = new List<Equipment>();
         public List<Equipment> GetEquipment { get => Instance.equips; }
-        public Equipment FindEquipment(EquipType _type, int _id)
+        public Equipment? FindEquipment(EquipType _type, int _id)
         {
             foreach (Equipment equip in Instance.equips)
             {

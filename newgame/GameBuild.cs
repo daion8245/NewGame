@@ -262,17 +262,6 @@ namespace newgame
         }
         #endregion
 
-        private Player CurrentPlayer
-        {
-            get
-            {
-                if (_gameManager.Player == null)
-                {
-                    throw new InvalidOperationException("Player is not initialized.");
-                }
-
-                return _gameManager.Player;
-            }
-        }
+        private Player CurrentPlayer => _gameManager.RequirePlayer();
     }
 }

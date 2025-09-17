@@ -18,7 +18,7 @@ namespace newgame
         #region 플레이어 생성
         void Create()
         {
-            MyStatus = new Status(); // this.MyStatus를 직접 사용
+            MyStatus = new Status();
             MyStatus.charType = CharType.PLAYER;
             SetPlayerStarterItem();
             SetPlayerStarterSkill();
@@ -30,7 +30,7 @@ namespace newgame
         #region 저장된 플레이어 불러오기
         public void Load()
         {
-            GameManager.Instance.player.MyStatus = DataManager.Instance.Load();
+            MyStatus = DataManager.Instance.Load();
         }
         #endregion
 

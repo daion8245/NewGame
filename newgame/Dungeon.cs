@@ -134,6 +134,8 @@ namespace newgame
                             "도망 시도(35%)"
                         });
 
+                        Player activePlayer = GameManager.Instance.RequirePlayer();
+
                         if(select == 0)
                         {
                             UiHelper.WaitForInput("몬스터와의 전투를 시작합니다. [ENTER를 눌러 계속]");
@@ -149,16 +151,16 @@ namespace newgame
                             else
                             {
                                 UiHelper.WaitForInput("도망에 실패했습니다! 체력의 30%를 잃고 몬스터와 전투를 시작합니다!  [ENTER를 눌러 계속]");
-                                GameManager.Instance.player.MyStatus.Hp -= (int)(GameManager.Instance.player.MyStatus.maxHp * 0.3);
+                                activePlayer.MyStatus.Hp -= (int)(activePlayer.MyStatus.maxHp * 0.3);
                                 MonsterCreate();
                             }
                         }
-                        bool playerDefeated = GameManager.Instance.player?.IsDead ?? false;
+                        bool playerDefeated = activePlayer.IsDead;
                         bool monsterDefeated = GameManager.Instance.monster?.IsDead ?? false;
 
                         if (playerDefeated)
                         {
-                            GameManager.Instance.player.IsDead = false;
+                            activePlayer.IsDead = false;
                             playerDefeatedInDungeon = true;
                             break;
                         }
