@@ -7,7 +7,7 @@ namespace newgame
     {
         private readonly List<SkillType> availableSkills = new List<SkillType>();
         private int bossKey;
-        private const int SkillUseChancePercent = 35;
+        private const int SkillUseChancePercent = 45;
         private static readonly Random Randomizer = new Random();
 
         public void StartBoss(int floor)
@@ -69,8 +69,7 @@ namespace newgame
                 if (Randomizer.Next(100) < SkillUseChancePercent)
                 {
                     SkillType skill = availableSkills[Randomizer.Next(availableSkills.Count)];
-                    BattleSkillLogic(target,skill);
-                    return UseAttackSkill(skill);
+                    return BattleSkillLogic(target, skill);
                 }
             }
 
@@ -79,16 +78,15 @@ namespace newgame
 
         //스킬 클래스에서 스킬을 가져와 사용하는 함수
 
-        void BattleSkillLogic(Character target, SkillType skillType)
+        string[] BattleSkillLogic(Character target, SkillType skillType)
         {
             SkillType useSkill = skillType;
             if (string.IsNullOrWhiteSpace(useSkill.name))
             {
-                return;
+                return SnapshotBattleLog();
             }
 
-            // 즉시 효과 처리 (기존 동작 유지)
-            UseAttackSkill(useSkill);
+            string[] log = UseAttackSkill(useSkill);
 
             // 지속효과 적용은 대상이 누구인지 명확히 지정해서 적용
             switch (useSkill.name)
@@ -96,13 +94,13 @@ namespace newgame
                 case "파이어볼":
                     {
                         // 파이어볼은 적(target)에게 지속 효과를 남겨야 함
-                        InvokeProtectedAddTickSkill(target, useSkill.name, useSkill.skillTurn);
+                        EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
                         break;
                     }
                 case "아쿠아 볼":
                     {
                         // 아쿠아 볼은 보스(self)에게 적용
-                        InvokeProtectedAddTickSkill(this, useSkill.name, useSkill.skillTurn);
+                        AddTickSkill(useSkill.name, useSkill.skillTurn);
                         break;
                     }
                 default:
@@ -110,37 +108,7 @@ namespace newgame
                         break;
                     }
             }
-        }
-
-        void InvokeProtectedAddTickSkill(Character receiver, string skillName, int duration)
-        {
-            if (receiver == null) return;
-
-            try
-            {
-                // protected 메서드인 AddTickSkill를 리플렉션으로 호출 시도
-                var binding = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.FlattenHierarchy;
-                var method = receiver.GetType().GetMethod("AddTickSkill", binding);
-                if (method != null)
-                {
-                    method.Invoke(receiver, new object[] { skillName, duration });
-                    return;
-                }
-
-                // AddTickSkill이 없을 경우 EnemyAddTickSkill도 시도 (안전망)
-                method = receiver.GetType().GetMethod("EnemyAddTickSkill", binding);
-                if (method != null)
-                {
-                    method.Invoke(receiver, new object[] { skillName, duration });
-                    return;
-                }
-
-                // 실패 시 아무 것도 하지 않음 (디버그용 로그를 원하면 여기에 추가)
-            }
-            catch
-            {
-                // 리플렉션 호출 중 문제 발생 시 무시 (필요하면 로그 추가)
-            }
+            return log;
         }
     }
 }

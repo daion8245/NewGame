@@ -94,10 +94,15 @@ namespace newgame
 
                 canUseSkillList.Add($"{skill.name} --- 마나 사용량 : {skill.skillMana}{extra}");
             }
-
+            canUseSkillList.Add("취소");
+            Console.WriteLine($"현제 마나 : {GameManager.Instance.player.MyStatus.mp}/{GameManager.Instance.player.MyStatus.maxMp}");
             int selected = UiHelper.SelectMenu(canUseSkillList.ToArray());
             if (selected >= 0 && selected < canUseSkill.Count)
             {
+                if (selected == canUseSkill.Count)
+                {
+                    return default(SkillType); // 취소 선택시
+                }
                 return canUseSkill[selected];
             }
 

@@ -419,7 +419,7 @@ namespace newgame
 
         #endregion
 
-        #region 스킬p
+        #region 스킬
 
         public void LoadSkillData()
         {

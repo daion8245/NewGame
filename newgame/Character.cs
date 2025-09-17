@@ -196,7 +196,7 @@ namespace newgame
 
             // 사망자가 없을 때만 공격 데미지 계산
             int damage = Damage(target, MyStatus.ATK);
-
+            MyStatus.mp = Math.Min(MyStatus.maxMp, MyStatus.mp + 10);
             bool defeated = target.Status.Hp <= 0;
             string message = BuildActionMessage(this, target, damage, null, defeated);
 
@@ -249,6 +249,11 @@ namespace newgame
                 ShowBattleInfo(target, battleLog);
                 ResolveTickDeaths(tickLogs);
                 return SnapshotBattleLog();
+            }
+
+            if(this is Player)
+            {
+                MyStatus.mp -= skill.skillMana;
             }
 
             int damage = Damage(target, skill.skillDamage);

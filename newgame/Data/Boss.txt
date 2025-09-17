@@ -1,10 +1,10 @@
 NAME : 슬라임 킹
-LEVEL : 2
-hp : 30
+LEVEL : 5
+hp : 100
 ATK : 4
 DEF : 3
-EXP : 10
-COIN : 15
-SKILL : 파이어볼
-SKILL : 아쿠아 볼
+EXP : 55
+COIN : 100
+SKILL : 점액 폭탄
+SKILL : 깔아뭉개기
 #

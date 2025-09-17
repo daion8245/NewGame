@@ -248,6 +248,14 @@ namespace newgame
             SkillType useSkill = ShowSkillList();
             if (string.IsNullOrWhiteSpace(useSkill.name))
             {
+                PerformAction(target);
+                return;
+            }
+            if (MyStatus.mp < useSkill.skillMana)
+            {
+                Console.WriteLine("마나가 부족합니다.");
+                UiHelper.WaitForInput("[ENTER]를 눌러 계속");
+                PerformAction(target);
                 return;
             }
 
