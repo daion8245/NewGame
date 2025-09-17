@@ -140,10 +140,15 @@ namespace newgame
             }
         }
 
-        private static string BuildActionMessage(Character attacker, Character defender, int damage, string? actionName, bool targetDefeated)
+        private static string BuildActionMessage(Character attacker, Character defender, int damage, string? actionName, bool targetDefeated, bool isCritical = false)
         {
             string label = string.IsNullOrWhiteSpace(actionName) ? "공격" : actionName!;
             string prefix = $"{attacker.MyStatus.Name}의 {label}!";
+
+            if (isCritical)
+            {
+                prefix = $"[치명타!] {prefix}";
+            }
             string suffix = $"{defender.MyStatus.Name}은 {damage}의 피해를 입었다. 남은 체력: {defender.MyStatus.Hp}/{defender.MyStatus.maxHp}";
 
             if (targetDefeated)
@@ -195,10 +200,10 @@ namespace newgame
             }
 
             // 사망자가 없을 때만 공격 데미지 계산
-            int damage = Damage(target, MyStatus.ATK);
+            (int damage, bool isCritical) = Damage(target, MyStatus.ATK);
             MyStatus.mp = Math.Min(MyStatus.maxMp, MyStatus.mp + 10);
             bool defeated = target.Status.Hp <= 0;
-            string message = BuildActionMessage(this, target, damage, null, defeated);
+            string message = BuildActionMessage(this, target, damage, null, defeated, isCritical);
 
             bool clearOpponent = IsPlayer(this);
             UpdateBattleMessage(this, message, clearOpponent);
@@ -256,10 +261,10 @@ namespace newgame
                 MyStatus.mp -= skill.skillMana;
             }
 
-            int damage = Damage(target, skill.skillDamage);
+            (int damage, bool isCritical) = Damage(target, skill.skillDamage);
 
             bool defeated = target.Status.Hp <= 0;
-            string message = BuildActionMessage(this, target, damage, skill.name, defeated);
+            string message = BuildActionMessage(this, target, damage, skill.name, defeated, isCritical);
 
             bool clearOpponent = IsPlayer(this) && !preserveOpponentLog;
             UpdateBattleMessage(this, message, clearOpponent);
@@ -607,7 +612,7 @@ namespace newgame
         #endregion
 
         #region 데미지 계산
-        protected int Damage(Character target, int damage)
+        protected (int Damage, bool IsCritical) Damage(Character target, int damage)
         {
             // A: 공격자 공격력, D: 대상 방어력, K: 고정값(데미지가 절반이 되는 지점, 예: 100 : 받는 데미지 50%)
             int A = damage;
@@ -616,17 +621,19 @@ namespace newgame
             //
             int KC = this.Status.CriticalChance;
             float KD = (float)this.Status.CriticalDamage;
+            bool isCritical = false;
 
             if (UiHelper.GetRandomInt1To100() <= KC)
             {
                 A = (int)(A * KD / 100f);
+                isCritical = true;
             }
 
             // 데미지 공식: max(1, round(A * K / (D + K)))
             int totaldamage = Math.Max(1, (int)Math.Round(A * K / (double)(D + K)));
 
             target.Status.Hp -= totaldamage;
-            return totaldamage;
+            return (totaldamage, isCritical);
         }
         #endregion
 
