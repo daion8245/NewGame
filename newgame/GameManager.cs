@@ -19,6 +19,11 @@ namespace newgame
         }
 
         public Player? player;
+        public Player? Player
+        {
+            get => player;
+            set => player = value;
+        }
         public Monster? monster;
 
         #region 몬스터 정보
