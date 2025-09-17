@@ -39,6 +39,7 @@ namespace newgame
 
         // 맵 데이터 (2차원 배열)
         List<List<int>> map = new List<List<int>>();
+        bool playerDefeatedInDungeon = false;
         void LoadMapData(int number)
         {
             map = GameManager.Instance.GetDungeonMap(number);
@@ -81,6 +82,12 @@ namespace newgame
                 }
 
                 RoomEvent((RoomType)map[player.Y][player.X]);
+
+                if (playerDefeatedInDungeon)
+                {
+                    playerDefeatedInDungeon = false;
+                    return;
+                }
             }
 
         }
@@ -144,7 +151,20 @@ namespace newgame
                                 MonsterCreate();
                             }
                         }
-                        RoomDelete(); // 이벤트 처리 후 방 삭제
+                        bool playerDefeated = GameManager.Instance.player?.IsDead ?? false;
+                        bool monsterDefeated = GameManager.Instance.monster?.IsDead ?? false;
+
+                        if (playerDefeated)
+                        {
+                            GameManager.Instance.player.IsDead = false;
+                            playerDefeatedInDungeon = true;
+                            break;
+                        }
+
+                        if (monsterDefeated)
+                        {
+                            RoomDelete(); // 승리 시 방 삭제
+                        }
                         break;
                     }
                 #endregion
