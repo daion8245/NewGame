@@ -1,10 +1,5 @@
-﻿using NewGame;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace newgame
 {
@@ -13,6 +8,15 @@ namespace newgame
     /// </summary>
     internal class StartMessage
     {
+        readonly Action _startNewGame;
+        readonly Func<bool> _loadGame;
+
+        public StartMessage(Action startNewGame, Func<bool> loadGame)
+        {
+            _startNewGame = startNewGame ?? throw new ArgumentNullException(nameof(startNewGame));
+            _loadGame = loadGame ?? throw new ArgumentNullException(nameof(loadGame));
+        }
+
         public void Start()
         {
             GameStartMessage();
@@ -30,8 +34,6 @@ namespace newgame
                 ]);
 
             Console.ForegroundColor = ConsoleColor.Green;
-            //Console.WriteLine("계속하실려면 Enter를 눌러주세요.");
-            //Console.ReadKey();
             Console.ResetColor();
 
             int sel = UiHelper.SelectMenu([
@@ -52,7 +54,13 @@ namespace newgame
                     Console.Clear();
                     Console.WriteLine("게임을 불러옵니다...");
                     Thread.Sleep(1000);
-                    LoadGame();
+                    if (!LoadGame())
+                    {
+                        Console.Clear();
+                        Console.WriteLine("저장된 데이터가 없습니다.");
+                        UiHelper.WaitForInput();
+                        GameStartMessage();
+                    }
                     return;
 
                 case 2:
@@ -65,22 +73,12 @@ namespace newgame
 
         void NewGame()
         {
-            GameBuild gameBuild = new GameBuild();
-            gameBuild.Start();
+            _startNewGame();
         }
 
-        void LoadGame()
+        bool LoadGame()
         {
-            if (DataManager.Instance.IsPlayerData())
-            {
-                Player player = new Player();
-                GameManager.Instance.player = player;
-
-                player.Load();
-
-                Lobby lobby = new Lobby();
-                lobby.Start();
-            }
+            return _loadGame();
         }
     }
 }

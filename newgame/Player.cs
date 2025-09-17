@@ -18,7 +18,7 @@ namespace newgame
         #region 플레이어 생성
         void Create()
         {
-            GameManager.Instance.player.MyStatus = new Status();
+            MyStatus = new Status(); // this.MyStatus를 직접 사용
             MyStatus.charType = CharType.PLAYER;
             SetPlayerStarterItem();
             SetPlayerStarterSkill();

@@ -1,78 +1,153 @@
-﻿using newgame;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace NewGame
+namespace newgame
 {
-    internal class GameBuild
+    /// <summary>
+    /// Composition root responsible for wiring the manual dependency graph.
+    /// </summary>
+    internal sealed class GameBuild
     {
-        public void Start()
+        private readonly DataManager _dataManager;
+        private readonly GameManager _gameManager;
+        private readonly Func<Player> _playerFactory;
+        private readonly Func<Lobby> _lobbyFactory;
+        private StartMessage? _startMessage;
+
+        private GameBuild(
+            DataManager dataManager,
+            GameManager gameManager,
+            Func<Player> playerFactory,
+            Func<Lobby> lobbyFactory)
+        {
+            _dataManager = dataManager ?? throw new ArgumentNullException(nameof(dataManager));
+            _gameManager = gameManager ?? throw new ArgumentNullException(nameof(gameManager));
+            _playerFactory = playerFactory ?? throw new ArgumentNullException(nameof(playerFactory));
+            _lobbyFactory = lobbyFactory ?? throw new ArgumentNullException(nameof(lobbyFactory));
+        }
+
+        public static GameBuild Create()
+        {
+            DataManager dataManager = DataManager.Instance;
+            GameManager gameManager = GameManager.Instance;
+            Func<Player> playerFactory = () => new Player();
+            Func<Lobby> lobbyFactory = () => new Lobby();
+
+            var build = new GameBuild(dataManager, gameManager, playerFactory, lobbyFactory);
+            var startMessage = new StartMessage(build.StartNewGame, build.TryLoadGame);
+            build.SetStartMessage(startMessage);
+
+            return build;
+        }
+
+        public void Run()
+        {
+            Init();
+            GetStartMessage().Start();
+        }
+
+        private void Init()
+        {
+            _dataManager.LoadAllEquipData();
+            _dataManager.LoadEnemyData();
+            _dataManager.LoadBossData();
+            _dataManager.LoadDungeonMap();
+            _dataManager.LoadSkillData();
+            _gameManager.SetItemList();
+        }
+
+        private void SetStartMessage(StartMessage startMessage)
+        {
+            _startMessage = startMessage ?? throw new ArgumentNullException(nameof(startMessage));
+        }
+
+        private StartMessage GetStartMessage()
+        {
+            return _startMessage ?? throw new InvalidOperationException("StartMessage is not configured.");
+        }
+
+        private void StartNewGame()
         {
             PlayerNameSet();
             SetStatus();
+            LaunchLobby();
+        }
 
+        private bool TryLoadGame()
+        {
+            if (!_dataManager.IsPlayerData())
+            {
+                return false;
+            }
 
-            Lobby lobby = new Lobby();
+            Player player = _playerFactory();
+            _gameManager.Player = player;
+            player.Load();
+            LaunchLobby();
+            return true;
+
+        }
+
+        private void LaunchLobby()
+        {
             Console.Clear();
+            Lobby lobby = _lobbyFactory();
             lobby.Start();
         }
 
         #region 플레이어 이름 정하기
-        void PlayerNameSet()
+        private void PlayerNameSet()
         {
             while (true)
             {
                 Console.Clear();
-
                 Console.Write("플레이어의 이름을 입력해 주세요 : ");
-                try
+                string? inputName = Console.ReadLine();
+
+                if (!IsValidName(inputName))
                 {
-                    string inputName = Console.ReadLine();
-
-                    if (string.IsNullOrWhiteSpace(inputName) || inputName.Length < 2 || inputName.Length > 10)
-                    {
-                        throw new Exception("이름은 2자 이상 10자 이하로 입력해야 합니다.");
-                    }
-
-                    Console.Clear();
-                    Console.WriteLine($"입력하신 이름 [{inputName}] 이 정말 맞습니까?");
-
-                    int sel = UiHelper.SelectMenu(new[] { "Y", "N" });
-
-                    if (sel == 0)
-                    {
-                        Console.Clear();
-
-                        GameManager.Instance.player = new Player();
-                        GameManager.Instance.player.Start();
-                        GameManager.Instance.player.SetName(inputName);
-                        return;
-                    }
+                    ShowInvalidNameMessage();
+                    continue;
                 }
-                catch (Exception e)
-                {
 
-                    UiHelper.TxtOut(new[]
-                    {
-                    $"잘못된 이름입니다.",
-                    "다시 입력해 주세요.",
-                     "",
-                    "enter를 눌러 계속"
-                    });
-                    Console.WriteLine(e);
-                    Console.ReadKey();
+                Console.Clear();
+                Console.WriteLine($"입력하신 이름 [{inputName}] 이 정말 맞습니까?");
+
+                int sel = UiHelper.SelectMenu(new[] { "Y", "N" });
+
+                if (sel == 0)
+                {
+                    Player player = _playerFactory();
+                    player.Start();
+                    player.SetName(inputName!);
+                    _gameManager.Player = player;
+                    return;
                 }
             }
+        }
+
+        private static bool IsValidName(string? name)
+        {
+            return !string.IsNullOrWhiteSpace(name) && name.Length >= 2 && name.Length <= 10;
+        }
+
+        private static void ShowInvalidNameMessage()
+        {
+            UiHelper.TxtOut(new[]
+            {
+                "잘못된 이름입니다.",
+                "다시 입력해 주세요.",
+                string.Empty,
+                "enter를 눌러 계속"
+            });
+            UiHelper.WaitForInput();
         }
         #endregion
 
         #region 스텟 설정
-        void SetStatus()
+        private void SetStatus()
         {
+            Player player = CurrentPlayer;
+
             int atk = 0;
             int hp = 0;
             int def = 0;
@@ -80,11 +155,12 @@ namespace NewGame
 
             Console.Clear();
 
-            Console.WriteLine($"플레이어 {GameManager.Instance.player.MyStatus.Name}" +
-                                                        $"의 기초 스텟을 설정합니다.");
-            int sel = UiHelper.SelectMenu([
+            Console.WriteLine($"플레이어 {player.MyStatus.Name}의 기초 스텟을 설정합니다.");
+            int sel = UiHelper.SelectMenu(new[]
+            {
                 "랜덤 설정",
-                "직접 설정"]);
+                "직접 설정"
+            });
 
             if (sel == 0)
             {
@@ -96,7 +172,6 @@ namespace NewGame
 
                 Console.Clear();
             }
-
             else
             {
                 int[] setstat = SelstatSet();
@@ -108,56 +183,47 @@ namespace NewGame
                 Console.Clear();
             }
 
-            GameManager.Instance.player.SetDefStat(atk, hp, def, mp);
+            player.SetDefStat(atk, hp, def, mp);
 
-            GameManager.Instance.player.ShowStat();
+            player.ShowStat();
             Console.WriteLine("[Enter]를 눌러 계속");
             Console.ReadKey();
         }
         #endregion
 
         #region 랜덤 스텟 설정
-        int[] RandomStat()
+        private static int[] RandomStat()
         {
             int atk = 0;
             int hp = 0;
             int def = 0;
             int mp = 0;
-            Random random = new Random();
 
             for (int i = 0; i < 10; i++)
             {
-                int ranstat = random.Next(1, 4);
+                int ranstat = Random.Shared.Next(1, 5);
                 switch (ranstat)
                 {
                     case 1:
-                        {
-                            atk++;
-                            break;
-                        }
+                        atk++;
+                        break;
                     case 2:
-                        {
-                            hp++;
-                            break;
-                        }
+                        hp++;
+                        break;
                     case 3:
-                        {
-                            def++;
-                            break;
-                        }
-                    case 4:
-                        {
-                            mp++;
-                            break;
-                        }
+                        def++;
+                        break;
+                    default:
+                        mp++;
+                        break;
                 }
             }
-            return new int[] { atk, hp, def, mp };
+            return new[] { atk, hp, def, mp };
         }
         #endregion
 
         #region 선택 스텟 설정
-        int[] SelstatSet()
+        private static int[] SelstatSet()
         {
             int atk = 0;
             int hp = 0;
@@ -176,42 +242,37 @@ namespace NewGame
                 switch (selstat)
                 {
                     case 0:
-                        {
-                            atk++;
-                            break;
-                        }
+                        atk++;
+                        break;
                     case 1:
-                        {
-                            hp++;
-                            break;
-                        }
+                        hp++;
+                        break;
                     case 2:
-                        {
-                            def++;
-                            break;
-                        }
-                    case 3:
-                        {
-                            mp++;
-                            break;
-                        }
+                        def++;
+                        break;
+                    default:
+                        mp++;
+                        break;
                 }
 
                 statcoin--;
             }
 
-            return new int[] { atk, hp, def, mp };
+            return new[] { atk, hp, def, mp };
         }
         #endregion
 
-        #region 플레이어 기본 장비 설정
-        void SetDefEquipment()
+        private Player CurrentPlayer
         {
+            get
+            {
+                if (_gameManager.Player == null)
+                {
+                    throw new InvalidOperationException("Player is not initialized.");
+                }
 
+                return _gameManager.Player;
+            }
         }
-        #endregion
-
-        #region 플레이어 기본 스킬 설정
-        #endregion
     }
 }
