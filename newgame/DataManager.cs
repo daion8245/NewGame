@@ -63,7 +63,11 @@ namespace newgame
             if (File.Exists(path))
             {
                 string data = File.ReadAllText(path);
-                playerData = JsonConvert.DeserializeObject<Status>(data);
+                Status? deserialized = JsonConvert.DeserializeObject<Status>(data);
+                if (deserialized != null)
+                {
+                    playerData = deserialized;
+                }
             }
             #endregion
 

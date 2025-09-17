@@ -76,9 +76,11 @@ namespace newgame
                 return;
             }
 
-            if (GameManager.Instance.player.MyStatus.gold >= items[menuSelect].GetPrice)
+            Player player = GameManager.Instance.RequirePlayer();
+
+            if (player.MyStatus.gold >= items[menuSelect].GetPrice)
             {
-                GameManager.Instance.player.MyStatus.gold -= items[menuSelect].GetPrice;
+                player.MyStatus.gold -= items[menuSelect].GetPrice;
                 Inventory.Instance.AddEquip(items[menuSelect]);
 
                 UiHelper.TxtOut(["", $"{items[menuSelect].GetEquipName} 구매 완료",""]);
@@ -167,12 +169,12 @@ namespace newgame
             }
 
             Console.Write("입력 : ");
-            string input = Console.ReadLine();
+            string? input = Console.ReadLine();
             BuyConsumableItem(input);
         }
 
         #region 아이템 관련 추가
-        void BuyConsumableItem(string _idx)
+        void BuyConsumableItem(string? _idx)
         {
             // _idx 문자열이 비어있다면
             if (string.IsNullOrEmpty(_idx))
@@ -183,7 +185,12 @@ namespace newgame
                 return;
             }
 
-            int idx = int.Parse(_idx);
+            if (!int.TryParse(_idx, out int idx))
+            {
+                Console.WriteLine("잘못된 입력입니다.");
+                ShowBuyConsumableItemMenu();
+                return;
+            }
             // idx = 1 ~ 5 범위가 아닌 경우에는 함수 종료
             if (idx <= (int)ItemType.NONE || idx >= Enum.GetValues(typeof(ItemType)).Length)
             {
@@ -194,11 +201,18 @@ namespace newgame
             }
 
             // 구매 진행
-            Item item = GameManager.Instance.FindItem((ItemType)idx);
-            if (GameManager.Instance.player.MyStatus.gold >= item.ItemPrice)
+            Item? item = GameManager.Instance.FindItem((ItemType)idx);
+            if (item == null)
+            {
+                Console.WriteLine("해당 아이템을 찾을 수 없습니다.");
+                return;
+            }
+
+            Player player = GameManager.Instance.RequirePlayer();
+            if (player.MyStatus.gold >= item.ItemPrice)
             {
                 // 돈이 있네?
-                GameManager.Instance.player.MyStatus.gold -= item.ItemPrice;
+                player.MyStatus.gold -= item.ItemPrice;
                 Inventory.Instance.AddItem(item);
 
                 ShowMenu();

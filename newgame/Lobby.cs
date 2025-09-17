@@ -16,6 +16,8 @@ namespace newgame
 
             Console.WriteLine("\t[마을]");
 
+            Player player = GameManager.Instance.RequirePlayer();
+
             int menusel = UiHelper.SelectMenu([
                 "상태창 보기",
                 "인벤토리 보기",
@@ -33,7 +35,7 @@ namespace newgame
                     {
                         Console.Clear();
                         Console.WriteLine("[ 상태창 ] \r");
-                        GameManager.Instance.player.ShowStat();
+                        player.ShowStat();
                         Console.WriteLine("[Enter]를 눌러 돌아가기");
                         Console.ReadKey();
                         Console.Clear();
@@ -43,7 +45,7 @@ namespace newgame
                     {
                         Console.Clear();
                         Console.WriteLine("[ 인벤토리 ] \r");
-                        GameManager.Instance.player.MyStatus.ShowInventory();
+                        player.MyStatus.ShowInventory();
                         break;
                     }
                 case 2:
@@ -82,7 +84,7 @@ namespace newgame
                 case 6:
                     {
                         Console.Clear();
-                        DataManager.Instance.Save(GameManager.Instance.player.MyStatus);
+                        DataManager.Instance.Save(player.MyStatus);
                         UiHelper.WaitForInput("게임 저장됨. (SHIFT를 눌러 계속)");
                         break;
                     }
