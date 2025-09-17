@@ -586,6 +586,14 @@ namespace newgame
             int A = damage;
             int D = target.Status.DEF;
             int K = 50;
+            //
+            int KC = this.Status.CriticalChance;
+            float KD = (float)this.Status.CriticalDamage;
+
+            if (UiHelper.GetRandomInt1To100() <= KC)
+            {
+                A = (int)(A * KD / 100f);
+            }
 
             // 데미지 공식: max(1, round(A * K / (D + K)))
             int totaldamage = Math.Max(1, (int)Math.Round(A * K / (double)(D + K)));

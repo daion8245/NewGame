@@ -113,5 +113,8 @@ namespace newgame
         }
         #endregion
 
+        #region 그 외 유틸
+        public static int GetRandomInt1To100(int randomMax = 100) => Random.Shared.Next(1, randomMax + 1);
+        #endregion
     }
 }

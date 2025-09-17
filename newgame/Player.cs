@@ -50,6 +50,8 @@ namespace newgame
             MyStatus.DEF = 2 + def;
             MyStatus.maxMp = 30 + (mp * 2);
             MyStatus.mp = MyStatus.maxMp;
+            MyStatus.CriticalChance = 10;
+            MyStatus.CriticalDamage = 150;
             MyStatus.exp = 0;
             MyStatus.nextEXP = 50;
             MyStatus.gold = 25;
@@ -66,6 +68,8 @@ namespace newgame
                         $"  공격력 : {MyStatus.ATK}",
                         $"  방어력 : {MyStatus.DEF}",
                         $"  마나 : {MyStatus.mp}/{MyStatus.maxMp}",
+                        $"  치명타 확률 : {MyStatus.CriticalChance}",
+                        $"  치명타 피해 : {MyStatus.CriticalDamage}",
                         $"  골드 : {MyStatus.gold}",
                         $"  경험치 : {MyStatus.exp}/{MyStatus.nextEXP}"
                     }, SlowTxtOut: true, SlowTxtLineTime: 0, SlowTxtOutTime: 1);

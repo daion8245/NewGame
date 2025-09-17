@@ -250,6 +250,12 @@ namespace newgame
                         case "COIN":
                             monStat.gold = int.Parse(value);
                             break;
+                        case "CRICHANCE":
+                            monStat.CriticalChance = int.Parse(value);
+                            break;
+                        case "CRIDMG":
+                            monStat.CriticalDamage = int.Parse(value);
+                            break;
                     }
                 }
             }
@@ -337,6 +343,12 @@ namespace newgame
                         case "GOLD":
                         case "COIN":
                             BossStat.gold = int.Parse(value);
+                            break;
+                        case "CRICHANCE":
+                            BossStat.CriticalChance = int.Parse(value);
+                            break;
+                        case "CRIDMG":
+                            BossStat.CriticalDamage = int.Parse(value);
                             break;
                         case "SKILL":
                             skillNames.Add(value);

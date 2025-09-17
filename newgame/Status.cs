@@ -80,6 +80,8 @@ namespace newgame
         public int maxHp;
         public int mp;
         public int maxMp;
+        public int CriticalChance;
+        public int CriticalDamage;
         public int gold;
         public int exp;
         public int nextEXP;
@@ -117,6 +119,8 @@ namespace newgame
                 $"  공격력 : {atk}",
                 $"  방어력 : {def}",
                 $"  마나 : {mp}/{maxMp}",
+                $"  치명타 확률 : {CriticalChance}",
+                $"  치명타 피해 : {CriticalDamage}",
                 $"  골드 : {gold}",
                 $"  경험치 : {exp} / {nextEXP}"
                 ],true,1,0);
@@ -181,12 +185,16 @@ namespace newgame
                 nextEXP += 10;
                 ATK += 3;
                 DEF += 2;
+                CriticalChance += 2;
+                CriticalDamage += 5;
 
                 Console.WriteLine($"{Name} 레벨업! 현재 레벨 : {level - 1} -> {level}");
                 Console.WriteLine($"체력 : {maxHp - 10} -> {maxHp}");
                 Console.WriteLine($"마나 : {mp - 5} -> {mp}");
                 Console.WriteLine($"공격력 : {ATK - 3} -> {ATK}");
                 Console.WriteLine($"방어력 : {DEF - 2} -> {DEF}");
+                Console.WriteLine($"치명타 확률 : {CriticalChance - 2} -> {CriticalChance}");
+                Console.WriteLine($"치명타 피해 : {CriticalDamage - 5} -> {CriticalDamage}");
             }
 
         }
