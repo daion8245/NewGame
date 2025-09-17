@@ -34,7 +34,7 @@ namespace newgame
         }
         #endregion
 
-        #region 이름 설정
+        #region 이름 설정 & 기본 스텟 설정
         public void SetName(string name)
         {
             MyStatus.Name = name;
@@ -53,7 +53,7 @@ namespace newgame
             MyStatus.CriticalChance = 10;
             MyStatus.CriticalDamage = 150;
             MyStatus.exp = 0;
-            MyStatus.nextEXP = 50;
+            MyStatus.nextEXP = 20;
             MyStatus.gold = 25;
         }
         #endregion

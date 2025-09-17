@@ -27,23 +27,12 @@ namespace newgame
             {
                 if (charType == CharType.PLAYER)
                 {
-                    Equipment? equip = null;
-
-                    equip = Inventory.Instance.GetEquip(EquipType.HELMET);
-                    int helmet = equip == null ? 0 : equip.GetEquipStat;
-
-                    equip = Inventory.Instance.GetEquip(EquipType.GLOVE);
-                    int glove = equip == null ? 0 : equip.GetEquipStat;
-
-                    equip = Inventory.Instance.GetEquip(EquipType.SHOES);
-                    int shoes = equip == null ? 0 : equip.GetEquipStat;
-
-                    return atk + helmet + glove + shoes;
+                    // 무기 포함 장비 공격력 합산
+                    return atk + GetStrAtk();
                 }
                 return atk;
             }
-
-            set => atk = value;
+            set => atk = value; // 기본 능력치만 대입
         }
         [JsonProperty]
         int def;
@@ -176,27 +165,46 @@ namespace newgame
 
         public void LevelUp()
         {
-            if(exp >= nextEXP)
+            while (exp >= nextEXP)
             {
+                // 증가 전 값(효과값) 저장
+                int prevLevel = level;
+                int prevMaxHp = maxHp;
+                int prevMaxMp = maxMp;
+                int prevATK = ATK; // 장비 포함
+                int prevDEF = DEF; // 장비 포함
+                int prevCritChance = CriticalChance;
+                int prevCritDamage = CriticalDamage;
+
+                // 경험치/레벨 처리
+                exp -= nextEXP;
                 level++;
+
+                // 체력/마나 최대치 상승 및 전부 회복
                 maxHp += 10;
                 _hp = maxHp;
-                mp += 5;
+
+                maxMp += 5;
+                mp = maxMp;
+
+                // 다음 레벨 필요 경험치 증가
                 nextEXP += 10;
-                ATK += 3;
-                DEF += 2;
+
+                // 기본 능력치만 상승(프로퍼티 대신 필드 사용)
+                atk += 3;
+                def += 2;
                 CriticalChance += 2;
                 CriticalDamage += 5;
 
-                Console.WriteLine($"{Name} 레벨업! 현재 레벨 : {level - 1} -> {level}");
-                Console.WriteLine($"체력 : {maxHp - 10} -> {maxHp}");
-                Console.WriteLine($"마나 : {mp - 5} -> {mp}");
-                Console.WriteLine($"공격력 : {ATK - 3} -> {ATK}");
-                Console.WriteLine($"방어력 : {DEF - 2} -> {DEF}");
-                Console.WriteLine($"치명타 확률 : {CriticalChance - 2} -> {CriticalChance}");
-                Console.WriteLine($"치명타 피해 : {CriticalDamage - 5} -> {CriticalDamage}");
+                // 출력(이전 효과값 -> 현재 효과값)
+                Console.WriteLine($"{Name} 레벨업! 현재 레벨 : {prevLevel} -> {level}");
+                Console.WriteLine($"체력 : {prevMaxHp} -> {maxHp}");
+                Console.WriteLine($"마나 : {prevMaxMp} -> {maxMp}");
+                Console.WriteLine($"공격력 : {prevATK} -> {ATK}");
+                Console.WriteLine($"방어력 : {prevDEF} -> {DEF}");
+                Console.WriteLine($"치명타 확률 : {prevCritChance} -> {CriticalChance}");
+                Console.WriteLine($"치명타 피해 : {prevCritDamage} -> {CriticalDamage}");
             }
-
         }
 
         void SetEquip(int sel)
