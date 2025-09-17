@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 
 namespace newgame
@@ -526,6 +527,43 @@ namespace newgame
             target.activeSkillCasters[skillName] = this;
         }
 
+        public string GetActiveSkillEffectDisplay()
+        {
+            if (activeSkills.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            List<string> labels = new List<string>();
+
+            foreach (var skillName in activeSkills.Keys)
+            {
+                string effectName = GetSkillEffectLabel(skillName);
+                if (string.IsNullOrWhiteSpace(effectName))
+                {
+                    continue;
+                }
+
+                labels.Add($"[{effectName}]");
+            }
+
+            if (labels.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            return $" [스킬 특수효과]{string.Join(string.Empty, labels)}";
+        }
+
+        protected virtual string GetSkillEffectLabel(string skillName)
+        {
+            return skillName switch
+            {
+                "파이어볼" => "화상",
+                _ => skillName
+            };
+        }
+
         protected virtual List<SkillTickLog> TickSkillTurns()
         {
             List<SkillTickLog> logs = new();
@@ -683,20 +721,32 @@ namespace newgame
             string border = new string('=', width);
             string divider = new string('-', width);
 
+
             static string Fit(string text, int width)
             {
                 text ??= string.Empty;
-                return text.Length > width ? text[..(width - 3)] + "..." : text.PadRight(width);
+                //주석된 부분은 글자가 너무 길 때 자르는 기능
+                return text.Length > width ? text.PadRight(width)/*text[..(width - 3)] + "..."*/ : text.PadRight(width);
             }
 
-            static string FormatStatus(string label, Status status)
+            /// <summary>
+            /// 해당 함수는 상태창의 한 줄을 포맷팅합니다.
+            /// 포멧팅이란? : 문자열을 특정 형식에 맞게 변환하는 것을 의미합니다.
+            /// </summary>
+            /// <param name="label">상태창의 왼쪽에 표시될 라벨 (예: "플레이어", "몬스터")</param>
+            static string FormatStatus(string label, Character? character, Status status)
             {
                 string name = string.IsNullOrWhiteSpace(status.Name) ? "??" : status.Name;
-                return $"{label} : {name}  Lv.{status.level}  HP {status.Hp}/{status.maxHp}";
+                string effectLabel = character?.GetActiveSkillEffectDisplay() ?? string.Empty;
+                return $"{label} : {name}{effectLabel}  Lv.{status.level}  HP {status.Hp}/{status.maxHp}";
             }
 
-            string playerLine = FormatStatus("플레이어", playerStatus);
-            string monsterLine = FormatStatus("몬스터  ", monsterStatus);
+            // 해당 변수는 상태창의 각 줄을 저장합니다.
+            string playerLine = FormatStatus("플레이어", playerChar, playerStatus);
+            // 해당 변수는 상태창의 각 줄을 저장합니다.
+            string monsterLine = FormatStatus("몬스터  ", monsterChar, monsterStatus);
+
+            /// 로그 메시지를 출력하는 내부 함수
             static void PrintLog(string label, string message, int width, Func<string, int, string> formatter)
             {
                 string prefix = $"{label} ▶ ";
