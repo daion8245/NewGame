@@ -10,10 +10,46 @@ namespace newgame
         private const int SkillUseChancePercent = 40;
         private static readonly Random Randomizer = new Random();
 
-        public void StartBoss(int bossType)
+        public void StartBoss(int floor)
         {
-            bossKey = bossType;
-            base.Start(bossType);
+            bossKey = floor;
+
+            Status bossStatus = GameManager.Instance.GetBossStat(floor);
+            string displayName = string.IsNullOrWhiteSpace(bossStatus.Name)
+                ? $"정체불명의 존재({floor}층)"
+                : bossStatus.Name;
+            bossStatus.Name = displayName;
+
+            MyStatus = bossStatus;
+            if (MyStatus.maxHp <= 0)
+            {
+                MyStatus.maxHp = Math.Max(MyStatus.Hp, 1);
+            }
+            if (MyStatus.Hp <= 0)
+            {
+                MyStatus.Hp = MyStatus.maxHp;
+            }
+            if (MyStatus.level <= 0)
+            {
+                MyStatus.level = 1;
+            }
+            if (MyStatus.ATK <= 0)
+            {
+                MyStatus.ATK = 1;
+            }
+            if (MyStatus.DEF < 0)
+            {
+                MyStatus.DEF = 0;
+            }
+
+            Console.Clear();
+            UiHelper.TxtOut(new string[]
+            {
+                $"{displayName}이(가) 나타났다!",
+                ""
+            });
+            UiHelper.WaitForInput();
+
             LoadBossSkills();
         }
 

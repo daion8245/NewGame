@@ -343,6 +343,13 @@ namespace newgame
                             break;
                     }
                 }
+
+                if (!string.IsNullOrWhiteSpace(BossStat.Name) || skillNames.Count > 0)
+                {
+                    BossStat.charType = CharType.MONSTER;
+                    int bossKey = GameManager.Instance.SetBossInfo(BossStat);
+                    GameManager.Instance.SetBossSkills(bossKey, skillNames);
+                }
             }
             catch (Exception ex)
             {

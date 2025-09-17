@@ -23,8 +23,9 @@ namespace newgame
 
         #region 몬스터 정보
         Dictionary<int, Status> monsterInfo = new Dictionary<int, Status>();
-        int bossCount = 1;
+        readonly Dictionary<int, Status> bossInfo = new Dictionary<int, Status>();
         readonly Dictionary<int, List<string>> bossSkills = new Dictionary<int, List<string>>();
+        int nextBossFloor = 1;
 
         public void SetMonsterInfo(Status _stat)
         {
@@ -34,10 +35,10 @@ namespace newgame
 
         public int SetBossInfo(Status _stat)
         {
-            int key = 100 + bossCount;
-            monsterInfo.Add(key, _stat);
-            bossCount++;
-            return key;
+            int floor = nextBossFloor;
+            bossInfo[floor] = _stat.Clone();
+            nextBossFloor++;
+            return floor;
         }
 
         public void SetBossSkills(int bossKey, IEnumerable<string> skillNames)
@@ -51,17 +52,29 @@ namespace newgame
                 }
             }
 
-            if (names.Count > 0)
-            {
-                bossSkills[bossKey] = names;
-            }
+            bossSkills[bossKey] = names;
         }
 
         public List<SkillType> GetBossSkills(int bossKey)
         {
             List<SkillType> results = new List<SkillType>();
 
-            if (bossSkills.TryGetValue(bossKey, out List<string>? names) && names != null)
+            int effectiveKey = bossKey;
+            if (effectiveKey < 1)
+            {
+                effectiveKey = 1;
+            }
+
+            if (!bossSkills.ContainsKey(effectiveKey))
+            {
+                int lastFloor = nextBossFloor - 1;
+                if (lastFloor >= 1 && bossSkills.ContainsKey(lastFloor))
+                {
+                    effectiveKey = lastFloor;
+                }
+            }
+
+            if (bossSkills.TryGetValue(effectiveKey, out List<string>? names) && names != null)
             {
                 foreach (string name in names)
                 {
@@ -79,6 +92,27 @@ namespace newgame
             }
 
             return results;
+        }
+
+        public Status GetBossStat(int floor)
+        {
+            if (floor < 1)
+            {
+                floor = 1;
+            }
+
+            if (bossInfo.TryGetValue(floor, out Status? stat))
+            {
+                return stat.Clone();
+            }
+
+            int lastFloor = nextBossFloor - 1;
+            if (lastFloor >= 1 && bossInfo.TryGetValue(lastFloor, out stat))
+            {
+                return stat.Clone();
+            }
+
+            return GetMonsterStat(1);
         }
 
         public Status GetMonsterStat(int _key)
