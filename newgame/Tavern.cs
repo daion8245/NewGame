@@ -90,7 +90,8 @@ namespace newgame
         #region 숙박
         void SleepTavern()
         {
-            var playerstat = GameManager.Instance.player.MyStatus;
+            Player player = GameManager.Instance.RequirePlayer();
+            var playerstat = player.MyStatus;
             Console.Clear();
 
             while (true)
@@ -147,7 +148,8 @@ namespace newgame
         #region 여관 상점
         void TavernShop()
         {
-            var playerstat = GameManager.Instance.player.MyStatus;
+            Player player = GameManager.Instance.RequirePlayer();
+            var playerstat = player.MyStatus;
 
             Console.Clear();
 
@@ -194,7 +196,8 @@ namespace newgame
 
         void TavernGambling_Betting()
         {
-            var playerstat = GameManager.Instance.player.MyStatus;
+            Player player = GameManager.Instance.RequirePlayer();
+            var playerstat = player.MyStatus;
             Console.Clear();
 
             int sel = UiHelper.SelectMenu(["골드 배팅",
@@ -289,7 +292,8 @@ namespace newgame
                 Console.WriteLine("아쉽게도 당첨되지 않았습니다.");
             }
 
-            var playerstat = GameManager.Instance.player.MyStatus;
+            Player player = GameManager.Instance.RequirePlayer();
+            var playerstat = player.MyStatus;
             if (reward > 0)
             {
                 playerstat.gold += (int)reward;

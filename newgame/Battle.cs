@@ -16,8 +16,8 @@
 
         private static void Start_Battle()
         {
-            Character player = GameManager.Instance.player;
-            Character monster = GameManager.Instance.monster;
+            Character player = GameManager.Instance.RequirePlayer();
+            Character monster = GameManager.Instance.RequireMonster();
 
             Character[] chars = new Character[] { player, monster };
 

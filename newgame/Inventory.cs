@@ -22,8 +22,8 @@ namespace newgame
             }
         }
 
-        private Dictionary<EquipType, Equipment> equips =
-            new Dictionary<EquipType, Equipment>()
+        private Dictionary<EquipType, Equipment?> equips =
+            new Dictionary<EquipType, Equipment?>()
             {
                 {EquipType.WEAPON, null! },
                 {EquipType.HELMET, null! },
@@ -81,7 +81,7 @@ namespace newgame
         public void SetEquip(EquipType _type, int _id)
         {
             //현제 착용하고 있는 장비를 확인하는 함수
-            Equipment item = GameManager.Instance.FindEquipment(_type, _id);//equipment 타입item변수에
+            Equipment? item = GameManager.Instance.FindEquipment(_type, _id);//equipment 타입item변수에
                                                                             //착용 가능한 장비의
                                                                             //타입과 id를 넣는다.
             if (item == null)
@@ -89,12 +89,15 @@ namespace newgame
                 return;
             }
 
+            Equipment equipItem = item;
+
             if (equips.ContainsKey(_type) == false)
             {
                 return;
             }
 
-            if (equips[_type] != null)
+            Equipment? currentlyEquipped = equips[_type];
+            if (currentlyEquipped != null)
             {
 
                 foreach (var can in canEquips)//그니깐 이건 리스트에 들어있는 모든 장비를 하나씩 꺼내서 can변수에 넣는 코드
@@ -102,27 +105,23 @@ namespace newgame
                     //canEquips 변수에 저장된 value 값과
                     //지금 착용하려는 아이템이 동일하다면,
                     //내가 현재 가지고 있는 장비 = 착용 가능한 장비
-                    if (can == item)
+                    if (can == equipItem)
                     {
-                        canEquips.Remove(item); //장비 꺼내기, 착용 가능한 장비에서 삭제
+                        canEquips.Remove(equipItem); //장비 꺼내기, 착용 가능한 장비에서 삭제
                         break;
                     }
                 }
                 //현제 착용하고 있는 장비를 다시 canEquips 에 저장
                 // 위에서 착용하지 않고 가지고 있던 장비를 꺼냈으니깐
-                canEquips.Add(equips[_type]);
+                canEquips.Add(currentlyEquipped);
             }
             //해당 Key 값이 item에 추가되게 한다
-            equips[_type] = item;
+            equips[_type] = equipItem;
         }
 
-        public Equipment GetEquip(EquipType _type)
+        public Equipment? GetEquip(EquipType _type)
         {
-            if (equips[_type] == null)
-            {
-                return null;
-            }
-            return equips[_type];
+            return equips.TryGetValue(_type, out Equipment? equip) ? equip : null;
         }
 
         #region 착용 장비 보이기
@@ -144,9 +143,9 @@ namespace newgame
                 }
 
                 string equipName = "없음";
-                if (equips.ContainsKey(type) && equips[type] != null)
+                if (equips.TryGetValue(type, out Equipment? equipped) && equipped != null)
                 {
-                    equipName = equips[type].GetEquipName;
+                    equipName = equipped.GetEquipName;
                 }
 
                 Console.WriteLine($"┃ {type,-6} : {equipName,-14}");
@@ -166,7 +165,8 @@ namespace newgame
             int temp = idx - 1;
             if (temp >= 0 && temp < canEquips.Count)
             {
-                GameManager.Instance.player.MyStatus.gold += canEquips[idx - 1].GetPrice;
+                Player player = GameManager.Instance.RequirePlayer();
+                player.MyStatus.gold += canEquips[idx - 1].GetPrice;
                 canEquips.RemoveAt(idx - 1);
                 return;
             }
@@ -275,7 +275,8 @@ namespace newgame
 
             if (item.IsPersistent())
             {
-                GameManager.Instance.player.AddEffect(item);
+                Player player = GameManager.Instance.RequirePlayer();
+                player.AddEffect(item);
             }
 
             slot.Decrease(1);
