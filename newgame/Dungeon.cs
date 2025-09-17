@@ -303,7 +303,7 @@ namespace newgame
         {
             Boss boss = new Boss();
             GameManager.Instance.monster = boss;
-            boss.StartBoss(100 + floor);
+            boss.StartBoss(floor);
             Battle battle = new Battle();
             battle.Start();
         }
