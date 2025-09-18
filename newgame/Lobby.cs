@@ -35,7 +35,7 @@ namespace newgame
                     {
                         Console.Clear();
                         Console.WriteLine("[ 상태창 ] \r");
-                        player.ShowStat();
+                        player.Initializer.ShowStat();
                         Console.WriteLine("[Enter]를 눌러 돌아가기");
                         Console.ReadKey();
                         Console.Clear();
