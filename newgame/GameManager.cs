@@ -20,6 +20,10 @@ namespace newgame
 
         private Lobby? _lobby;
 
+        private readonly BattleLogService battleLogService = new BattleLogService();
+
+        public BattleLogService BattleLogService => battleLogService;
+
         public Player? player;
         public Player? Player
         {

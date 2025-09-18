@@ -34,163 +34,31 @@ namespace newgame
         //이전 HP 값을 저장하는 배열 (플레이어[0], 적[1])
         protected int[] beforHP = new int[2];
 
-        protected static readonly string[] battleLog = new string[2];
+        private readonly BattleLogService battleLogService;
+
+        protected Character()
+            : this(GameManager.Instance.BattleLogService)
+        {
+        }
+
+        protected Character(BattleLogService battleLogService)
+        {
+            this.battleLogService = battleLogService ?? throw new ArgumentNullException(nameof(battleLogService));
+        }
+
+        protected BattleLogService BattleLogService => battleLogService;
 
         #region 로그 관련
-        protected static string[] SnapshotBattleLog()
+        protected string[] SnapshotBattleLog()
         {
-            return new[]
-            {
-                battleLog[0] ?? string.Empty,
-                battleLog[1] ?? string.Empty
-            };
+            return battleLogService.SnapshotBattleLog();
         }
 
-        protected static void ResetBattleLog()
+        protected void ResetBattleLog()
         {
-            battleLog[0] = string.Empty;
-            battleLog[1] = string.Empty;
+            battleLogService.ResetBattleLog();
         }
 
-        protected static bool IsPlayer(Character actor)
-        {
-            Player? activePlayer = GameManager.Instance.player;
-            return activePlayer != null && ReferenceEquals(actor, activePlayer);
-        }
-
-        // 로그 한 줄을 표준 형식으로 만들어 반환한다.
-        // - isFirstLine이 true면 "->" 접두사, 아니면 " ->" 접두사를 사용한다.
-        // - 공백/널 입력은 빈 문자열로 정규화한다(빈 로그는 출력 안 함).
-        private static string FormatLogLine(string message, bool isFirstLine)
-        {
-            string content = (message ?? string.Empty).Trim();
-            if (string.IsNullOrEmpty(content))
-            {
-                return string.Empty;
-            }
-
-            string prefix = isFirstLine ? "->" : " ->";
-            return prefix + content;
-        }
-
-        // 공격자(플레이어/몬스터)에 따라 로그 슬롯을 선택해(플레이어: 0, 몬스터: 1)
-        // 해당 슬롯의 메시지를 덮어쓴다.
-        // clearOpponentMessage가 true면 상대 슬롯 로그는 비운다(턴 전환 느낌을 주는 효과).
-        private void UpdateBattleMessage(Character attacker, string message, bool clearOpponentMessage)
-        {
-            bool isPlayer = IsPlayer(attacker);
-            int index = isPlayer ? 0 : 1;
-
-            string formatted = FormatLogLine(message, true); // 항상 첫 줄로 기록
-            battleLog[index] = formatted;
-
-            if (clearOpponentMessage)
-            {
-                battleLog[isPlayer ? 1 : 0] = string.Empty;
-            }
-        }
-
-        // 기존 슬롯의 마지막 줄 뒤에 추가 메시지를 이어붙인다.
-        // - 해당 액터의 첫 줄이면 "->", 아니면 " ->"로 들여쓰기 느낌을 준다.
-        private void AppendBattleMessage(Character actor, string message)
-        {
-            bool isPlayer = IsPlayer(actor);
-            int index = isPlayer ? 0 : 1;
-
-            string existing = battleLog[index] ?? string.Empty;
-            bool isFirstLine = string.IsNullOrEmpty(existing);
-            string formatted = FormatLogLine(message, isFirstLine);
-
-            if (string.IsNullOrEmpty(formatted))
-            {
-                return;
-            }
-
-            battleLog[index] = isFirstLine ? formatted : existing + "\n" + formatted;
-        }
-
-        // 인자로 전달된 액터가 어느 쪽인지 판별하여 해당 측 로그만 비운다.
-        // - 플레이어면 0, 몬스터면 1
-        private static void ClearBattleMessageForActor(Character actor)
-        {
-            if (actor == null)
-            {
-                return;
-            }
-
-            Player? activePlayer = GameManager.Instance.player;
-            Monster? activeMonster = GameManager.Instance.monster;
-
-            if (activePlayer != null && ReferenceEquals(actor, activePlayer))
-            {
-                battleLog[0] = string.Empty;
-            }
-            else if (activeMonster != null && ReferenceEquals(actor, activeMonster))
-            {
-                battleLog[1] = string.Empty;
-            }
-        }
-
-        // 인자로 전달된 액터의 '상대' 로그를 비운다.
-        // - 플레이어면 몬스터 로그(1), 몬스터면 플레이어 로그(0)
-        private static void ClearBattleMessageForOpponent(Character actor)
-        {
-            if (actor == null)
-            {
-                return;
-            }
-
-            Player? activePlayer = GameManager.Instance.player;
-            Monster? activeMonster = GameManager.Instance.monster;
-
-            if (activePlayer != null && ReferenceEquals(actor, activePlayer))
-            {
-                battleLog[1] = string.Empty;
-            }
-            else if (activeMonster != null && ReferenceEquals(actor, activeMonster))
-            {
-                battleLog[0] = string.Empty;
-            }
-        }
-
-        // 틱 로그 집합을 실제 battleLog에 반영한다.
-        // - 각 로그는 액터 기준으로 자신의 슬롯에 누적된다.
-        // - ClearOpponent 플래그가 있으면 상대 슬롯은 비운다(상태 이상에 의한 간섭 표현).
-        private void ApplyTickLogs(IEnumerable<SkillTickLog> tickLogs)
-        {
-            foreach (var log in tickLogs)
-            {
-                AppendBattleMessage(log.Actor, log.Message);
-
-                if (log.ClearOpponent)
-                {
-                    ClearBattleMessageForOpponent(log.Actor);
-                }
-            }
-        }
-
-        // 한 액션(공격/스킬) 메시지를 표준 문장으로 구성한다.
-        // - actionName이 null/공백이면 "공격"으로 치환
-        // - isCritical이면 접두에 [치명타!] 부착
-        // - 대상 체력 및 쓰러짐 여부 표기
-        private static string BuildActionMessage(Character attacker, Character defender, int damage, string? actionName, bool targetDefeated, bool isCritical = false)
-        {
-            string label = string.IsNullOrWhiteSpace(actionName) ? "공격" : actionName!;
-            string prefix = $"{attacker.MyStatus.Name}의 {label}!";
-
-            if (isCritical)
-            {
-                prefix = $"[치명타!] {prefix}";
-            }
-            string suffix = $"{defender.MyStatus.Name}은 {damage}의 피해를 입었다. 남은 체력: {defender.MyStatus.Hp}/{defender.MyStatus.maxHp}";
-
-            if (targetDefeated)
-            {
-                suffix += " (쓰러짐)";
-            }
-
-            return $"{prefix} {suffix}";
-        }
         #endregion
 
         #region 전투 진입
@@ -200,7 +68,7 @@ namespace newgame
         {
             this.target = target;
 
-            if (IsPlayer(this))
+            if (battleLogService.IsPlayer(this))
             {
                 ResetBattleLog();
             }
@@ -220,7 +88,7 @@ namespace newgame
 
             Status targetStatus = target.MyStatus;
 
-            ClearBattleMessageForActor(this);
+            battleLogService.ClearBattleMessageForActor(this);
 
             List<SkillTickLog> tickLogs = TickSkillTurns();
 
@@ -228,8 +96,8 @@ namespace newgame
             bool anyDeath = tickLogs.Any(log => log.TargetDefeated);
             if (anyDeath)
             {
-                ApplyTickLogs(tickLogs);
-                ShowBattleInfo(target, battleLog);
+                battleLogService.ApplyTickLogs(tickLogs);
+                battleLogService.ShowBattleInfo(this, target);
                 ResolveTickDeaths(tickLogs);
                 return SnapshotBattleLog();
             }
@@ -238,14 +106,14 @@ namespace newgame
             (int damage, bool isCritical) = Damage(target, MyStatus.ATK);
             MyStatus.mp = Math.Min(MyStatus.maxMp, MyStatus.mp + 10);
             bool defeated = targetStatus.Hp <= 0;
-            string message = BuildActionMessage(this, target, damage, null, defeated, isCritical);
+            string message = battleLogService.BuildActionMessage(this, target, damage, null, defeated, isCritical);
 
-            bool clearOpponent = IsPlayer(this);
-            UpdateBattleMessage(this, message, clearOpponent);
+            bool clearOpponent = battleLogService.IsPlayer(this);
+            battleLogService.UpdateBattleMessage(this, message, clearOpponent);
 
-            ApplyTickLogs(tickLogs);
+            battleLogService.ApplyTickLogs(tickLogs);
 
-            ShowBattleInfo(target, battleLog);
+            battleLogService.ShowBattleInfo(this, target);
 
             if (defeated)
             {
@@ -279,17 +147,17 @@ namespace newgame
 
             Status targetStatus = targetCharacter.MyStatus;
 
-            ClearBattleMessageForActor(this);
+            battleLogService.ClearBattleMessageForActor(this);
 
             List<SkillTickLog> tickLogs = TickSkillTurns();
 
             bool attackerDiedFromTick = tickLogs.Any(log => ReferenceEquals(log.Target, this) && log.TargetDefeated);
-            bool preserveOpponentLog = tickLogs.Any(log => IsPlayer(log.Actor) != IsPlayer(this));
+            bool preserveOpponentLog = tickLogs.Any(log => battleLogService.IsPlayer(log.Actor) != battleLogService.IsPlayer(this));
 
             if (attackerDiedFromTick)
             {
-                ApplyTickLogs(tickLogs);
-                ShowBattleInfo(targetCharacter, battleLog);
+                battleLogService.ApplyTickLogs(tickLogs);
+                battleLogService.ShowBattleInfo(this, targetCharacter);
                 ResolveTickDeaths(tickLogs);
                 return SnapshotBattleLog();
             }
@@ -302,14 +170,14 @@ namespace newgame
             (int damage, bool isCritical) = Damage(targetCharacter, skill.skillDamage);
 
             bool defeated = targetStatus.Hp <= 0;
-            string message = BuildActionMessage(this, targetCharacter, damage, skill.name, defeated, isCritical);
+            string message = battleLogService.BuildActionMessage(this, targetCharacter, damage, skill.name, defeated, isCritical);
 
-            bool clearOpponent = IsPlayer(this) && !preserveOpponentLog;
-            UpdateBattleMessage(this, message, clearOpponent);
+            bool clearOpponent = battleLogService.IsPlayer(this) && !preserveOpponentLog;
+            battleLogService.UpdateBattleMessage(this, message, clearOpponent);
 
-            ApplyTickLogs(tickLogs);
+            battleLogService.ApplyTickLogs(tickLogs);
 
-            ShowBattleInfo(targetCharacter, battleLog);
+            battleLogService.ShowBattleInfo(this, targetCharacter);
 
             if (defeated)
             {
@@ -543,7 +411,7 @@ namespace newgame
 
         #region 스킬 지속 효과
 
-        protected struct SkillTickLog
+        protected internal struct SkillTickLog
         {
             public SkillTickLog(Character actor, Character target, string message, bool targetDefeated, bool clearOpponent = false)
             {
@@ -704,7 +572,7 @@ namespace newgame
                         bool defeated = MyStatus.Hp <= 0;
                         int remain = Math.Max(remainingTurns, 0); // 표시용 잔여 턴(음수 방지)
                         string label = $"{skill}(지속)";
-                        string message = BuildActionMessage(caster, this, dotDamage, label, defeated) + $" (남은 턴: {remain})";
+                        string message = battleLogService.BuildActionMessage(caster, this, dotDamage, label, defeated) + $" (남은 턴: {remain})";
                         return new SkillTickLog(caster, this, message, defeated);
                     }
                 default:
@@ -747,115 +615,6 @@ namespace newgame
 
             targetStatus.Hp -= totaldamage;
             return (totaldamage, isCritical);
-        }
-        #endregion
-
-        #region 플레이어&적 정보
-        // 전투 UI 전체를 그린다.
-        // - 플레이어/몬스터 객체를 안전하게 추론(현재 this/target 기반 대체 포함)
-        // - 상태 라벨에 버프/디버프 표시 태그 포함([화상] 등)
-        // - 로그는 "플레이어 ▶", "몬스터  ▶" 접두로 첫 줄, 이후 줄은 동일 들여쓰기 유지
-        public void ShowBattleInfo(Character target, string[] log)
-        {
-            Console.Clear();
-
-            log ??= Array.Empty<string>();
-            string msg0 = log.Length > 0 ? log[0] ?? string.Empty : string.Empty;
-            string msg1 = log.Length > 1 ? log[1] ?? string.Empty : string.Empty;
-
-            Character? playerChar = GameManager.Instance.player;
-            Character? monsterChar = GameManager.Instance.monster;
-
-            // 안전한 널 대체: 싱글플레이/테스트 상황에서 GM에 미등록일 수 있음
-            if (playerChar == null)
-            {
-                if (this is Player)
-                {
-                    playerChar = this;
-                }
-                else if (target is Player)
-                {
-                    playerChar = target;
-                }
-            }
-
-            if (monsterChar == null)
-            {
-                if (this is Monster)
-                {
-                    monsterChar = this;
-                }
-                else if (target is Monster)
-                {
-                    monsterChar = target;
-                }
-            }
-
-            Status playerStatus = playerChar?.MyStatus ?? this.MyStatus;
-            Status monsterStatus = monsterChar?.MyStatus ?? (target?.MyStatus ?? this.MyStatus);
-
-            const int width = 68; // 한 줄 폭(고정 레이아웃)
-            string border = new string('=', width);
-            string divider = new string('-', width);
-
-            // 폭에 맞춰 문자열을 채운다.
-            // - 길이가 길어도 자르지 않고 우측 패딩만 넣는다(레이아웃 깨짐 방지).
-            static string Fit(string text, int width)
-            {
-                text ??= string.Empty;
-                // 너무 길 때 자르는 기능은 주석 처리되어 있음(디자인 선택)
-                return text.Length > width ? text.PadRight(width)/*text[..(width - 3)] + "..."*/ : text.PadRight(width);
-            }
-
-            /// <summary>
-            /// 한 줄 상태 라벨 구성
-            /// - 이름 미설정 시 "??" 대체
-            /// - GetActiveSkillEffectDisplay()로 [효과] 태그를 이름 옆에 붙인다.
-            /// </summary>
-            static string FormatStatus(string label, Character? character, Status status)
-            {
-                string name = string.IsNullOrWhiteSpace(status.Name) ? "??" : status.Name;
-                string effectLabel = character?.GetActiveSkillEffectDisplay() ?? string.Empty;
-                return $"{label} : {name}{effectLabel}  Lv.{status.level}  HP {status.Hp}/{status.maxHp}";
-            }
-
-            string playerLine = FormatStatus("플레이어", playerChar, playerStatus);
-            string monsterLine = FormatStatus("몬스터  ", monsterChar, monsterStatus);
-
-            // 로그 출력:
-            // - 첫 줄은 "라벨 ▶ " 접두사를 붙이고, 이후 줄은 같은 길이만큼 공백으로 들여쓰기
-            // - 비어있으면 접두사만 출력하여 영역 유지
-            static void PrintLog(string label, string message, int width, Func<string, int, string> formatter)
-            {
-                string prefix = $"{label} ▶ ";
-                string indent = new string(' ', prefix.Length);
-
-                string[] lines = string.IsNullOrEmpty(message)
-                    ? Array.Empty<string>()
-                    : message.Split('\n');
-
-                if (lines.Length == 0)
-                {
-                    Console.WriteLine(formatter(prefix, width));
-                    return;
-                }
-
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    string linePrefix = i == 0 ? prefix : indent;
-                    string content = lines[i];
-                    Console.WriteLine(formatter(linePrefix + content, width));
-                }
-            }
-
-            Console.WriteLine(border);
-            Console.WriteLine(Fit(playerLine, width));
-            Console.WriteLine(Fit(monsterLine, width));
-            Console.WriteLine(divider);
-            PrintLog("플레이어", msg0, width, Fit);
-            PrintLog("몬스터  ", msg1, width, Fit);
-            Console.WriteLine(border);
-            Console.WriteLine();
         }
         #endregion
 

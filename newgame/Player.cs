@@ -184,7 +184,7 @@ namespace newgame
         #region 플레이어가 선택한 액션 실행
         public void PerformAction(Character target)
         {
-            ShowBattleInfo(target, battleLog);
+            BattleLogService.ShowBattleInfo(this, target);
 
             int input = SelectBattleAction();
 
