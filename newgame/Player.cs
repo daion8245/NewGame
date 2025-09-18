@@ -265,12 +265,12 @@ namespace newgame
             {
                 case "파이어볼":
                     {
-                        EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
+                        StatusEffects.EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
                         break;
                     }
                 case "아쿠아 볼":
                     {
-                        AddTickSkill(useSkill.name, useSkill.skillTurn);
+                        StatusEffects.AddTickSkill(useSkill.name, useSkill.skillTurn);
                         break;
                     }
                 default:
@@ -294,8 +294,7 @@ namespace newgame
                 Console.Clear();
                 Console.WriteLine("전투에서 탈출했다");
 
-                Lobby lobby = new Lobby();
-                lobby.Start();
+                GameManager.Instance.ReturnToLobby();
                 isbattleRun = false;
             }
             //만약 실패할시 플레이어에게 실패 메세지를 띄움

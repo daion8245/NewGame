@@ -10,19 +10,16 @@ namespace newgame
         private readonly DataManager _dataManager;
         private readonly GameManager _gameManager;
         private readonly Func<Player> _playerFactory;
-        private readonly Func<Lobby> _lobbyFactory;
         private StartMessage? _startMessage;
 
         private GameBuild(
             DataManager dataManager,
             GameManager gameManager,
-            Func<Player> playerFactory,
-            Func<Lobby> lobbyFactory)
+            Func<Player> playerFactory)
         {
             _dataManager = dataManager ?? throw new ArgumentNullException(nameof(dataManager));
             _gameManager = gameManager ?? throw new ArgumentNullException(nameof(gameManager));
             _playerFactory = playerFactory ?? throw new ArgumentNullException(nameof(playerFactory));
-            _lobbyFactory = lobbyFactory ?? throw new ArgumentNullException(nameof(lobbyFactory));
         }
 
         public static GameBuild Create()
@@ -30,9 +27,8 @@ namespace newgame
             DataManager dataManager = DataManager.Instance;
             GameManager gameManager = GameManager.Instance;
             Func<Player> playerFactory = () => new Player();
-            Func<Lobby> lobbyFactory = () => new Lobby();
 
-            var build = new GameBuild(dataManager, gameManager, playerFactory, lobbyFactory);
+            var build = new GameBuild(dataManager, gameManager, playerFactory);
             var startMessage = new StartMessage(build.StartNewGame, build.TryLoadGame);
             build.SetStartMessage(startMessage);
 
@@ -90,8 +86,7 @@ namespace newgame
         private void LaunchLobby()
         {
             Console.Clear();
-            Lobby lobby = _lobbyFactory();
-            lobby.Start();
+            _gameManager.ReturnToLobby();
         }
 
         #region 플레이어 이름 정하기
