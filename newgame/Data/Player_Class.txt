@@ -1,0 +1,22 @@
+﻿NAME : 초보자  
+DESCRIPTION : [모험을 시작하는 자]  
+ATK : 1
+HP : 0
+DEF : 0
+MP : 0
+CC : 0
+CD : 0
+SKILL : 돌 던지기
+SKILL : 강하게 치기
+#
+NAME : 검사
+DESCRIPTION : [검을 능숙하게 다루며 근접 전투에 특화된 클래스]
+ATK : 12
+HP : 8
+DEF : 0
+MP : 0
+CC : 0
+CD : 0
+SKILL : 가르기
+SKILL : 전투의 함성
+#

@@ -112,7 +112,8 @@ namespace newgame
                 if (sel == 0)
                 {
                     Player player = _playerFactory();
-                    player.Start();
+                    Status freshStatus = player.Initializer.Start();
+                    player.ApplyStatus(freshStatus);
                     player.SetName(inputName!);
                     _gameManager.Player = player;
                     return;
@@ -178,9 +179,9 @@ namespace newgame
                 Console.Clear();
             }
 
-            player.SetDefStat(atk, hp, def, mp);
+            player.Initializer.SetDefStat(atk, hp, def, mp);
 
-            player.ShowStat();
+            player.Initializer.ShowStat();
             Console.WriteLine("[Enter]를 눌러 계속");
             Console.ReadKey();
         }

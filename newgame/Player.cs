@@ -6,39 +6,48 @@ namespace newgame
 {
     internal class Player : Character
     {
-        private readonly Skills skillSystem = new Skills();
+        private readonly Skills skillSystem;
+        private readonly PlayerInitializer initializer;
 
         public Player() : this(GameManager.Instance.BattleLogService)
         {
         }
 
-        public Player(BattleLogService battleLogService) : base(battleLogService)
+        public Player(BattleLogService battleLogService) : this(
+            battleLogService,
+            new Status(),
+            Inventory.Instance,
+            new Skills())
         {
         }
 
-        #region 플레이어 초기 설정
-
-        public void Start()
+        internal Player(
+            BattleLogService battleLogService,
+            Status status,
+            Inventory inventory,
+            Skills skills) : base(battleLogService)
         {
-            Create();
+            MyStatus = status ?? throw new ArgumentNullException(nameof(status));
+            skillSystem = skills ?? throw new ArgumentNullException(nameof(skills));
+            initializer = new PlayerInitializer(
+                MyStatus,
+                inventory ?? throw new ArgumentNullException(nameof(inventory)),
+                skillSystem);
         }
 
-        #region 플레이어 생성
-        void Create()
-        {
-            MyStatus = new Status();
-            MyStatus.charType = CharType.PLAYER;
-            SetPlayerStarterItem();
-            SetPlayerStarterSkill();
+        public PlayerInitializer Initializer => initializer;
 
-            Console.Clear();
+        public void ApplyStatus(Status status)
+        {
+            MyStatus = status ?? throw new ArgumentNullException(nameof(status));
+            initializer.AttachStatus(status);
         }
-        #endregion
 
         #region 저장된 플레이어 불러오기
         public void Load()
         {
-            MyStatus = DataManager.Instance.Load();
+            Status loadedStatus = DataManager.Instance.Load();
+            ApplyStatus(loadedStatus);
         }
         #endregion
 
@@ -48,62 +57,6 @@ namespace newgame
             MyStatus.Name = name;
             Console.WriteLine($"설정된 이름 : {MyStatus.Name}");
         }
-        public void SetDefStat(int atk, int hp, int def, int mp)
-        {
-            // 기본값 설정
-            MyStatus.level = 1;
-            MyStatus.ATK = 8 + atk;
-            MyStatus.maxHp = 45 + (hp * 10);
-            MyStatus.Hp = MyStatus.maxHp;
-            MyStatus.DEF = 2 + def;
-            MyStatus.maxMp = 30 + (mp * 2);
-            MyStatus.mp = MyStatus.maxMp;
-            MyStatus.CriticalChance = 10;
-            MyStatus.CriticalDamage = 150;
-            MyStatus.exp = 0;
-            MyStatus.nextEXP = 20;
-            MyStatus.gold = 25;
-        }
-        #endregion
-
-        #region 스텟 표시
-        public void ShowStat()
-        {
-            UiHelper.TxtOut(new string[] {
-                        $"이름 : {MyStatus.Name}",
-                        $"  레벨 : {MyStatus.level}",
-                        $"  체력 : {MyStatus.Hp}/{MyStatus.maxHp}",
-                        $"  공격력 : {MyStatus.ATK}",
-                        $"  방어력 : {MyStatus.DEF}",
-                        $"  마나 : {MyStatus.mp}/{MyStatus.maxMp}",
-                        $"  치명타 확률 : {MyStatus.CriticalChance}",
-                        $"  치명타 피해 : {MyStatus.CriticalDamage}",
-                        $"  골드 : {MyStatus.gold}",
-                        $"  경험치 : {MyStatus.exp}/{MyStatus.nextEXP}"
-                    }, SlowTxtOut: true, SlowTxtLineTime: 0, SlowTxtOutTime: 1);
-        }
-        #endregion
-
-        #region 기본템 설정
-        void SetPlayerStarterItem()
-        {
-            for (int i = 1; i < (int)EquipType.MAX; i++)
-            {
-                Inventory.Instance.SetEquip((EquipType)i, 1);
-            }
-
-            Inventory.Instance.ShowEquipList();
-        }
-        #endregion
-
-        #region 기본스킬 설정
-        void SetPlayerStarterSkill()
-        {
-            skillSystem.AddCanUseSkill("파이어볼");
-            skillSystem.AddCanUseSkill("아쿠아 볼");
-        }
-        #endregion
-
         #endregion
 
         #region 플레이어 전투

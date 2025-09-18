@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Reflection.Metadata;
+using static newgame.CharacterClass;
 
 namespace newgame
 {
@@ -492,6 +493,106 @@ namespace newgame
                 Console.WriteLine($"[오류] : 파일 읽기 실패 ({ex.Message})");
             }
         }
+        #endregion
+
+        #region 직업
+
+        public void LoadPlayer_ClassData()
+        {
+            string dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+
+            // 텍스트 파일 이름
+            string fileName = $"Player_Class.txt";
+            // 텍스트 파일 경로
+            string filePath = Path.Combine(dataPath, fileName);
+
+            // 파일 체크
+            if (File.Exists(filePath) == false)
+            {
+                // 파일이 없는 경우
+                Console.WriteLine($"해당 경로 [{filePath}]가 존재하지 않습니다. ");
+                Console.WriteLine($"[{fileName}] 파일을 확인해주세요.");
+                return;
+            }
+
+            SetPlayer_ClassData(filePath);
+        }
+
+        void SetPlayer_ClassData(string filePath)
+        {
+            try
+            {
+                // 텍스트 파일에서 모든 라인 읽어오기
+                string[] lines = File.ReadAllLines(filePath);
+
+                CharacterClassType classType = new CharacterClassType();
+                List<string> skillNames = new List<string>();
+
+                foreach (string line in lines)
+                {
+                    if (line == "#")
+                    {
+                        // 현재까지 수집된 직업 데이터와 스킬을 GameManager에 등록
+                        GameManager.Instance.SetPlayerClassInfo(classType, skillNames);
+                        // 새로운 클래스 데이터를 위한 초기화
+                        classType = new CharacterClassType();
+                        skillNames = new List<string>();
+                        continue;
+                    }
+
+                    string[] curLine = line.Split(':');
+                    if (curLine.Length < 2)
+                    {
+                        continue;
+                    }
+
+                    string key = curLine[0].Trim().ToUpperInvariant();
+                    string value = curLine[1].Trim();
+
+                    switch (key)
+                    {
+                        case "NAME":
+                            classType.name = value;
+                            break;
+                        case "DESCRIPTION":
+                            classType.description = value;
+                            break;
+                        case "ATK":
+                            classType.atk = int.Parse(value);
+                            break;
+                        case "DEF":
+                            classType.def = int.Parse(value);
+                            break;
+                        case "HP":
+                            classType.hp = int.Parse(value);
+                            break;
+                        case "MP":
+                            classType.mp = int.Parse(value);
+                            break;
+                        case "CC":
+                            classType.CC = int.Parse(value);
+                            break;
+                        case "CD":
+                            classType.CD = int.Parse(value);
+                            break;
+                        case "SKILL":
+                            skillNames.Add(value);
+                            break;
+                    }
+                }
+
+                // 파일 끝에 도달했지만 데이터가 남아있는 경우 처리
+                if (!string.IsNullOrWhiteSpace(classType.name) || skillNames.Count > 0)
+                {
+                    GameManager.Instance.SetPlayerClassInfo(classType, skillNames);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[오류] : 파일 읽기 실패 ({ex.Message})");
+            }
+        }
+
         #endregion
     }
 }

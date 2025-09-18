@@ -24,6 +24,7 @@ namespace newgame
                 "미궁으로 들어가기",
                 "상점",
                 "여관",
+                "전직소",
                 "대장간",
                 "저장",
                 "게임 종료",
@@ -35,7 +36,7 @@ namespace newgame
                     {
                         Console.Clear();
                         Console.WriteLine("[ 상태창 ] \r");
-                        player.ShowStat();
+                        player.Initializer.ShowStat();
                         Console.WriteLine("[Enter]를 눌러 돌아가기");
                         Console.ReadKey();
                         Console.Clear();
@@ -77,18 +78,23 @@ namespace newgame
                     }
                 case 5:
                     {
+                        // 비어있는 case 5
+                        break;
+                    }
+                case 6:
+                    {
                         Smithy smithy = new Smithy();
                         smithy.Start();
                         break;
                     }
-                case 6:
+                case 7:
                     {
                         Console.Clear();
                         DataManager.Instance.Save(player.MyStatus);
                         UiHelper.WaitForInput("게임 저장됨. (SHIFT를 눌러 계속)");
                         break;
                     }
-                case 7:
+                case 8:
                     {
                         Console.Clear();
                         Console.WriteLine("게임을 종료합니다...");

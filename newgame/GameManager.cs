@@ -319,5 +319,9 @@ namespace newgame
             return new List<SkillType>(Skills);
         }
         #endregion
+
+        #region 직업
+
+        #endregion
     }
 }
