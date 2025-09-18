@@ -168,7 +168,7 @@ namespace newgame
             };
         }
 
-        private SkillTickLog? SkillTickEffact(string skill, Character caster, int remainingTurns)
+        private SkillTickLog? SkillTickEffect(string skill, Character caster, int remainingTurns)
         {
             switch (skill)
             {
