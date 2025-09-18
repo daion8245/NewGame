@@ -18,6 +18,8 @@ namespace newgame
             }
         }
 
+        private Lobby? _lobby;
+
         public Player? player;
         public Player? Player
         {
@@ -37,6 +39,17 @@ namespace newgame
         public Monster RequireMonster()
         {
             return monster ?? throw new InvalidOperationException("Monster has not been initialized yet.");
+        }
+
+        public Lobby GetOrCreateLobby()
+        {
+            _lobby ??= new Lobby();
+            return _lobby;
+        }
+
+        public void ReturnToLobby()
+        {
+            GetOrCreateLobby().Start();
         }
 
         #region 몬스터 정보

@@ -217,8 +217,7 @@ namespace newgame
                             GameManager.Instance.UpdateDungeonMap(floor, map);
                             player.X = 1; // 플레이어 위치 초기화
                             player.Y = 1; // 플레이어 위치 초기화
-                            Lobby lobby = new Lobby();
-                            lobby.Start();
+                            GameManager.Instance.ReturnToLobby();
                         }
                         else
                         {

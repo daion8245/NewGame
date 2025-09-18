@@ -73,9 +73,8 @@ namespace newgame
                     }
                 case 4:
                     {
-                        Lobby lobby = new Lobby();
                         Console.Clear();
-                        lobby.Start(); 
+                        GameManager.Instance.ReturnToLobby();
                         break;
                     }
                 case 5:

@@ -37,8 +37,7 @@ namespace newgame
                 case 2:
                 default:
                     {
-                        Lobby lobby = new Lobby();
-                        lobby.Start();
+                        GameManager.Instance.ReturnToLobby();
                         break;
                     }
             }

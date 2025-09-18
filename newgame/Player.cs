@@ -294,8 +294,7 @@ namespace newgame
                 Console.Clear();
                 Console.WriteLine("전투에서 탈출했다");
 
-                Lobby lobby = new Lobby();
-                lobby.Start();
+                GameManager.Instance.ReturnToLobby();
                 isbattleRun = false;
             }
             //만약 실패할시 플레이어에게 실패 메세지를 띄움
