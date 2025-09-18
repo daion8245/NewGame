@@ -265,12 +265,12 @@ namespace newgame
             {
                 case "파이어볼":
                     {
-                        EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
+                        StatusEffects.EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
                         break;
                     }
                 case "아쿠아 볼":
                     {
-                        AddTickSkill(useSkill.name, useSkill.skillTurn);
+                        StatusEffects.AddTickSkill(useSkill.name, useSkill.skillTurn);
                         break;
                     }
                 default:

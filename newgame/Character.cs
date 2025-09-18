@@ -23,9 +23,9 @@ namespace newgame
 
         //현제 활성화 되어있는 포션 효과
         private List<ActiveItemEffect> activeEffects = new();
-        //현제 지속되고 있는 스킬의 지속 효과
-        protected Dictionary<string, int> activeSkills = new Dictionary<string, int>();
-        protected Dictionary<string, Character?> activeSkillCasters = new();
+        private readonly StatusEffectTracker statusEffects;
+
+        public StatusEffectTracker StatusEffects => statusEffects;
 
         //플레이어가 죽었는지
         public bool IsDead = false;
@@ -35,6 +35,15 @@ namespace newgame
         protected int[] beforHP = new int[2];
 
         protected static readonly string[] battleLog = new string[2];
+
+        protected Character()
+        {
+            statusEffects = new StatusEffectTracker(
+                this,
+                () => target,
+                (attacker, defender, damage, actionName, targetDefeated, isCritical) =>
+                    BuildActionMessage(attacker, defender, damage, actionName, targetDefeated, isCritical));
+        }
 
         #region 로그 관련
         protected static string[] SnapshotBattleLog()
@@ -222,7 +231,7 @@ namespace newgame
 
             ClearBattleMessageForActor(this);
 
-            List<SkillTickLog> tickLogs = TickSkillTurns();
+            List<SkillTickLog> tickLogs = statusEffects.TickSkillTurns();
 
             // 지속 피해로 사망자가 발생하면 즉시 처리 후 return
             bool anyDeath = tickLogs.Any(log => log.TargetDefeated);
@@ -230,7 +239,7 @@ namespace newgame
             {
                 ApplyTickLogs(tickLogs);
                 ShowBattleInfo(target, battleLog);
-                ResolveTickDeaths(tickLogs);
+                StatusEffectTracker.ResolveTickDeaths(tickLogs);
                 return SnapshotBattleLog();
             }
 
@@ -253,7 +262,7 @@ namespace newgame
                 target.Dead(this);
             }
 
-            ResolveTickDeaths(tickLogs);
+            StatusEffectTracker.ResolveTickDeaths(tickLogs);
 
             beforHP[0] = MyStatus.Hp;
             beforHP[1] = targetStatus.Hp;
@@ -281,7 +290,7 @@ namespace newgame
 
             ClearBattleMessageForActor(this);
 
-            List<SkillTickLog> tickLogs = TickSkillTurns();
+            List<SkillTickLog> tickLogs = statusEffects.TickSkillTurns();
 
             bool attackerDiedFromTick = tickLogs.Any(log => ReferenceEquals(log.Target, this) && log.TargetDefeated);
             bool preserveOpponentLog = tickLogs.Any(log => IsPlayer(log.Actor) != IsPlayer(this));
@@ -290,7 +299,7 @@ namespace newgame
             {
                 ApplyTickLogs(tickLogs);
                 ShowBattleInfo(targetCharacter, battleLog);
-                ResolveTickDeaths(tickLogs);
+                StatusEffectTracker.ResolveTickDeaths(tickLogs);
                 return SnapshotBattleLog();
             }
 
@@ -317,7 +326,7 @@ namespace newgame
                 targetCharacter.Dead(this);
             }
 
-            ResolveTickDeaths(tickLogs);
+            StatusEffectTracker.ResolveTickDeaths(tickLogs);
 
             return SnapshotBattleLog();
         }
@@ -336,14 +345,9 @@ namespace newgame
             }
 
             IsDead = true;
-            activeSkills.Clear();
-            activeSkillCasters.Clear();
+            statusEffects.Clear();
 
-            if (target != null)
-            {
-                target.activeSkills.Clear();
-                target.activeSkillCasters.Clear();
-            }
+            target?.StatusEffects.Clear();
 
             ResetBattleLog();
 
@@ -541,181 +545,6 @@ namespace newgame
 
         #endregion
 
-        #region 스킬 지속 효과
-
-        protected struct SkillTickLog
-        {
-            public SkillTickLog(Character actor, Character target, string message, bool targetDefeated, bool clearOpponent = false)
-            {
-                Actor = actor;
-                Target = target;
-                Message = message;
-                TargetDefeated = targetDefeated;
-                ClearOpponent = clearOpponent;
-            }
-
-            public Character Actor { get; }
-            public Character Target { get; }
-            public string Message { get; }
-            public bool TargetDefeated { get; }
-            public bool ClearOpponent { get; }
-        }
-
-        //이름과 지속 턴을 받아서 딕셔너리에 추가
-        protected virtual void AddTickSkill(string skillName, int duration)
-        {
-            activeSkills[skillName] = duration;
-            activeSkillCasters[skillName] = this;
-        }
-
-        protected virtual void EnemyAddTickSkill(string skillName, int duration)
-        {
-            if (target == null)
-            {
-                return;
-            }
-
-            target.activeSkills[skillName] = duration;
-            target.activeSkillCasters[skillName] = this;
-        }
-
-        /// <summary>
-        /// 현재 캐릭터에게 적용 중인 지속 스킬(버프/디버프)의 표시용 라벨을 생성해 반환합니다.
-        /// 각 효과는 [효과명] 형태로 이어붙여 표시되며, 활성 효과가 없으면 빈 문자열을 반환합니다.
-        /// </summary>
-        /// <returns>활성화된 지속 스킬 효과의 표시 문자열. 없으면 빈 문자열.</returns>
-        public string GetActiveSkillEffectDisplay()
-        {
-            if (activeSkills.Count == 0)
-            {
-                return string.Empty;
-            }
-
-            List<string> labels = new List<string>();
-
-            foreach (var skillName in activeSkills.Keys)
-            {
-                string effectName = GetSkillEffectLabel(skillName);
-                if (string.IsNullOrWhiteSpace(effectName))
-                {
-                    continue;
-                }
-
-                labels.Add($"[{effectName}]");
-            }
-
-            if (labels.Count == 0)
-            {
-                return string.Empty;
-            }
-
-            // 공백 없이 붙여 출력: [화상][중독] 형태
-            return $"{string.Join(string.Empty, labels)}";
-        }
-
-        protected virtual string GetSkillEffectLabel(string skillName)
-        {
-            return skillName switch
-            {
-                "파이어볼" => "화상",
-                _ => skillName
-            };
-        }
-
-        protected virtual List<SkillTickLog> TickSkillTurns()
-        {
-            List<SkillTickLog> logs = new();
-
-            if (activeSkills.Count == 0)
-            {
-                return logs;
-            }
-
-            var keys = new List<string>(activeSkills.Keys);
-
-            foreach (var skillName in keys)
-            {
-                if (!activeSkills.TryGetValue(skillName, out int remain))
-                {
-                    continue;
-                }
-
-                // 현재 턴 소모
-                remain -= 1;
-                activeSkills[skillName] = remain;
-
-                // 시전자 추적(버프/디버프 출처 표시용)
-                Character caster = GetSkillCaster(skillName);
-
-                // 틱 효과 적용(로그 생성). remainingTurns는 사용자 표시용이므로 0 미만 방지
-                SkillTickLog? effectLog = SkillTickEffact(skillName, caster, Math.Max(remain, 0));
-                if (effectLog.HasValue)
-                {
-                    logs.Add(effectLog.Value);
-                }
-
-                // 만료 처리(0 이하): 효과 제거 및 종료 로그
-                if (activeSkills.TryGetValue(skillName, out int currentRemain) && currentRemain <= 0)
-                {
-                    activeSkills.Remove(skillName);
-                    activeSkillCasters.Remove(skillName);
-                    logs.Add(new SkillTickLog(caster, this, $"{skillName} 효과가 종료되었습니다.", false));
-                }
-            }
-
-            return logs;
-        }
-
-        private static void ResolveTickDeaths(IEnumerable<SkillTickLog> logs)
-        {
-            foreach (var log in logs)
-            {
-                if (log.TargetDefeated && !log.Target.IsDead)
-                {
-                    log.Target.Dead(log.Actor);
-                }
-            }
-        }
-
-        private Character GetSkillCaster(string skillName)
-        {
-            if (activeSkillCasters.TryGetValue(skillName, out Character? caster) && caster != null)
-            {
-                return caster;
-            }
-
-            return target ?? this;
-        }
-
-        #region 스킬 효과
-        // 스킬별 틱 효과를 적용한다.
-        // - 예시: "파이어볼" → 1 고정 화상 피해, 남은 턴 수를 메시지에 표기
-        // - 반환 로그에는 (액터, 타겟, 메시지, 대상 사망 여부, 상대 로그 초기화 여부) 포함
-        protected virtual SkillTickLog? SkillTickEffact(string skill, Character caster, int remainingTurns)
-        {
-            switch (skill)
-            {
-                case "파이어볼":
-                    {
-                        Character? targetCharacter = target;
-                        int referenceHp = targetCharacter?.HasStatus == true ? targetCharacter.MyStatus.Hp : MyStatus.Hp;
-                        int dotDamage = 1 + (referenceHp / 20); // 화상 고정 피해(게임 밸런스에 따라 조정 가능)
-                        MyStatus.Hp = Math.Max(0, MyStatus.Hp - dotDamage);
-                        bool defeated = MyStatus.Hp <= 0;
-                        int remain = Math.Max(remainingTurns, 0); // 표시용 잔여 턴(음수 방지)
-                        string label = $"{skill}(지속)";
-                        string message = BuildActionMessage(caster, this, dotDamage, label, defeated) + $" (남은 턴: {remain})";
-                        return new SkillTickLog(caster, this, message, defeated);
-                    }
-                default:
-                    {
-                        // 미구현/표시 불필요한 스킬은 로그 없이 null
-                        return null;
-                    }
-            }
-        }
-        #endregion
-
         #region 데미지 계산
         // 데미지 공식:
         // - 기본 공격력 A, 대상 방어력 D, 고정 상수 K(완화 기준점)
@@ -810,12 +639,12 @@ namespace newgame
             /// <summary>
             /// 한 줄 상태 라벨 구성
             /// - 이름 미설정 시 "??" 대체
-            /// - GetActiveSkillEffectDisplay()로 [효과] 태그를 이름 옆에 붙인다.
+            /// - StatusEffects.GetActiveSkillEffectDisplay()로 [효과] 태그를 이름 옆에 붙인다.
             /// </summary>
             static string FormatStatus(string label, Character? character, Status status)
             {
                 string name = string.IsNullOrWhiteSpace(status.Name) ? "??" : status.Name;
-                string effectLabel = character?.GetActiveSkillEffectDisplay() ?? string.Empty;
+                string effectLabel = character?.StatusEffects.GetActiveSkillEffectDisplay() ?? string.Empty;
                 return $"{label} : {name}{effectLabel}  Lv.{status.level}  HP {status.Hp}/{status.maxHp}";
             }
 
@@ -857,8 +686,6 @@ namespace newgame
             Console.WriteLine(border);
             Console.WriteLine();
         }
-        #endregion
-
         #endregion
     }
 }
