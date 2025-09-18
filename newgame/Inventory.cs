@@ -266,7 +266,7 @@ namespace newgame
             Console.WriteLine("해당 아이템이 없습니다.");
         }
 
-        public void UseItem(int index)
+        public void UseItem(int index, ActiveItemEffectManager effectManager)
         {
             var slot = items[index - 1];
             var item = slot.Item;
@@ -275,8 +275,7 @@ namespace newgame
 
             if (item.IsPersistent())
             {
-                Player player = GameManager.Instance.RequirePlayer();
-                player.AddEffect(item);
+                effectManager.AddEffect(item);
             }
 
             slot.Decrease(1);

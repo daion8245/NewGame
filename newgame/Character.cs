@@ -22,7 +22,7 @@ namespace newgame
         }
 
         //현제 활성화 되어있는 포션 효과
-        private List<ActiveItemEffect> activeEffects = new();
+        private readonly ActiveItemEffectManager activeItemEffectManager;
         //현제 지속되고 있는 스킬의 지속 효과
         protected Dictionary<string, int> activeSkills = new Dictionary<string, int>();
         protected Dictionary<string, Character?> activeSkillCasters = new();
@@ -35,6 +35,16 @@ namespace newgame
         protected int[] beforHP = new int[2];
 
         protected static readonly string[] battleLog = new string[2];
+
+        protected internal Character()
+            : this(null)
+        {
+        }
+
+        protected internal Character(ActiveItemEffectManager? effectManager)
+        {
+            activeItemEffectManager = effectManager ?? new ActiveItemEffectManager();
+        }
 
         #region 로그 관련
         protected static string[] SnapshotBattleLog()
@@ -441,7 +451,7 @@ namespace newgame
                 return;
             }
 
-            Inventory.Instance.UseItem(idx);
+            Inventory.Instance.UseItem(idx, activeItemEffectManager);
         }
 
         /// <summary>
@@ -450,32 +460,7 @@ namespace newgame
         /// <param name="item"></param>
         public void AddEffect(Item item)
         {
-            bool isFound = false;
-
-            foreach (ActiveItemEffect effect in activeEffects)
-            {
-                if (effect.ItemType == item.ItemType)
-                {
-                    effect.RemainingTurn += item.ItemUsedCount;
-                    effect.TotalBonus += item.ItemStatus;
-
-                    Console.WriteLine($"{item.ItemType} 효과가 누적되었습니다! → " +
-                        $"+{item.ItemStatus} / 남은 턴: {effect.RemainingTurn} " +
-                        $"(소모 시점: {effect.ConsumeType})");
-                    isFound = true;
-                    break;
-                }
-            }
-
-            if (!isFound)
-            {
-                ActiveItemEffect newEffect = new ActiveItemEffect(item);
-                activeEffects.Add(newEffect);
-
-                Console.WriteLine($"{item.ItemType} 효과가 새롭게 적용되었습니다! → " +
-                    $"+{item.ItemStatus} / {item.ItemUsedCount}턴 간 지속 " +
-                    $"(소모 시점: {newEffect.ConsumeType})");
-            }
+            activeItemEffectManager.AddEffect(item);
         }
 
         /// <summary>
@@ -483,21 +468,7 @@ namespace newgame
         /// </summary>
         public void OnBattleStart()
         {
-            for (int i = activeEffects.Count - 1; i >= 0; i--)
-            {
-                var effect = activeEffects[i];
-                if (effect.ConsumeType == ConsumeType.BattleStart)
-                {
-                    effect.RemainingTurn--;
-                    Console.WriteLine($"{effect.ItemType} 효과가 1턴 차감되었습니다. → 남은 턴: {effect.RemainingTurn}");
-
-                    if (effect.RemainingTurn <= 0)
-                    {
-                        Console.WriteLine($"{effect.ItemType} 효과가 종료되었습니다. (전투 시작 시 차감)");
-                        activeEffects.RemoveAt(i);
-                    }
-                }
-            }
+            activeItemEffectManager.OnBattleStart();
         }
 
         /// <summary>
@@ -505,38 +476,12 @@ namespace newgame
         /// </summary>
         public void OnTurnPassed()
         {
-            for (int i = activeEffects.Count - 1; i >= 0; i--)
-            {
-                var effect = activeEffects[i];
-                if (effect.ConsumeType == ConsumeType.PerTurn)
-                {
-                    effect.RemainingTurn--;
-                    Console.WriteLine($"{effect.ItemType} 효과가 1턴 차감되었습니다. → 남은 턴: {effect.RemainingTurn}");
-
-                    if (effect.RemainingTurn <= 0)
-                    {
-                        Console.WriteLine($"{effect.ItemType} 효과가 종료되었습니다. (턴 경과로 차감)");
-                        activeEffects.RemoveAt(i);
-                    }
-                }
-            }
+            activeItemEffectManager.OnTurnPassed();
         }
 
         public int GetTotalBonus(ItemType effectType)
         {
-            int total = 0;
-
-            // 효과 리스트를 모두 확인
-            foreach (ActiveItemEffect effect in activeEffects)
-            {
-                // 같은 종류의 효과라면
-                if (effect.ItemType == effectType)
-                {
-                    total += effect.TotalBonus;
-                }
-            }
-
-            return total;
+            return activeItemEffectManager.GetTotalBonus(effectType);
         }
 
         #endregion
