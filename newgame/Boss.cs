@@ -94,13 +94,13 @@ namespace newgame
                 case "파이어볼":
                     {
                         // 파이어볼은 적(target)에게 지속 효과를 남겨야 함
-                        EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
+                        StatusEffects.EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
                         break;
                     }
                 case "아쿠아 볼":
                     {
                         // 아쿠아 볼은 보스(self)에게 적용
-                        AddTickSkill(useSkill.name, useSkill.skillTurn);
+                        StatusEffects.AddTickSkill(useSkill.name, useSkill.skillTurn);
                         break;
                     }
                 default:
