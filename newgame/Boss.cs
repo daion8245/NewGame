@@ -10,6 +10,14 @@ namespace newgame
         private const int SkillUseChancePercent = 45;
         private static readonly Random Randomizer = new Random();
 
+        public Boss() : this(GameManager.Instance.BattleLogService)
+        {
+        }
+
+        public Boss(BattleLogService battleLogService) : base(battleLogService)
+        {
+        }
+
         public void StartBoss(int floor)
         {
             bossKey = floor;
@@ -83,7 +91,7 @@ namespace newgame
             SkillType useSkill = skillType;
             if (string.IsNullOrWhiteSpace(useSkill.name))
             {
-                return SnapshotBattleLog();
+                return battleLogService.SnapshotBattleLog();
             }
 
             string[] log = UseAttackSkill(useSkill);

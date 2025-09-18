@@ -2,6 +2,14 @@
 {
     internal class Monster : Character
     {
+        public Monster() : this(GameManager.Instance.BattleLogService)
+        {
+        }
+
+        public Monster(BattleLogService battleLogService) : base(battleLogService)
+        {
+        }
+
         public void Start(int monsterType)
         {
             if (monsterType >= 1)

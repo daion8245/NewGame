@@ -2,7 +2,11 @@
 {
     internal class Battle : Character //Battle 클래스 생성 Character를 상속받는다
     {
-        public Battle()
+        public Battle() : this(GameManager.Instance.BattleLogService)
+        {
+        }
+
+        public Battle(BattleLogService battleLogService) : base(battleLogService)
         {
             // 생성자에서 전투를 바로 시작하지 않는다.
         }
