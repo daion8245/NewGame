@@ -19,8 +19,7 @@
 
             if (input != "1")
             {
-                Lobby lobby = new Lobby();
-                lobby.Start();
+                GameManager.Instance.ReturnToLobby();
                 return;
             }
 
