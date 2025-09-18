@@ -115,7 +115,7 @@ namespace newgame
 
                 Character caster = GetSkillCaster(skillName);
 
-                SkillTickLog? effectLog = SkillTickEffact(skillName, caster, Math.Max(remain, 0));
+                SkillTickLog? effectLog = SkillTickEffect(skillName, caster, Math.Max(remain, 0));
                 if (effectLog.HasValue)
                 {
                     logs.Add(effectLog.Value);

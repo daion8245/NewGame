@@ -18,7 +18,15 @@ namespace newgame
             }
         }
 
+        private readonly BattleLogService battleLogService;
         private Lobby? _lobby;
+
+        private GameManager()
+        {
+            battleLogService = new BattleLogService();
+        }
+
+        public BattleLogService BattleLogService => battleLogService;
 
         public Player? player;
         public Player? Player

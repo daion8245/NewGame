@@ -26,7 +26,7 @@ namespace newgame
         {
             DataManager dataManager = DataManager.Instance;
             GameManager gameManager = GameManager.Instance;
-            Func<Player> playerFactory = () => new Player();
+            Func<Player> playerFactory = () => new Player(gameManager.BattleLogService);
 
             var build = new GameBuild(dataManager, gameManager, playerFactory);
             var startMessage = new StartMessage(build.StartNewGame, build.TryLoadGame);

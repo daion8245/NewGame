@@ -8,6 +8,14 @@ namespace newgame
     {
         private readonly Skills skillSystem = new Skills();
 
+        public Player() : this(GameManager.Instance.BattleLogService)
+        {
+        }
+
+        public Player(BattleLogService battleLogService) : base(battleLogService)
+        {
+        }
+
         #region 플레이어 초기 설정
 
         public void Start()
@@ -184,7 +192,7 @@ namespace newgame
         #region 플레이어가 선택한 액션 실행
         public void PerformAction(Character target)
         {
-            ShowBattleInfo(target, battleLog);
+            battleLogService.ShowBattleInfo(this, target);
 
             int input = SelectBattleAction();
 
