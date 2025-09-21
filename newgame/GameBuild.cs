@@ -28,8 +28,8 @@ namespace newgame
             GameManager gameManager = GameManager.Instance;
             Func<Player> playerFactory = () => new Player(gameManager.BattleLogService);
 
-            var build = new GameBuild(dataManager, gameManager, playerFactory);
-            var startMessage = new StartMessage(build.StartNewGame, build.TryLoadGame);
+            GameBuild build = new GameBuild(dataManager, gameManager, playerFactory);
+            StartMessage startMessage = new StartMessage(build.StartNewGame, build.TryLoadGame);
             build.SetStartMessage(startMessage);
 
             return build;
@@ -48,6 +48,7 @@ namespace newgame
             _dataManager.LoadBossData();
             _dataManager.LoadDungeonMap();
             _dataManager.LoadSkillData();
+            _dataManager.LoadPlayer_ClassData();
             _gameManager.SetItemList();
         }
 
@@ -255,6 +256,13 @@ namespace newgame
             }
 
             return new[] { atk, hp, def, mp };
+        }
+        #endregion
+
+        #region 플레이어 기본 직업 설정
+        private void SetJob()
+        {
+
         }
         #endregion
 

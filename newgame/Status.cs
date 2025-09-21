@@ -74,6 +74,7 @@ namespace newgame
         public int gold;
         public int exp;
         public int nextEXP;
+
         #endregion
 
         public Status Clone()
@@ -101,7 +102,8 @@ namespace newgame
 
         public void ShowStatus()
         {
-            UiHelper.TxtOut([
+            List<string> statusLines = new List<string>
+            {
                 $"이름 : {Name}",
                 $"  레벨 : {level}",
                 $"  체력 : {_hp}/{maxHp}",
@@ -112,7 +114,12 @@ namespace newgame
                 $"  치명타 피해 : {CriticalDamage}",
                 $"  골드 : {gold}",
                 $"  경험치 : {exp} / {nextEXP}"
-                ],true,1,0);
+            };
+            if (IsPlayer)
+            {
+                statusLines.Insert(1, $"  직업 : {ClassName}");
+            }
+            UiHelper.TxtOut(statusLines.ToArray());
         }
 
         public void ShowInventory()
@@ -214,5 +221,15 @@ namespace newgame
             //int.TryParse(Console.ReadLine(), out idx);
             Inventory.Instance.SetEquip(sel + 1);
         }
+
+        #region 직업 추가를 위한 플래이어에게만 className 추가
+        [JsonIgnore]
+        public bool IsPlayer => charType == CharType.PLAYER;
+
+        [JsonProperty]
+        public string ClassName { get; set; } = string.Empty;
+
+        public bool ShouldSerializeClassName() => IsPlayer;
+        #endregion
     }
 }

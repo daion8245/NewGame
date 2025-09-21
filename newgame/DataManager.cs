@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Reflection.Metadata;
-using static newgame.CharacterClass;
 
 namespace newgame
 {
