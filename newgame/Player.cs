@@ -8,6 +8,7 @@ namespace newgame
     {
         private readonly Skills skillSystem;
         private readonly PlayerInitializer initializer;
+        private CharacterClassType? currentClass;
 
         public Player() : this(GameManager.Instance.BattleLogService)
         {
@@ -37,10 +38,86 @@ namespace newgame
 
         public PlayerInitializer Initializer => initializer;
 
+        public CharacterClassType? CurrentClass => currentClass;
+
+        public void AssignClass(CharacterClassType classType)
+        {
+            if (string.IsNullOrWhiteSpace(classType.name))
+            {
+                throw new ArgumentException("Class name cannot be empty.", nameof(classType));
+            }
+
+            if (currentClass != null)
+            {
+                if (string.Equals(currentClass.Value.name, classType.name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+
+                throw new InvalidOperationException("Player already has a different class assigned.");
+            }
+
+            MyStatus.ApplyClass(classType);
+            currentClass = classType;
+            ApplyClassSkills(classType.name);
+        }
+
+        public bool TryAssignClass(string className)
+        {
+            if (string.IsNullOrWhiteSpace(className))
+            {
+                return false;
+            }
+
+            if (!GameManager.Instance.TryGetPlayerClass(className, out CharacterClassType classType))
+            {
+                return false;
+            }
+
+            AssignClass(classType);
+            return true;
+        }
+
+        private void ApplyClassSkills(string className)
+        {
+            List<SkillType> classSkills = GameManager.Instance.GetClassSkills(className);
+            if (classSkills.Count == 0)
+            {
+                return;
+            }
+
+            skillSystem.ClearAllCanUseSkills();
+            foreach (SkillType skill in classSkills)
+            {
+                skillSystem.AddCanUseSkill(skill.name);
+            }
+        }
+
+        private void RestoreClassState()
+        {
+            if (string.IsNullOrWhiteSpace(MyStatus.ClassName))
+            {
+                currentClass = null;
+                return;
+            }
+
+            if (GameManager.Instance.TryGetPlayerClass(MyStatus.ClassName, out CharacterClassType classType))
+            {
+                currentClass = classType;
+                ApplyClassSkills(classType.name);
+            }
+            else
+            {
+                currentClass = null;
+            }
+        }
+
+
         public void ApplyStatus(Status status)
         {
             MyStatus = status ?? throw new ArgumentNullException(nameof(status));
             initializer.AttachStatus(status);
+            RestoreClassState();
         }
 
         #region 저장된 플레이어 불러오기

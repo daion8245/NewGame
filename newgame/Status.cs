@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Net.NetworkInformation;
 using static newgame.UiHelper;
 
@@ -220,6 +221,28 @@ namespace newgame
             //int idx = 0;
             //int.TryParse(Console.ReadLine(), out idx);
             Inventory.Instance.SetEquip(sel + 1);
+        }
+
+        public void ApplyClass(CharacterClassType classType)
+        {
+            if (string.IsNullOrWhiteSpace(classType.name))
+            {
+                throw new ArgumentException("Class name cannot be empty.", nameof(classType));
+            }
+
+            ClassName = classType.name;
+
+            atk += classType.atk;
+            def += classType.def;
+
+            maxHp += classType.hp;
+            Hp = maxHp;
+
+            maxMp += classType.mp;
+            mp = maxMp;
+
+            CriticalChance += classType.CC;
+            CriticalDamage += classType.CD;
         }
 
         #region 직업 추가를 위한 플래이어에게만 className 추가
