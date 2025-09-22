@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Net.NetworkInformation;
 using static newgame.UiHelper;
 
@@ -28,9 +29,9 @@ namespace newgame
                 if (charType == CharType.PLAYER)
                 {
                     // 무기 포함 장비 공격력 합산
-                    return atk + GetStrAtk();
+                    equipatk = GetStrAtk();
                 }
-                return atk;
+                return (int)((atk + equipatk) * clatk);
             }
             set => atk = value; // 기본 능력치만 대입
         }
@@ -51,9 +52,9 @@ namespace newgame
                     equip = Inventory.Instance.GetEquip(EquipType.PANTS);
                     int pants = equip == null ? 0 : equip.GetEquipStat;
 
-                    return def + shirt + pants;
+                    equipdef = shirt + pants;
                 }
-                return def;
+                return (int)((def + equipdef) * cldef);
             }
             set => def = value;
         }
@@ -66,16 +67,46 @@ namespace newgame
             set => _hp = (value < 0) ? 0 : value; // set은 return 금지, value를 필드에 대입
         }
 
-        public int maxHp;
-        public int mp;
-        public int maxMp;
-        public int CriticalChance;
-        public int CriticalDamage;
+        private int maxHp;
+
+        public int MaxHp
+        {
+            get => (int)((maxHp) * clhp);
+            set => maxHp = value;
+        }
+
+        private int mp;
+        public int Mp
+        {
+            get => mp;
+            set => mp = (value < 0) ? 0 : value; // set은 return 금지, value를 필드에 대입
+        }
+        private int maxMp;
+        public int MaxMp
+        {
+            get { return (int)((maxMp) * clmp); }
+            set => maxMp = value;
+        }
+        private int criticalChance;
+        public int CriticalChance
+        {
+            get { return (int)((criticalChance) * clcrit); }
+            set => criticalChance = value;
+        }
+        private int criticalDamage;
+        public int CriticalDamage
+        {
+            get { return (int)((criticalDamage) * clcd); }
+            set => criticalDamage = value;
+        }
+
         public int gold;
         public int exp;
         public int nextEXP;
 
         #endregion
+        int equipatk = 0; // 장비 공격력 합산용
+        int equipdef = 0;
 
         public Status Clone()
         {
@@ -220,6 +251,32 @@ namespace newgame
             //int idx = 0;
             //int.TryParse(Console.ReadLine(), out idx);
             Inventory.Instance.SetEquip(sel + 1);
+        }
+
+        float clatk = 1f;
+        float cldef = 1f;
+        float clhp = 1f;
+        float clmp = 1f;
+        float clcrit = 1f;
+        float clcd = 1f;
+        public void ApplyClass(CharacterClassType classType)
+        {
+            if (string.IsNullOrWhiteSpace(classType.name))
+            {
+                throw new ArgumentException("Class name cannot be empty.", nameof(classType));
+            }
+
+            ClassName = classType.name;
+
+            clatk += ((float)classType.atk / 100);
+            cldef += ((float)classType.def / 100);
+
+            clhp += ((float)classType.hp / 100);
+
+            clmp += ((float)classType.mp / 100);
+
+            clcrit += ((float)classType.CC / 100);
+            clcd += ((float)classType.CD / 100);
         }
 
         #region 직업 추가를 위한 플래이어에게만 className 추가

@@ -29,13 +29,13 @@ namespace newgame
             bossStatus.Name = displayName;
 
             MyStatus = bossStatus;
-            if (MyStatus.maxHp <= 0)
+            if (MyStatus.MaxHp <= 0)
             {
-                MyStatus.maxHp = Math.Max(MyStatus.Hp, 1);
+                MyStatus.MaxHp = Math.Max(MyStatus.Hp, 1);
             }
             if (MyStatus.Hp <= 0)
             {
-                MyStatus.Hp = MyStatus.maxHp;
+                MyStatus.Hp = MyStatus.MaxHp;
             }
             if (MyStatus.level <= 0)
             {

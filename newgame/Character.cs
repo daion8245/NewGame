@@ -89,7 +89,7 @@ namespace newgame
 
             // 사망자가 없을 때만 공격 데미지 계산
             (int damage, bool isCritical) = Damage(target, MyStatus.ATK);
-            MyStatus.mp = Math.Min(MyStatus.maxMp, MyStatus.mp + 10);
+            MyStatus.Mp = Math.Min(MyStatus.MaxMp, MyStatus.Mp + 10);
             bool defeated = targetStatus.Hp <= 0;
             string message = battleLogService.BuildActionMessage(this, target, damage, null, defeated, isCritical);
 
@@ -149,7 +149,7 @@ namespace newgame
 
             if(this is Player)
             {
-                MyStatus.mp -= skill.skillMana;
+                MyStatus.Mp -= skill.skillMana;
             }
 
             (int damage, bool isCritical) = Damage(targetCharacter, skill.skillDamage);
@@ -228,8 +228,8 @@ namespace newgame
                 Console.WriteLine("눈앞이 깜깜해졌다.");
                 Thread.Sleep(2000);
 
-                MyStatus.Hp = Math.Max(1, MyStatus.maxHp / 2);
-                MyStatus.mp = MyStatus.maxMp;
+                MyStatus.Hp = Math.Max(1, MyStatus.MaxHp / 2);
+                MyStatus.Mp = MyStatus.MaxMp;
                 IsDead = false;
 
                 Tavern tavern = new Tavern();

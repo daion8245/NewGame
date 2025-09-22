@@ -239,7 +239,7 @@ namespace newgame
                             break;
                         case "HP":
                             monStat.Hp = int.Parse(value);
-                            monStat.maxHp = monStat.Hp;
+                            monStat.MaxHp = monStat.Hp;
                             break;
                         case "ATK":
                             monStat.ATK = int.Parse(value);
@@ -333,7 +333,7 @@ namespace newgame
                             break;
                         case "HP":
                             BossStat.Hp = int.Parse(value);
-                            BossStat.maxHp = BossStat.Hp;
+                            BossStat.MaxHp = BossStat.Hp;
                             break;
                         case "ATK":
                             BossStat.ATK = int.Parse(value);

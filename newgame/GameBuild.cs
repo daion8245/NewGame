@@ -182,10 +182,25 @@ namespace newgame
 
             player.Initializer.SetDefStat(atk, hp, def, mp);
 
+            AssignInitialClass(player);
+
             player.Initializer.ShowStat();
             Console.WriteLine("[Enter]를 눌러 계속");
             Console.ReadKey();
         }
+        private void AssignInitialClass(Player player)
+        {
+            var classes = _gameManager.GetPlayerClasses();
+            if (classes.Count == 0)
+            {
+                return;
+            }
+
+            CharacterClassType chosen = classes[0];
+            player.AssignClass(chosen);
+            Console.WriteLine($"기본 직업 [{chosen.name}] 이(가) 적용되었습니다.");
+        }
+
         #endregion
 
         #region 랜덤 스텟 설정

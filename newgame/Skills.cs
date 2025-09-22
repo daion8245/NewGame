@@ -96,7 +96,7 @@ namespace newgame
             }
             canUseSkillList.Add("취소");
             Player player = GameManager.Instance.RequirePlayer();
-            Console.WriteLine($"현제 마나 : {player.MyStatus.mp}/{player.MyStatus.maxMp}");
+            Console.WriteLine($"현제 마나 : {player.MyStatus.Mp}/{player.MyStatus.MaxMp}");
             int selected = UiHelper.SelectMenu(canUseSkillList.ToArray());
             if (selected >= 0 && selected < canUseSkill.Count)
             {

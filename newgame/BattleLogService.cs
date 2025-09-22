@@ -145,7 +145,7 @@ namespace newgame
                 prefix = $"[치명타!] {prefix}";
             }
 
-            string suffix = $"{defender.MyStatus.Name}은 {damage}의 피해를 입었다. 남은 체력: {defender.MyStatus.Hp}/{defender.MyStatus.maxHp}";
+            string suffix = $"{defender.MyStatus.Name}은 {damage}의 피해를 입었다. 남은 체력: {defender.MyStatus.Hp}/{defender.MyStatus.MaxHp}";
 
             if (targetDefeated)
             {
@@ -212,7 +212,7 @@ namespace newgame
             {
                 string name = string.IsNullOrWhiteSpace(status.Name) ? "??" : status.Name;
                 string effectLabel = character?.StatusEffects.GetActiveSkillEffectDisplay() ?? string.Empty;
-                return $"{label} : {name}{effectLabel}  Lv.{status.level}  HP {status.Hp}/{status.maxHp}";
+                return $"{label} : {name}{effectLabel}  Lv.{status.level}  HP {status.Hp}/{status.MaxHp}";
             }
 
             string playerLine = FormatStatus("플레이어", playerChar, playerStatus);
