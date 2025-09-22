@@ -518,6 +518,21 @@ namespace newgame
         /// </summary>
         public IReadOnlyList<CharacterClassType> GetPlayerClasses() => Jobs.AsReadOnly();
 
+        public bool TryGetPlayerClass(string className, out CharacterClassType classType)
+        {
+            foreach (CharacterClassType job in Jobs)
+            {
+                if (string.Equals(job.name, className, StringComparison.OrdinalIgnoreCase))
+                {
+                    classType = job;
+                    return true;
+                }
+            }
+
+            classType = default;
+            return false;
+        }
+
         /// <summary>
         /// 직업명으로 스킬들을 조회한다. 이름이 매칭되는 스킬만 반환한다.
         /// </summary>
