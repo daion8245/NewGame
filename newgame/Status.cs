@@ -64,7 +64,10 @@ namespace newgame
         public int Hp
         {
             get => _hp;
-            set => _hp = (value < 0) ? 0 : value; // set은 return 금지, value를 필드에 대입
+            set
+            {
+                _hp = (value < 0) ? 0 : value; // set은 return 금지, value를 필드에 대입
+            }
         }
 
         private int maxHp;

@@ -284,10 +284,16 @@ namespace newgame
         {
             items = new List<Item>();
             #region 포션
-            items.Add(new Item(ItemType.F_POTION_HP, 50, 1, 5));
-            items.Add(new Item(ItemType.T_POTION_EXPUP, 2, 3, 40));
-            items.Add(new Item(ItemType.T_POTION_ATKUP, 10, 3, 20));
-            items.Add(new Item(ItemType.F_ETC_RESETNAME, 0, 1, 1000));
+            items.Add(new Item(ItemType.F_POTION_LOW_HP, 8, 1,   15));
+            items.Add(new Item(ItemType.F_POTION_MIDDLE_HP, 30, 1, 50));
+            items.Add(new Item(ItemType.F_POTION_HIGH_HP, 100, 1, 200));
+            items.Add(new Item(ItemType.T_POTION_EXPUP, 2,  3,  40));
+            items.Add(new Item(ItemType.T_POTION_ATKUP, 10, 3,  20));
+            items.Add(new Item(ItemType.F_ETC_RESETNAME,0,  1, 1000));
+            #endregion
+
+            #region 제작재료
+            items.Add(new Item(ItemType.M_WOOD, 0, 1, 1));
             #endregion
         }
         #endregion

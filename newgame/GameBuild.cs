@@ -43,6 +43,7 @@ namespace newgame
 
         private void Init()
         {
+            GameManager.Instance.SetItemList();
             _dataManager.LoadAllEquipData();
             _dataManager.LoadEnemyData();
             _dataManager.LoadBossData();
@@ -199,6 +200,11 @@ namespace newgame
             CharacterClassType chosen = classes[0];
             player.AssignClass(chosen);
             Console.WriteLine($"기본 직업 [{chosen.name}] 이(가) 적용되었습니다.");
+
+            Inventory.Instance.AddItem(ItemType.M_WOOD, 1);
+            Inventory.Instance.AddItem(ItemType.F_POTION_LOW_HP, 3);
+            Inventory.Instance.AddItem(ItemType.F_POTION_MIDDLE_HP);
+            Inventory.Instance.AddItem(ItemType.F_POTION_HIGH_HP);
         }
 
         #endregion
@@ -271,13 +277,6 @@ namespace newgame
             }
 
             return new[] { atk, hp, def, mp };
-        }
-        #endregion
-
-        #region 플레이어 기본 직업 설정
-        private void SetJob()
-        {
-
         }
         #endregion
 

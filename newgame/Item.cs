@@ -9,14 +9,21 @@ namespace newgame
     // 2 : 효과
     public enum ItemType
     {
-        NONE,           // 없음
+        NONE,
         #region 포션
-        F_POTION_HP,      // 회복 물약 - 지속여부 : false
+        F_POTION_LOW_HP,
+        F_POTION_MIDDLE_HP,
+        F_POTION_HIGH_HP,      // 회복 물약 - 지속여부 : false
         T_POTION_EXPUP,   // 경험치 획득량 증가 물약 - 지속여부 : true
         T_POTION_ATKUP,   // 공격력 증가 물약 - 지속여부 : true
         #endregion
         #region 기타
         F_ETC_RESETNAME, // 닉네임 변경권 - 지속여부 : false
+        #endregion
+        #region 제작재료
+        M_WOOD,
+        M_HERB,      // ← 새 재료
+        M_BOTTLE     // ← 새 재료
         #endregion
     }
 
@@ -37,6 +44,8 @@ namespace newgame
 
         public bool IsPersistent() => ItemType.ToString().StartsWith("T_");
 
+        public bool IsMaterial() => ItemType.ToString().StartsWith("M_");
+
         // 재정의
         public Item(ItemType _type, int _status, int _usedCount, int _price)
         {
@@ -49,24 +58,36 @@ namespace newgame
         // 아이템 사용
         public void Use()
         {
-            if (IsPersistent() == false)
+            if (!IsPersistent())
             {
+                if (IsMaterial())
+                {
+                    Console.WriteLine("제작 아이템은 사용할수 없습니다.");
+                    UiHelper.WaitForInput();
+                    return;
+                }
                 Console.WriteLine($"[단일 아이템 사용] {ItemType}: +{ItemStatus} 효과 즉시 적용");
                 ApplyInstantEffect();
             }
         }
-
         private void ApplyInstantEffect()
         {
             switch (ItemType)
             {
-                case ItemType.F_POTION_HP:
+                case ItemType.F_POTION_LOW_HP or ItemType.F_POTION_MIDDLE_HP or ItemType.F_POTION_HIGH_HP:
                     {
-                        // 회복
+                        if(PlayerStatus.MaxHp < (PlayerStatus.Hp + ItemStatus))
+                        {
+                            PlayerStatus.Hp = PlayerStatus.MaxHp;
+                            break;
+                        }
+                        PlayerStatus.Hp += ItemStatus;
                         break;
                     }
                 // TODO
             }
         }
+
+        private Status PlayerStatus => GameManager.Instance.player.MyStatus;
     }
 }

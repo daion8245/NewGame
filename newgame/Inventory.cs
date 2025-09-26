@@ -43,11 +43,17 @@ namespace newgame
         [JsonProperty]
         Dictionary<ItemType, string> itemNames = new Dictionary<ItemType, string>()
                 {
-                    {ItemType.F_POTION_HP, "회복 물약" },
+                    {ItemType.F_POTION_LOW_HP, "하급 회복 물약" },
+                    {ItemType.F_POTION_MIDDLE_HP, "중급 회복 물약" },
+                    {ItemType.F_POTION_HIGH_HP, "상급 회복 물약" },
                     {ItemType.T_POTION_EXPUP, "경험치 획득량 증가" },
                     {ItemType.T_POTION_ATKUP, "공격력 증가" },
-                    {ItemType.F_ETC_RESETNAME, "닉네임 변경" }
-                };
+                    {ItemType.F_ETC_RESETNAME, "닉네임 변경" },
+
+                    #region 제작 재료
+                    {ItemType.M_WOOD, "나무" }
+                    #endregion
+        };
 
         public string GetItemName(ItemType _type)
         {
@@ -238,6 +244,19 @@ namespace newgame
             }
 
             items.Add(new ItemSlot(item, count));
+        }
+
+        public bool AddItem(ItemType type, int count = 1)
+        {
+            Item? item = GameManager.Instance.FindItem(type);
+            if (item == null)
+            {
+                Console.WriteLine($"아이템 데이터가 초기화되지 않았거나 {type} 을(를) 찾을 수 없습니다.");
+                return false;
+            }
+
+            AddItem(item, count);
+            return true;
         }
 
         public void RemoveItem(ItemType type, int count = 1)
