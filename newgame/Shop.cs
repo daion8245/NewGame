@@ -4,7 +4,7 @@ namespace newgame
 {
     internal class Shop
     {
-        public Dictionary<EquipType,int> items = new Dictionary<EquipType,int>();
+        public Dictionary<EquipType,int> equips = new Dictionary<EquipType,int>();
 
         public void Start()
         {
@@ -51,17 +51,17 @@ namespace newgame
             UiHelper.TxtOut(["\t 「상점/구매」",
                 ""]);
 
-            List<Equipment> items = new List<Equipment>();
+            List<Equipment> equips = new List<Equipment>();
             List<string> itemNames = new List<string>();
 
-            foreach (var item in this.items)
+            foreach (var item in this.equips)
             {
                 foreach (Equipment equip in GameManager.Instance.GetEquipment)
                 {
                     if (equip.GetEquipType == item.Key && equip.GetEquipID == item.Value)
                     {
                         itemNames.Add($"{equip.GetEquipName} - {equip.GetPrice}골드");
-                        items.Add(equip);
+                        equips.Add(equip);
                     }
                 }
             }
@@ -77,12 +77,12 @@ namespace newgame
 
             Player player = GameManager.Instance.RequirePlayer();
 
-            if (player.MyStatus.gold >= items[menuSelect].GetPrice)
+            if (player.MyStatus.gold >= equips[menuSelect].GetPrice)
             {
-                player.MyStatus.gold -= items[menuSelect].GetPrice;
-                Inventory.Instance.AddEquip(items[menuSelect]);
+                player.MyStatus.gold -= equips[menuSelect].GetPrice;
+                Inventory.Instance.AddEquip(equips[menuSelect]);
 
-                UiHelper.TxtOut(["", $"{items[menuSelect].GetEquipName} 구매 완료",""]);
+                UiHelper.TxtOut(["", $"{equips[menuSelect].GetEquipName} 구매 완료",""]);
 
                 int GoLobbySel = UiHelper.SelectMenu(["구매 계속하기","나가기"]);
                 if (GoLobbySel == 0)
@@ -104,7 +104,6 @@ namespace newgame
                 ShowMenu();
                 return;
             }
-
         }
         #endregion
 
@@ -227,7 +226,7 @@ namespace newgame
         #region 상점 판매품목 초기화
         public void ResetShopItems()
         {
-            items.Clear();
+            equips.Clear();
         }
         #endregion
     }

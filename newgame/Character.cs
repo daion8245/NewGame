@@ -245,11 +245,17 @@ namespace newgame
         [JsonProperty]
         Dictionary<ItemType, string> itemNames = new Dictionary<ItemType, string>()
             {
-                {ItemType.F_POTION_HP, "회복 물약" },
+                {ItemType.F_POTION_LOW_HP, "하급 회복 물약" },
+                {ItemType.F_POTION_MIDDLE_HP, "중급 회복 물약" },
+                {ItemType.F_POTION_HIGH_HP, "상급 회복 물약" },
                 {ItemType.T_POTION_EXPUP, "경험치 획득량 증가" },
                 {ItemType.T_POTION_ATKUP, "공격력 증가" },
-                {ItemType.F_ETC_RESETNAME, "닉네임 변경" }
-            };
+                {ItemType.F_ETC_RESETNAME, "닉네임 변경" },
+
+                #region 제작 재료
+                {ItemType.M_WOOD, "나무" }
+                #endregion
+        };
 
         public string GetItemName(ItemType _type)
         {
