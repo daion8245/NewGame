@@ -22,8 +22,6 @@ namespace newgame
         #endregion
         #region 제작재료
         M_WOOD,
-        M_HERB,      // ← 새 재료
-        M_BOTTLE     // ← 새 재료
         #endregion
     }
 

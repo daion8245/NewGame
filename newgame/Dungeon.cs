@@ -64,8 +64,12 @@ namespace newgame
 
                 // 키 입력 받기
                 ConsoleKeyInfo key = Console.ReadKey(true);
-
-                RoomDelete();
+                
+                if (!GameManager.Instance.player.IsDead)
+                {
+                    RoomDelete();
+                }
+                
                 GameManager.Instance.UpdateDungeonMap(floor, map);
                 // 이동 처리
                 int newX = player.X, newY = player.Y;
@@ -87,6 +91,9 @@ namespace newgame
                 if (playerDefeatedInDungeon)
                 {
                     GameManager.Instance.UpdateDungeonMap(floor, map);
+                    UiHelper.WaitForInput("던전에서 패배하여 마을로 돌아갑니다. [ENTER를 눌러 계속]");
+                    player.X = 1; // 플레이어 위치 초기화
+                    player.Y = 1; // 플레이어 위치 초기화
                     playerDefeatedInDungeon = false;
                     return;
                 }
@@ -298,8 +305,7 @@ namespace newgame
                     map[i].Add((int)RoomType.Empty); // 비어 있는 칸으로 채움
             }
         }
-
-
+        
         void DrawPlayer()
         {
             int left = player.X;
@@ -310,7 +316,9 @@ namespace newgame
 
         void RoomDelete()
         {
-            if (player.Y >= 0 && player.Y < map.Count && player.X >= 0 && player.X < map[player.Y].Count && (RoomType)map[player.Y][player.X] != RoomType.Empty && (RoomType)map[player.Y][player.X] != RoomType.Exit)
+            if (player.Y >= 0 && player.Y < map.Count && player.X >= 0 && player.X < map[player.Y].Count &&
+                (RoomType)map[player.Y][player.X] != RoomType.Empty &&
+                (RoomType)map[player.Y][player.X] != RoomType.Exit)
             {
                 map[player.Y][player.X] = (int)RoomType.Empty;
             }
