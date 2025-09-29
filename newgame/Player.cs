@@ -120,6 +120,18 @@ namespace newgame
             RestoreClassState();
         }
 
+        #region 패배 후 복구
+        public void RespawnAtTavern()
+        {
+            MyStatus.Hp = Math.Max(1, MyStatus.MaxHp / 2);
+            MyStatus.Mp = MyStatus.MaxMp;
+            IsDead = false;
+
+            Tavern tavern = new Tavern();
+            tavern.Start();
+        }
+        #endregion
+
         #region 저장된 플레이어 불러오기
         public void Load()
         {
