@@ -1,7 +1,8 @@
-﻿using System;
+﻿using newgame.Manager;
+using System;
 using System.Collections.Generic;
 
-namespace newgame
+namespace newgame.Entity.Skill
 {
     public struct SkillType
     {

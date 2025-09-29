@@ -1,10 +1,12 @@
-﻿using System;
+﻿using newgame.Entity.Player;
+using newgame.Manager;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace newgame
+namespace newgame.Room
 {
     internal class Tavern
     {

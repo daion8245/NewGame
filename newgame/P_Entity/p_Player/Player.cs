@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using newgame.Entity.Skill;
+using newgame.Manager;
+using newgame.Room;
 using SkiaSharp;
 
-namespace newgame
+namespace newgame.Entity.Player
 {
     internal class Player : Character
     {

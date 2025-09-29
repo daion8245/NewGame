@@ -1,6 +1,11 @@
+using newgame.Entity;
+using newgame.Entity.Item;
+using newgame.Entity.Player;
+using newgame.Entity.Skill;
+using newgame.Manager;
 using System;
 
-namespace newgame
+namespace newgame.Room
 {
     /// <summary>
     /// Composition root responsible for wiring the manual dependency graph.

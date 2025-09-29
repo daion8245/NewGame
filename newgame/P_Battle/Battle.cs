@@ -1,4 +1,8 @@
-﻿namespace newgame
+﻿using newgame.Entity;
+using newgame.Entity.Player;
+using newgame.Manager;
+
+namespace newgame
 {
     internal class Battle : Character //Battle 클래스 생성 Character를 상속받는다
     {

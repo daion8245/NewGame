@@ -1,8 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using newgame.Entity;
+using newgame.Entity.Equip;
+using newgame.Entity.Player;
+using newgame.Entity.Skill;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Reflection.Metadata;
 
-namespace newgame
+namespace newgame.Manager
 {
     public class DataManager
     {

@@ -6,7 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 
-namespace newgame
+namespace newgame.Entity
 {
     //능력치를 가지고 있는 모든 캐릭터의 부모 클래스
     internal class Character

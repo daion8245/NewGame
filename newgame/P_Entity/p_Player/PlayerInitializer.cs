@@ -1,6 +1,9 @@
+using newgame.Entity.Equip;
+using newgame.Entity.Skill;
+using newgame.Manager;
 using System;
 
-namespace newgame
+namespace newgame.Entity.Player
 {
     internal class PlayerInitializer
     {

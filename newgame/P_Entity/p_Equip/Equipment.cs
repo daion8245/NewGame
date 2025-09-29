@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace newgame
+namespace newgame.Entity.Equip
 {
     public enum EquipType
     {

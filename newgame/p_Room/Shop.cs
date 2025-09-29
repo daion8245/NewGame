@@ -1,6 +1,10 @@
-﻿using System.ComponentModel;
+﻿using newgame.Entity.Equip;
+using newgame.Entity.Item;
+using newgame.Entity.Player;
+using newgame.Manager;
+using System.ComponentModel;
 
-namespace newgame
+namespace newgame.Room
 {
     internal class Shop
     {
