@@ -39,7 +39,6 @@ namespace newgame
 
         // 맵 데이터 (2차원 배열)
         List<List<int>> map = new List<List<int>>();
-        bool playerDefeatedInDungeon = false;
         void LoadMapData(int number)
         {
             map = GameManager.Instance.GetDungeonMap(number);
@@ -89,17 +88,8 @@ namespace newgame
 
                 RoomEvent((RoomType)map[player.Y][player.X]);
 
-                if (playerDefeatedInDungeon)
+                if (HandlePlayerDefeatIfNeeded())
                 {
-                    GameManager.Instance.UpdateDungeonMap(floor, map);
-                    UiHelper.WaitForInput("던전에서 패배하여 마을로 돌아갑니다. [ENTER를 눌러 계속]");
-
-                    Player? activePlayer = GameManager.Instance.Player;
-                    activePlayer?.RespawnAtTavern();
-
-                    player.X = 1; // 플레이어 위치 초기화
-                    player.Y = 1; // 플레이어 위치 초기화
-                    playerDefeatedInDungeon = false;
                     return;
                 }
             }
@@ -167,16 +157,7 @@ namespace newgame
                                 MonsterCreate();
                             }
                         }
-                        bool playerDefeated = activePlayer.IsDead;
-                        bool monsterDefeated = GameManager.Instance.monster?.IsDead ?? false;
-
-                        if (playerDefeated)
-                        {
-                            playerDefeatedInDungeon = true;
-                            break;
-                        }
-
-                        if (monsterDefeated)
+                        if (GameManager.Instance.monster?.IsDead ?? false)
                         {
                             RoomDelete(); // 승리 시 방 삭제
                         }
@@ -316,6 +297,26 @@ namespace newgame
             int top = player.Y;
             Console.SetCursorPosition(left, top);
             Console.Write('@');
+        }
+
+        bool HandlePlayerDefeatIfNeeded()
+        {
+            Player? activePlayer = GameManager.Instance.Player;
+            if (activePlayer == null || !activePlayer.IsDead)
+            {
+                return false;
+            }
+
+            GameManager.Instance.UpdateDungeonMap(floor, map);
+            UiHelper.WaitForInput("던전에서 패배하여 마을로 돌아갑니다. [ENTER를 눌러 계속]");
+
+            activePlayer.RespawnAtTavern();
+            activePlayer.IsDead = false;
+
+            player.X = 1; // 플레이어 위치 초기화
+            player.Y = 1; // 플레이어 위치 초기화
+
+            return true;
         }
 
         void RoomDelete()
