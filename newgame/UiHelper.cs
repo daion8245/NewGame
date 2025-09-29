@@ -2,7 +2,7 @@
 
 namespace newgame
 {
-    internal class UiHelper
+    internal static class UiHelper
     {
 
         #region 선택 메뉴
@@ -115,6 +115,30 @@ namespace newgame
 
         #region 그 외 유틸
         public static int GetRandomInt1To100(int randomMax = 100) => Random.Shared.Next(1, randomMax + 1);
+        #endregion
+
+        #region 리스트 최소값 찾기 
+
+        public static int FindMinIndex(List<int> list)
+        {
+            if (list == null || list.Count == 0)
+                throw new ArgumentException("리스트가 비어있거나 null입니다.");
+
+            int minIndex = 0;
+            int minValue = list[0];
+
+            for (int i = 1; i < list.Count; i++)
+            {
+                if (list[i] < minValue)
+                {
+                    minValue = list[i];
+                    minIndex = i;
+                }
+            }
+
+            return minIndex;
+        }
+
         #endregion
     }
 }
