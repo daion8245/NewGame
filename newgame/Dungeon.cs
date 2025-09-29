@@ -65,7 +65,8 @@ namespace newgame
                 // 키 입력 받기
                 ConsoleKeyInfo key = Console.ReadKey(true);
                 
-                if (!GameManager.Instance.player.IsDead)
+                Player? activePlayerForCleanup = GameManager.Instance.Player;
+                if (activePlayerForCleanup != null && !activePlayerForCleanup.IsDead)
                 {
                     RoomDelete();
                 }
@@ -92,6 +93,10 @@ namespace newgame
                 {
                     GameManager.Instance.UpdateDungeonMap(floor, map);
                     UiHelper.WaitForInput("던전에서 패배하여 마을로 돌아갑니다. [ENTER를 눌러 계속]");
+
+                    Player? activePlayer = GameManager.Instance.Player;
+                    activePlayer?.RespawnAtTavern();
+
                     player.X = 1; // 플레이어 위치 초기화
                     player.Y = 1; // 플레이어 위치 초기화
                     playerDefeatedInDungeon = false;
@@ -167,7 +172,6 @@ namespace newgame
 
                         if (playerDefeated)
                         {
-                            activePlayer.IsDead = false;
                             playerDefeatedInDungeon = true;
                             break;
                         }

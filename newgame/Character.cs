@@ -227,13 +227,6 @@ namespace newgame
                 Console.WriteLine("전투에서 패배했다..");
                 Console.WriteLine("눈앞이 깜깜해졌다.");
                 Thread.Sleep(2000);
-
-                MyStatus.Hp = Math.Max(1, MyStatus.MaxHp / 2);
-                MyStatus.Mp = MyStatus.MaxMp;
-                IsDead = false;
-
-                Tavern tavern = new Tavern();
-                tavern.Start();
             }
         }
         #endregion
