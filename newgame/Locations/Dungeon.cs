@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using static newgame.UiHelper;
+using newgame.DungeonRooms;
 
 namespace newgame
 {
@@ -176,7 +177,7 @@ namespace newgame
                     }
                 case (RoomType.Event):
                     {
-                        // 이벤트 로직 추가
+                        EventRoomCreate();
                         break;
                     }
                 case (RoomType.Ladder):
@@ -369,6 +370,15 @@ namespace newgame
             Battle battle = new Battle();
             battle.Start();
         }
+        #endregion
+
+        #region 던전 이벤트 방
+        void EventRoomCreate()
+        {
+            EventRoomsCreater eventRoomsCreater = new EventRoomsCreater();
+            eventRoomsCreater.CreateDungeonEventRoom();
+        }
+
         #endregion
     }
 }

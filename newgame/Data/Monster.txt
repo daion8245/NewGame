@@ -48,6 +48,16 @@ COIN : 60
 CRICHANCE : 14
 CRIDMG : 170
 #
+NAME : 유령
+LEVEL : 8
+hp : 8
+ATK : 8
+DEF : 888
+EXP : 88
+COIN : 8
+CRICHANCE : 8
+CRIDMG : 88
+#
 NAME : 하피
 LEVEL : 6
 hp : 90

@@ -1,4 +1,5 @@
 using System;
+using newgame.Systems;
 
 namespace newgame
 {
@@ -38,6 +39,7 @@ namespace newgame
         public void Run()
         {
             Init();
+
             GetStartMessage().Start();
         }
 

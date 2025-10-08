@@ -140,5 +140,15 @@ namespace newgame
         }
 
         #endregion
+
+        #region 메세지&선택화면
+        public static int MessageAndSelect(string[] message, string[] select, bool Spacing = true)
+        {
+            TxtOut(message);
+            if (Spacing) Console.WriteLine();
+            int selected = SelectMenu(select);
+            return selected;
+        }
+        #endregion
     }
 }
