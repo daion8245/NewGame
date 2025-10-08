@@ -1,12 +1,9 @@
-﻿using newgame.Entity.Equip;
-using newgame.Entity.Player;
-using newgame.Manager;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Net.NetworkInformation;
-using static newgame.Manager.UiHelper;
+using static newgame.UiHelper;
 
-namespace newgame.Entity.Skill
+namespace newgame
 {
     public enum CharType
     {

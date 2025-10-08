@@ -1,9 +1,7 @@
-using newgame.Entity.Skill;
-using newgame.Manager;
 using System;
 using System.Collections.Generic;
 
-namespace newgame.Entity
+namespace newgame
 {
     internal class Boss : Monster
     {

@@ -1,8 +1,6 @@
-﻿using newgame.Entity.Skill;
-using newgame.Manager;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace newgame.Entity.Item
+namespace newgame
 {
     // 아이템 타입 설정 규칙
     // 타입명은 [0]_[1]_[2]

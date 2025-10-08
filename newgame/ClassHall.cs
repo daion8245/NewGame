@@ -1,12 +1,11 @@
-﻿using newgame.Manager;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace newgame.Room
+namespace newgame
 {
     internal class ClassHall
     {

@@ -1,6 +1,4 @@
-﻿using newgame.Manager;
-
-namespace newgame.Entity
+﻿namespace newgame
 {
     internal class Monster : Character
     {

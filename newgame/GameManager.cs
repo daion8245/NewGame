@@ -1,12 +1,6 @@
-﻿using newgame.Entity;
-using newgame.Entity.Equip;
-using newgame.Entity.Item;
-using newgame.Entity.Player;
-using newgame.Entity.Skill;
-using newgame.Room;
-using System.Text.Json.Serialization.Metadata;
+﻿using System.Text.Json.Serialization.Metadata;
 
-namespace newgame.Manager
+namespace newgame
 {
     /// <summary>
     /// 게임 전역 상태를 관리하는 싱글톤 매니저

@@ -1,10 +1,7 @@
-﻿using newgame.Entity.Equip;
-using newgame.Entity.Item;
-using newgame.Manager;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace newgame.Entity.Player
+namespace newgame
 {
     [JsonObject(MemberSerialization.Fields)]
     internal class Inventory

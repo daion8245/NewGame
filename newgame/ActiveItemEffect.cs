@@ -1,4 +1,5 @@
-﻿namespace newgame.Entity.Item
+﻿
+namespace newgame
 {
     public enum ConsumeType
     {

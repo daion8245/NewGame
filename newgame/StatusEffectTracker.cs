@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace newgame.Entity.Skill
+namespace newgame
 {
     internal readonly struct SkillTickLog
     {

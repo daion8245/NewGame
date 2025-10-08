@@ -1,8 +1,4 @@
-﻿using newgame.Entity.Equip;
-using newgame.Entity.Player;
-using newgame.Manager;
-
-namespace newgame.Room
+﻿namespace newgame
 {
     internal class Smithy
     {

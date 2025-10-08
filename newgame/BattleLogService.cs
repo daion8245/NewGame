@@ -1,7 +1,3 @@
-using newgame.Entity;
-using newgame.Entity.Player;
-using newgame.Entity.Skill;
-using newgame.Manager;
 using System;
 using System.Collections.Generic;
 

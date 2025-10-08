@@ -1,10 +1,7 @@
-﻿using newgame.Entity;
-using newgame.Entity.Player;
-using newgame.Manager;
-using System.Drawing;
-using static newgame.Manager.UiHelper;
+﻿using System.Drawing;
+using static newgame.UiHelper;
 
-namespace newgame.Room
+namespace newgame
 {
     internal class Dungeon
     {
@@ -179,7 +176,7 @@ namespace newgame.Room
                     }
                 case (RoomType.Event):
                     {
-                        EventRoom();
+                        // 이벤트 로직 추가
                         break;
                     }
                 case (RoomType.Ladder):
@@ -336,27 +333,11 @@ namespace newgame.Room
         #endregion
 
         #region 몬스터 소환/배틀
-
-        #region 층별 몬스터 지정 
-
-        Dictionary<int, List<int>> floorMonsters = new Dictionary<int, List<int>>()
-        {
-            { 1, new List<int> { 1, 2 } }, // 1층 몬스터 ID
-            { 2, new List<int> { 3, 4 } }, // 2층 몬스터 ID
-            { 3, new List<int> { 5, 6 } }, // 3층 몬스터 ID
-            // 필요시 추가 층수 및 몬스터 ID
-        };
-
-        #endregion
         void MonsterCreate()
         {
-            //층별 몬스터 설정
-            Random rand = new Random();
-            int floorMonsterId = rand.Next(UiHelper.FindMinIndex(floorMonsters[floor]), floorMonsters[floor].Count);
-            
             Monster monster = new Monster();
             GameManager.Instance.monster = monster;
-            monster.Start(floorMonsterId);
+            monster.Start(1);
             Battle battle = new Battle();
             battle.Start();
         }
@@ -372,15 +353,6 @@ namespace newgame.Room
             Battle battle = new Battle();
             battle.Start();
         }
-        #endregion
-
-        #region 이벤트 방
-
-        private void EventRoom()
-        {
-            
-        }
-
         #endregion
     }
 }

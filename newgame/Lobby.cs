@@ -1,9 +1,6 @@
-﻿using newgame.Entity.Equip;
-using newgame.Entity.Player;
-using newgame.Manager;
-using static newgame.Manager.UiHelper;
+﻿using static newgame.UiHelper;
 
-namespace newgame.Room
+namespace newgame
 {
     internal class Lobby
     {
