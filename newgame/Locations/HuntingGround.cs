@@ -1,4 +1,4 @@
-namespace newgame;
+namespace newgame.Locations;
 
 public class HuntingGround
 {

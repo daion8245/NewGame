@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
+using newgame.Characters;
+using newgame.Enemies;
 
-namespace newgame
+namespace newgame.Services
 {
     internal sealed class BattleLogService
     {

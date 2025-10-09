@@ -1,6 +1,4 @@
-﻿using System.Net.Security;
-
-namespace newgame
+﻿namespace newgame.UI
 {
     internal static class UiHelper
     {
@@ -142,10 +140,10 @@ namespace newgame
         #endregion
 
         #region 메세지&선택화면
-        public static int MessageAndSelect(string[] message, string[] select, bool Spacing = true)
+        public static int MessageAndSelect(string[] message, string[] select, bool spacing = true)
         {
             TxtOut(message);
-            if (Spacing) Console.WriteLine();
+            if (spacing) Console.WriteLine();
             int selected = SelectMenu(select);
             return selected;
         }

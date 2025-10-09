@@ -1,5 +1,5 @@
 ﻿
-namespace newgame
+namespace newgame.Items
 {
     public enum ConsumeType
     {

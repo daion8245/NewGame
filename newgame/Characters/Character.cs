@@ -1,36 +1,33 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading;
+﻿using newgame.Items;
+using newgame.Services;
+using newgame.UI;
+using Newtonsoft.Json;
 
-namespace newgame
+namespace newgame.Characters
 {
     //능력치를 가지고 있는 모든 캐릭터의 부모 클래스
     internal class Character
     {
-        Status? Status;
+        private Status? _status;
 
-        public bool HasStatus => Status != null;
+        public bool HasStatus => _status != null;
 
         public Status MyStatus
         {
-            get => Status ?? throw new InvalidOperationException("Status has not been initialized.");
-            protected set => Status = value ?? throw new ArgumentNullException(nameof(value));
+            get => _status ?? throw new InvalidOperationException("Status has not been initialized.");
+            protected set => _status = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         //현제 활성화 되어있는 포션 효과
-        private List<ActiveItemEffect> activeEffects = new();
-        private readonly StatusEffectTracker statusEffects;
+        private List<ActiveItemEffect> _activeEffects = new();
+        private readonly StatusEffectTracker _statusEffects;
 
-        public StatusEffectTracker StatusEffects => statusEffects;
+        public StatusEffectTracker StatusEffects => _statusEffects;
 
         //플레이어가 죽었는지
-        public bool IsDead = false;
+        public bool IsDead;
         //플레이어가 전투에서 도망쳤는지
-        public bool isbattleRun = false;
+        public bool IsbattleRun = false;
         //이전 HP 값을 저장하는 배열 (플레이어[0], 적[1])
         protected int[] beforHP = new int[2];
 
@@ -39,7 +36,7 @@ namespace newgame
         protected Character(BattleLogService battleLogService)
         {
             this.battleLogService = battleLogService ?? throw new ArgumentNullException(nameof(battleLogService));
-            statusEffects = new StatusEffectTracker(
+            _statusEffects = new StatusEffectTracker(
                 this,
                 () => target,
                 (attacker, defender, damage, actionName, targetDefeated, isCritical) =>
@@ -75,7 +72,7 @@ namespace newgame
 
             battleLogService.ClearBattleMessageForActor(this);
 
-            List<SkillTickLog> tickLogs = statusEffects.TickSkillTurns();
+            List<SkillTickLog> tickLogs = _statusEffects.TickSkillTurns();
 
             // 지속 피해로 사망자가 발생하면 즉시 처리 후 return
             bool anyDeath = tickLogs.Any(log => log.TargetDefeated);
@@ -134,7 +131,7 @@ namespace newgame
 
             battleLogService.ClearBattleMessageForActor(this);
 
-            List<SkillTickLog> tickLogs = statusEffects.TickSkillTurns();
+            List<SkillTickLog> tickLogs = _statusEffects.TickSkillTurns();
 
             bool attackerDiedFromTick = tickLogs.Any(log => ReferenceEquals(log.Target, this) && log.TargetDefeated);
             bool preserveOpponentLog = tickLogs.Any(log => battleLogService.IsPlayer(log.Actor) != battleLogService.IsPlayer(this));
@@ -189,7 +186,7 @@ namespace newgame
             }
 
             IsDead = true;
-            statusEffects.Clear();
+            _statusEffects.Clear();
 
             target?.StatusEffects.Clear();
 
@@ -208,6 +205,8 @@ namespace newgame
                 {
                     throw new InvalidOperationException("Target status is not initialized.");
                 }
+
+                GameManager.Instance.QuestManager.NotifyMonsterDeath(selfStatus.Name);
 
                 UiHelper.TxtOut([
                     $"{selfStatus.Name}은 쓰러졌다!",
@@ -299,7 +298,7 @@ namespace newgame
         {
             bool isFound = false;
 
-            foreach (ActiveItemEffect effect in activeEffects)
+            foreach (ActiveItemEffect effect in _activeEffects)
             {
                 if (effect.ItemType == item.ItemType)
                 {
@@ -317,7 +316,7 @@ namespace newgame
             if (!isFound)
             {
                 ActiveItemEffect newEffect = new ActiveItemEffect(item);
-                activeEffects.Add(newEffect);
+                _activeEffects.Add(newEffect);
 
                 Console.WriteLine($"{item.ItemType} 효과가 새롭게 적용되었습니다! → " +
                     $"+{item.ItemStatus} / {item.ItemUsedCount}턴 간 지속 " +
@@ -330,9 +329,9 @@ namespace newgame
         /// </summary>
         public void OnBattleStart()
         {
-            for (int i = activeEffects.Count - 1; i >= 0; i--)
+            for (int i = _activeEffects.Count - 1; i >= 0; i--)
             {
-                var effect = activeEffects[i];
+                var effect = _activeEffects[i];
                 if (effect.ConsumeType == ConsumeType.BattleStart)
                 {
                     effect.RemainingTurn--;
@@ -341,7 +340,7 @@ namespace newgame
                     if (effect.RemainingTurn <= 0)
                     {
                         Console.WriteLine($"{effect.ItemType} 효과가 종료되었습니다. (전투 시작 시 차감)");
-                        activeEffects.RemoveAt(i);
+                        _activeEffects.RemoveAt(i);
                     }
                 }
             }
@@ -352,9 +351,9 @@ namespace newgame
         /// </summary>
         public void OnTurnPassed()
         {
-            for (int i = activeEffects.Count - 1; i >= 0; i--)
+            for (int i = _activeEffects.Count - 1; i >= 0; i--)
             {
-                var effect = activeEffects[i];
+                var effect = _activeEffects[i];
                 if (effect.ConsumeType == ConsumeType.PerTurn)
                 {
                     effect.RemainingTurn--;
@@ -363,7 +362,7 @@ namespace newgame
                     if (effect.RemainingTurn <= 0)
                     {
                         Console.WriteLine($"{effect.ItemType} 효과가 종료되었습니다. (턴 경과로 차감)");
-                        activeEffects.RemoveAt(i);
+                        _activeEffects.RemoveAt(i);
                     }
                 }
             }
@@ -374,7 +373,7 @@ namespace newgame
             int total = 0;
 
             // 효과 리스트를 모두 확인
-            foreach (ActiveItemEffect effect in activeEffects)
+            foreach (ActiveItemEffect effect in _activeEffects)
             {
                 // 같은 종류의 효과라면
                 if (effect.ItemType == effectType)

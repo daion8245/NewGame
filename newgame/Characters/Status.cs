@@ -1,9 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Net.NetworkInformation;
-using static newgame.UiHelper;
+﻿using newgame.Items;
+using newgame.UI;
+using Newtonsoft.Json;
 
-namespace newgame
+namespace newgame.Characters
 {
     public enum CharType
     {

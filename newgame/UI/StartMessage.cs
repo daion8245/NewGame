@@ -1,7 +1,4 @@
-using System;
-using System.Threading;
-
-namespace newgame
+namespace newgame.UI
 {
     /// <summary>
     /// Shows the initial game menu and handles basic start actions.

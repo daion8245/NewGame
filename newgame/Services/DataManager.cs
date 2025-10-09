@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using newgame.Characters;
+using newgame.Items;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Reflection.Metadata;
 
-namespace newgame
+namespace newgame.Services
 {
     public class DataManager
     {
