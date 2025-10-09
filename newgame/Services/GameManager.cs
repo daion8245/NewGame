@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization.Metadata;
+using newgame.Systems;
 
 namespace newgame
 {
@@ -29,6 +30,7 @@ namespace newgame
 
         // 전투 메시지를 한 곳에서 관리하는 서비스 (UI/로그 출력 일관성 유지)
         private readonly BattleLogService battleLogService;
+        private readonly QuestManager questManager;
         // 지연 생성되는 로비 인스턴스 (필요할 때만 생성)
         private Lobby? _lobby;
 
@@ -38,12 +40,15 @@ namespace newgame
         private GameManager()
         {
             battleLogService = new BattleLogService();
+            questManager = new QuestManager();
         }
 
         /// <summary>
         /// 전투 로그 서비스에 대한 읽기 전용 참조
         /// </summary>
         public BattleLogService BattleLogService => battleLogService;
+
+        public QuestManager QuestManager => questManager;
 
         /// <summary>
         /// 현재 플레이어 인스턴스(없을 수 있음)
