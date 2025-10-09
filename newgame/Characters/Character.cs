@@ -209,6 +209,8 @@ namespace newgame
                     throw new InvalidOperationException("Target status is not initialized.");
                 }
 
+                GameManager.Instance.QuestManager.NotifyMonsterDeath(selfStatus.Name);
+
                 UiHelper.TxtOut([
                     $"{selfStatus.Name}은 쓰러졌다!",
                     $"{selfStatus.Name}에게서 승리했다!",
