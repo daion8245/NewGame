@@ -24,38 +24,46 @@ namespace newgame.Items
         public int CriChance = criChance;
         public int CrlDam = crlDam;
 
-        public string ToSummary()
+        public IEnumerable<string> EnumerateSummaryParts()
         {
-            List<string> parts = new List<string>();
-
             if (Hp != 0)
             {
-                parts.Add($"HP+{Hp}");
+                yield return $"HP+{Hp}";
             }
 
             if (Mp != 0)
             {
-                parts.Add($"MP+{Mp}");
+                yield return $"MP+{Mp}";
             }
 
             if (Atk != 0)
             {
-                parts.Add($"ATK+{Atk}");
+                yield return $"ATK+{Atk}";
             }
 
             if (Def != 0)
             {
-                parts.Add($"DEF+{Def}");
+                yield return $"DEF+{Def}";
             }
 
             if (CriChance != 0)
             {
-                parts.Add($"CC+{CriChance}");
+                yield return $"CC+{CriChance}";
             }
 
             if (CrlDam != 0)
             {
-                parts.Add($"CD+{CrlDam}");
+                yield return $"CD+{CrlDam}";
+            }
+        }
+
+        public string ToSummary()
+        {
+            List<string> parts = new List<string>();
+
+            foreach (string part in EnumerateSummaryParts())
+            {
+                parts.Add(part);
             }
 
             return parts.Count == 0 ? "능력치 없음" : string.Join(", ", parts);
