@@ -370,7 +370,7 @@ namespace newgame.Locations
         {
             Boss boss = new Boss();
             GameManager.Instance.monster = boss;
-            boss.StartBoss(floor);
+            boss.StartBoss(floor + 1);
             Battle battle = new Battle();
             battle.Start();
         }
