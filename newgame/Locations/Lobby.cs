@@ -24,6 +24,7 @@ namespace newgame.Locations
             int menusel = UiHelper.SelectMenu([
                 "상태창 보기",
                 "인벤토리 보기",
+                "퀘스트 보기",
                 "미궁으로 들어가기",
                 "상점",
                 "여관",
@@ -55,10 +56,17 @@ namespace newgame.Locations
                 case 2:
                     {
                         Console.Clear();
-                        Dungeon.Instance.Start();
+                        GameManager.Instance.QuestManager.ShowQuestBoard();
+                        UiHelper.WaitForInput();
                         break;
                     }
                 case 3:
+                    {
+                        Console.Clear();
+                        Dungeon.Instance.Start();
+                        break;
+                    }
+                case 4:
                     {
                         Console.Clear();
 
@@ -76,31 +84,31 @@ namespace newgame.Locations
                         shop.Start();
                         break;
                     }
-                case 4:
+                case 5:
                     {
                         Tavern tavern = new Tavern();
                         tavern.Start();
                         return;
                     }
-                case 5:
+                case 6:
                     {
-                        // 비어있는 case 5
+                        // 비어있는 case 6
                         break;
                     }
-                case 6:
+                case 7:
                     {
                         Smithy smithy = new Smithy();
                         smithy.Start();
                         break;
                     }
-                case 7:
+                case 8:
                     {
                         Console.Clear();
                         DataManager.Instance.Save(player.MyStatus);
                         UiHelper.WaitForInput("게임 저장됨. (SHIFT를 눌러 계속)");
                         break;
                     }
-                case 8:
+                case 9:
                     {
                         Console.Clear();
                         Console.WriteLine("게임을 종료합니다...");
