@@ -143,10 +143,6 @@ namespace newgame.Items
         #region 착용 장비 보이기
         public void ShowEquipList()
         {
-            // 기존 구현은 콘솔 화면에 상자를 그리며 장비를 표시하려 했으나
-            // 미완성된 상태여서 컴파일 오류가 발생하였다. 간단한 텍스트
-            // 형식으로 현재 장비 목록을 출력하도록 수정한다.
-
             Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
             Console.WriteLine("┃          장착 장비           ┃");
             Console.WriteLine("┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫");
@@ -158,16 +154,39 @@ namespace newgame.Items
                     continue;
                 }
 
-                string equipName = "없음";
-                if (_equips.TryGetValue(type, out Equipment? equipped) && equipped != null)
-                {
-                    equipName = equipped.GetEquipName;
-                }
-
-                Console.WriteLine($"┃ {type,-6} : {equipName,-14}");
+                Equipment? equipped = _equips.GetValueOrDefault(type);
+                PrintEquipmentWithStats(type, equipped);
             }
 
             Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+        }
+
+        static void PrintEquipmentWithStats(EquipType type, Equipment? equipment)
+        {
+            string equipName = equipment?.GetEquipName ?? "없음";
+            Console.WriteLine($"┃ {type,-6} : {equipName,-14}");
+
+            if (equipment == null)
+            {
+                return;
+            }
+
+            List<string> statLines = new List<string>();
+            foreach (string part in equipment.GetEquipStat.EnumerateSummaryParts())
+            {
+                statLines.Add(part);
+            }
+
+            if (statLines.Count == 0)
+            {
+                Console.WriteLine("┃          - 능력치 없음");
+                return;
+            }
+
+            foreach (string stat in statLines)
+            {
+                Console.WriteLine($"┃          - {stat}");
+            }
         }
         #endregion
 
