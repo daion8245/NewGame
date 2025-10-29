@@ -341,17 +341,17 @@ namespace newgame.Characters
             int chance = random.Next(1, 101);
             if (chance >= 50)
             {
-                IsbattleRun = true;
+                IsBattleRun = true;
                 Console.Clear();
                 Console.WriteLine("전투에서 탈출했다");
 
                 GameManager.Instance.ReturnToLobby();
-                IsbattleRun = false;
+                IsBattleRun = false;
             }
             //만약 실패할시 플레이어에게 실패 메세지를 띄움
             else
             {
-                IsbattleRun = false;
+                IsBattleRun = false;
                 Console.WriteLine("도망치는데 실패했다");
                 UiHelper.WaitForInput("[ENTER]를 눌러 계속");
             }

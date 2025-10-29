@@ -28,7 +28,7 @@ namespace newgame.Systems
 
             Character[] chars = new Character[] { player, monster };
 
-            player.IsbattleRun = false;     // 필요시 monster도 false 초기화
+            player.IsBattleRun = false;     // 필요시 monster도 false 초기화
 
             int current = 0; // 0: player, 1: monster
 
@@ -52,7 +52,7 @@ namespace newgame.Systems
                 }
 
                 // 1) 공격자가 '도주' 선택했으면 종료
-                if (attacker.IsbattleRun)
+                if (attacker.IsBattleRun)
                     break;
 
                 // 2) 피격자가 죽었으면 즉시 종료
