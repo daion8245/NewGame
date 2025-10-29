@@ -576,5 +576,16 @@ namespace newgame
         }
 
         #endregion
+
+        #region 던전 상점
+
+        private List<Shop> _dungeonShops = new List<Shop>();
+
+        public void SetDungeonShops(Shop dungeonShops)
+        {
+            _dungeonShops.Add(dungeonShops);
+        }
+
+        #endregion
     }
 }

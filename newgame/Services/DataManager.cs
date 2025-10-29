@@ -1,5 +1,6 @@
 ﻿using newgame.Characters;
 using newgame.Items;
+using newgame.Locations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -637,6 +638,57 @@ namespace newgame.Services
             }
         }
 
+        #endregion
+        
+        #region 던전 상점
+
+        public void LoadDungeonShopData()
+        {
+            string dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+            
+            string fileName = $"DungeonShop_Shop.txt";
+            string filePath = Path.Combine(dataPath, fileName);
+            if (File.Exists(filePath) == false)
+            {
+                Console.WriteLine($"해당 경로 [{filePath}]가 존재하지 않습니다. ");
+                Console.WriteLine($"[{fileName}] 파일을 확인해주세요.");
+                return;
+            }
+        }
+
+        void SetDungeonShopData(string filePath)
+        {
+            try
+            {
+                string[] lines = File.ReadAllLines(filePath);
+
+                string shopName = "상점 이름 지정되지 않음.";
+                string shopdescription = "상점 설명 지정되지 않음.";
+                int shopLevel = 0;
+                Dictionary<EquipType, int> equips = new Dictionary<EquipType, int>();
+                List<ItemType> items = new List<ItemType>();
+                
+                foreach (string line in lines)
+                {
+                    if (line == "#")
+                    {
+                        Shop shop = new Shop(shopName,shopLevel,shopdescription);
+                        shop.equips = equips;
+                        shop.items = items;
+                        
+                        GameManager.Instance.SetDungeonShops(shop);
+                        continue;
+                    }
+                    string[] curLine = line.Split(':');
+                    
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"[오류] : 파일 읽기 실패 ({e.Message})");
+                throw;
+            }
+        }
         #endregion
     }
 }
