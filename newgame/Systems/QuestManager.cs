@@ -18,7 +18,6 @@ namespace newgame.Systems
 
         private void OnMonsterDead(string mobName)
         {
-            
         }
     }
 }

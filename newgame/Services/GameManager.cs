@@ -1,10 +1,6 @@
-﻿using newgame.Characters;
-using newgame.Enemies;
-using newgame.Items;
-using newgame.Locations;
-using newgame.Systems;
+using System.Text.Json.Serialization.Metadata;
 
-namespace newgame.Services
+namespace newgame
 {
     /// <summary>
     /// 게임 전역 상태를 관리하는 싱글톤 매니저
@@ -33,7 +29,6 @@ namespace newgame.Services
 
         // 전투 메시지를 한 곳에서 관리하는 서비스 (UI/로그 출력 일관성 유지)
         private readonly BattleLogService battleLogService;
-        private readonly QuestManager questManager;
         // 지연 생성되는 로비 인스턴스 (필요할 때만 생성)
         private Lobby? _lobby;
 
@@ -43,15 +38,12 @@ namespace newgame.Services
         private GameManager()
         {
             battleLogService = new BattleLogService();
-            questManager = new QuestManager();
         }
 
         /// <summary>
         /// 전투 로그 서비스에 대한 읽기 전용 참조
         /// </summary>
         public BattleLogService BattleLogService => battleLogService;
-
-        public QuestManager QuestManager => questManager;
 
         /// <summary>
         /// 현재 플레이어 인스턴스(없을 수 있음)
@@ -308,12 +300,12 @@ namespace newgame.Services
 
         #region 장비 상태 확인
         // 보유 중인 장비 목록
-        private List<Equipment> _equips = [];
+        List<Equipment> equips = new List<Equipment>();
 
         /// <summary>
         /// 현재 보유 중인 장비 목록(읽기 전용 컬렉션 스냅샷)
         /// </summary>
-        public List<Equipment> GetEquipment { get => Instance._equips; }
+        public List<Equipment> GetEquipment { get => Instance.equips; }
 
         /// <summary>
         /// 타입과 ID로 장비를 검색한다.
@@ -323,7 +315,7 @@ namespace newgame.Services
         /// <returns>장비 또는 null</returns>
         public Equipment? FindEquipment(EquipType _type, int _id)
         {
-            foreach (Equipment equip in Instance._equips)
+            foreach (Equipment equip in Instance.equips)
             {
                 if (equip.GetEquipType == _type && equip.GetEquipID == _id)
                 {
@@ -341,12 +333,12 @@ namespace newgame.Services
         /// <returns>true = 추가됨, false = 중복으로 미추가</returns>
         public bool SetEquipList(Equipment equip)
         {
-            if(_equips == null)
+            if(equips == null)
             {
-                _equips = new List<Equipment>();
+                equips = new List<Equipment>();
             }
 
-            foreach(Equipment item in _equips)
+            foreach(Equipment item in equips)
             {
                 if(equip.GetEquipType == item.GetEquipType && equip.GetEquipID == item.GetEquipID)
                 {
@@ -354,7 +346,7 @@ namespace newgame.Services
                 }
             }
 
-            _equips.Add(equip);
+            equips.Add(equip);
             return true;
         }
 
