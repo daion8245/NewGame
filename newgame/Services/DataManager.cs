@@ -1,4 +1,5 @@
-﻿using newgame.Characters;
+﻿using System.Linq;
+using newgame.Characters;
 using newgame.Items;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -160,9 +161,8 @@ namespace newgame.Services
                     stat = new EquipStat();
                 }
 
-                foreach(string rawLine in lines)
+                foreach(string line in lines.Select(l => l.Trim()))
                 {
-                    string line = rawLine.Trim();
                     if(string.IsNullOrWhiteSpace(line))
                     {
                         continue;
