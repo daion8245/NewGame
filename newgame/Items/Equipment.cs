@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace newgame.Items
 {
@@ -22,6 +23,43 @@ namespace newgame.Items
         public int Mp = mp;
         public int CriChance = criChance;
         public int CrlDam = crlDam;
+
+        public string ToSummary()
+        {
+            List<string> parts = new List<string>();
+
+            if (Hp != 0)
+            {
+                parts.Add($"HP+{Hp}");
+            }
+
+            if (Mp != 0)
+            {
+                parts.Add($"MP+{Mp}");
+            }
+
+            if (Atk != 0)
+            {
+                parts.Add($"ATK+{Atk}");
+            }
+
+            if (Def != 0)
+            {
+                parts.Add($"DEF+{Def}");
+            }
+
+            if (CriChance != 0)
+            {
+                parts.Add($"CC+{CriChance}");
+            }
+
+            if (CrlDam != 0)
+            {
+                parts.Add($"CD+{CrlDam}");
+            }
+
+            return parts.Count == 0 ? "능력치 없음" : string.Join(", ", parts);
+        }
     }
     
     internal class Equipment

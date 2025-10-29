@@ -1,4 +1,5 @@
-﻿using newgame.Characters;
+﻿using System.Collections.Generic;
+using newgame.Characters;
 using newgame.Services;
 using newgame.UI;
 using Newtonsoft.Json;
@@ -128,6 +129,17 @@ namespace newgame.Items
             return _equips.GetValueOrDefault(type);
         }
 
+        public IEnumerable<Equipment> GetEquippedItems()
+        {
+            foreach (Equipment? equip in _equips.Values)
+            {
+                if (equip != null)
+                {
+                    yield return equip;
+                }
+            }
+        }
+
         #region 착용 장비 보이기
         public void ShowEquipList()
         {
@@ -189,9 +201,7 @@ namespace newgame.Items
 
             foreach (Equipment t in _canEquips)
             {
-                string upType = t.GetEquipType is EquipType.WEAPON or EquipType.HELMET or EquipType.GLOVE or EquipType.SHOES ? "공격력" : "방어력";
-                equipItemList.Add($"{t.GetEquipName} -> {upType}+{t.GetEquipStat} 증가");
-                //equipItemList.Add($"┃ {canEquips[i].GetEquipName} ");
+                equipItemList.Add($"{t.GetEquipName} -> {t.GetEquipStat.ToSummary()}");
             }
 
             Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
