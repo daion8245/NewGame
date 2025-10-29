@@ -1,15 +1,18 @@
 ID : 1
 NAME : 초보자 바지
-STAT : 0
+HP : 2
+DEF : 2
 PRICE : 0
 #
 ID : 2
 NAME : 가죽 바지
-STAT : 0
+HP : 3
+DEF : 3
 PRICE : 10
 #
 ID : 3
 NAME : 질긴 가죽 바지
-STAT : 0
+HP : 4
+DEF : 4
 PRICE : 20
 #

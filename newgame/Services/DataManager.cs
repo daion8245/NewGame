@@ -140,38 +140,82 @@ namespace newgame.Services
                 // 텍스트 파일에서 모든 라인 읽어오기
                 string[] lines = File.ReadAllLines(filePath);
                 string name = string.Empty;         // 아이템 이름
-                int[] data = new int[3];            // id, stat, price
-                foreach(string line in lines)
-                {
-                    if(line == "#")
-                    {
-                        // 현재까지 얻어진 정보로 Equipment 클래스 생성하고
-                        Equipment equip = new Equipment(_type, data[0], name, data[1], data[2]);
-                        // GameManager 에서 equips 리스트에 등록하기
-                        GameManager.Instance.SetEquipList(equip);
+                int id = 0;
+                int price = 0;
+                EquipStat stat = new EquipStat();
 
+                void RegisterEquipment()
+                {
+                    if (id == 0 && string.IsNullOrWhiteSpace(name))
+                    {
+                        return;
+                    }
+
+                    Equipment equip = new Equipment(_type, id, name, stat, price);
+                    GameManager.Instance.SetEquipList(equip);
+
+                    name = string.Empty;
+                    id = 0;
+                    price = 0;
+                    stat = new EquipStat();
+                }
+
+                foreach(string rawLine in lines)
+                {
+                    string line = rawLine.Trim();
+                    if(string.IsNullOrWhiteSpace(line))
+                    {
                         continue;
                     }
 
-                    // 문자열 자르기 ( 해당 형식은 ":" 를 기준으로 문자열을 구분하고 있음 )
+                    if(line == "#")
+                    {
+                        RegisterEquipment();
+                        continue;
+                    }
+
                     string[] curLine = line.Split(':');
-                    if (curLine[0].Trim() == "ID")                 // ID 일 때
+                    if(curLine.Length < 2)
                     {
-                        data[0] = int.Parse(curLine[1].Trim());
+                        continue;
                     }
-                    else if(curLine[0].Trim() == "NAME")           // NAME 일 때
+
+                    string key = curLine[0].Trim();
+                    string value = curLine[1].Trim();
+
+                    switch(key)
                     {
-                        name = curLine[1].Trim();
-                    }
-                    else if(curLine[0].Trim() == "STAT")           // STAT 일 때
-                    {
-                        data[1] = int.Parse(curLine[1].Trim());
-                    }
-                    else if(curLine[0].Trim() == "PRICE")          // PRICE 일 때
-                    {
-                        data[2] = int.Parse(curLine[1].Trim());
+                        case "ID":
+                            id = int.Parse(value);
+                            break;
+                        case "NAME":
+                            name = value;
+                            break;
+                        case "HP":
+                            stat.Hp = int.Parse(value);
+                            break;
+                        case "ATK":
+                            stat.Atk = int.Parse(value);
+                            break;
+                        case "DEF":
+                            stat.Def = int.Parse(value);
+                            break;
+                        case "MP":
+                            stat.Mp = int.Parse(value);
+                            break;
+                        case "CC":
+                            stat.CriChance = int.Parse(value);
+                            break;
+                        case "CD":
+                            stat.CrlDam = int.Parse(value);
+                            break;
+                        case "PRICE":
+                            price = int.Parse(value);
+                            break;
                     }
                 }
+
+                RegisterEquipment();
             }
             catch(Exception ex)
             {
