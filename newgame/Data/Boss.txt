@@ -8,3 +8,13 @@ COIN : 100
 SKILL : 점액 폭탄
 SKILL : 깔아뭉개기
 #
+NAME : 죽은자의 영혼
+LEVEL : 7
+hp : 250
+ATK : 10
+DEF :5
+EXP : 70
+COIN : 150
+SKILL : 소드 어택
+SKILL : 영혼 흡수
+#
