@@ -601,7 +601,7 @@ namespace newgame
 
             Shop copy = new Shop(dungeonShop.Name, level, dungeonShop.Description)
             {
-                equips = new Dictionary<EquipType, int>(dungeonShop.equips),
+                equips = new List<ShopEquipProduct>(dungeonShop.equips),
                 items = new List<ItemType>(dungeonShop.items)
             };
 

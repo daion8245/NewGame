@@ -64,12 +64,12 @@ namespace newgame.Locations
 
                         Shop shop = new Shop("마을 상점");
 
-                        shop.equips.Add(EquipType.WEAPON, 2);
-                        shop.equips.Add(EquipType.GLOVE, 2);
-                        shop.equips.Add(EquipType.HELMET, 2);
-                        shop.equips.Add(EquipType.SHIRT, 2);
-                        shop.equips.Add(EquipType.PANTS, 2);
-                        shop.equips.Add(EquipType.SHOES, 2);
+                        shop.AddEquip(EquipType.WEAPON, 2);
+                        shop.AddEquip(EquipType.GLOVE, 2);
+                        shop.AddEquip(EquipType.HELMET, 2);
+                        shop.AddEquip(EquipType.SHIRT, 2);
+                        shop.AddEquip(EquipType.PANTS, 2);
+                        shop.AddEquip(EquipType.SHOES, 2);
                         shop.items.Add(ItemType.F_POTION_LOW_HP);
                         shop.items.Add(ItemType.F_POTION_MIDDLE_HP);
                         shop.items.Add(ItemType.F_ETC_RESETNAME);
