@@ -176,7 +176,7 @@ namespace newgame.Locations
                     }
                 case (RoomType.Shop):
                     {
-                        // 상점 로직 추가
+                        EnterDungeonShop();
                         break;
                     }
                 case (RoomType.Event):
@@ -383,6 +383,15 @@ namespace newgame.Locations
             eventRoomsCreater.CreateDungeonEventRoom();
         }
 
+        #endregion
+
+        #region 던전 상점 방
+        
+        private void EnterDungeonShop()
+        {
+            Shop shop = GameManager.Instance.GetDungeonShops(0);
+            shop.Start();
+        }
         #endregion
     }
 }

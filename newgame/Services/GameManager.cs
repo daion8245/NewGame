@@ -586,6 +586,11 @@ namespace newgame
             _dungeonShops.Add(dungeonShops);
         }
 
+        public Shop GetDungeonShops(int level)
+        {
+            return _dungeonShops[level];
+        }
+
         #endregion
     }
 }
