@@ -390,7 +390,9 @@ namespace newgame.Locations
         private void EnterDungeonShop()
         {
             Shop shop = GameManager.Instance.GetDungeonShop(floor);
+            shop.SetExitAction(() => { });
             shop.Start();
+            shop.SetExitAction(null);
         }
         #endregion
     }

@@ -668,7 +668,7 @@ namespace newgame.Services
                 string? shopName = null;
                 string? shopdescription = null;
                 int shopLevel = 1;
-                Dictionary<EquipType, int> equips = new Dictionary<EquipType, int>();
+                List<ShopEquipProduct> equipProducts = new List<ShopEquipProduct>();
                 List<ItemType> items = new List<ItemType>();
                 bool hasData = false;
 
@@ -686,7 +686,7 @@ namespace newgame.Services
 
                     Shop shop = new Shop(finalName, finalLevel, finalDescription)
                     {
-                        equips = new Dictionary<EquipType, int>(equips),
+                        equips = new List<ShopEquipProduct>(equipProducts),
                         items = new List<ItemType>(items)
                     };
 
@@ -711,7 +711,7 @@ namespace newgame.Services
                         shopName = null;
                         shopdescription = null;
                         shopLevel = 1;
-                        equips = new Dictionary<EquipType, int>();
+                        equipProducts = new List<ShopEquipProduct>();
                         items = new List<ItemType>();
                         continue;
                     }
@@ -770,13 +770,7 @@ namespace newgame.Services
                                     break;
                                 }
 
-                                if (equips.ContainsKey(equipType))
-                                {
-                                    Console.WriteLine($"[경고] : '{key}' 항목이 중복되어 가장 처음 값을 유지합니다.");
-                                    break;
-                                }
-
-                                equips[equipType] = equipId;
+                                equipProducts.Add(new ShopEquipProduct(equipType, equipId));
                                 hasData = true;
                             }
                             else

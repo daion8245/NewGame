@@ -6,19 +6,34 @@ using newgame.UI;
 
 namespace newgame.Locations
 {
+    internal readonly struct ShopEquipProduct
+    {
+        public EquipType Type { get; }
+        public int EquipId { get; }
+
+        public ShopEquipProduct(EquipType type, int equipId)
+        {
+            Type = type;
+            EquipId = equipId;
+        }
+    }
+
     internal class Shop
     {
         public string Name = "Shop";
         public string Description = "상점 주인: 천천히 둘러보세요!";
         public int Level = 1;
-        public Dictionary<EquipType, int> equips = new Dictionary<EquipType, int>();
+        public List<ShopEquipProduct> equips = new List<ShopEquipProduct>();
         public List<ItemType> items = new List<ItemType>();
+
+        private Action _exitAction;
 
         public Shop(string name, int level = 1, string description = "상점 주인: 천천히 둘러보세요!")
         {
             Name = name;
             Level = level;
             Description = description;
+            _exitAction = () => GameManager.Instance.ReturnToLobby();
         }
 
         public void Start()
@@ -52,14 +67,29 @@ namespace newgame.Locations
                 case 2:
                 default:
                     {
-                        GameManager.Instance.ReturnToLobby();
-                        break;
+                        ExitShop();
+                        return;
                     }
             }
         }
         #endregion
 
         #region 장비/아이템 구매
+        public void SetExitAction(Action? exitAction)
+        {
+            _exitAction = exitAction ?? (() => GameManager.Instance.ReturnToLobby());
+        }
+
+        public void AddEquip(EquipType type, int equipId)
+        {
+            equips.Add(new ShopEquipProduct(type, equipId));
+        }
+
+        void ExitShop()
+        {
+            _exitAction();
+        }
+
         void BuyEquipItem()
         {
             Console.Clear();
@@ -70,16 +100,16 @@ namespace newgame.Locations
             List<Item> itemProducts = new List<Item>();
             List<string> menuNames = new List<string>();
 
-            foreach (var item in this.equips)
+            foreach (ShopEquipProduct product in equips)
             {
-                foreach (Equipment equip in GameManager.Instance.GetEquipment)
+                Equipment? equip = GameManager.Instance.FindEquipment(product.Type, product.EquipId);
+                if (equip == null)
                 {
-                    if (equip.GetEquipType == item.Key && equip.GetEquipID == item.Value)
-                    {
-                        menuNames.Add($"{equip.GetEquipName} - {equip.GetPrice}골드");
-                        equipProducts.Add(equip);
-                    }
+                    continue;
                 }
+
+                menuNames.Add($"{equip.GetEquipName} - {equip.GetPrice}골드");
+                equipProducts.Add(equip);
             }
             foreach (ItemType itemType in items)
             {
