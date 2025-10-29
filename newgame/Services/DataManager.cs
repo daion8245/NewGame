@@ -645,8 +645,8 @@ namespace newgame.Services
         public void LoadDungeonShopData()
         {
             string dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
-            
-            string fileName = $"DungeonShop_Shop.txt";
+
+            string fileName = "Dungeon_Shop.txt";
             string filePath = Path.Combine(dataPath, fileName);
             if (File.Exists(filePath) == false)
             {
@@ -654,6 +654,8 @@ namespace newgame.Services
                 Console.WriteLine($"[{fileName}] 파일을 확인해주세요.");
                 return;
             }
+
+            SetDungeonShopData(filePath);
         }
 
         void SetDungeonShopData(string filePath)
@@ -662,26 +664,127 @@ namespace newgame.Services
             {
                 string[] lines = File.ReadAllLines(filePath);
 
-                string shopName = "상점 이름 지정되지 않음.";
-                string shopdescription = "상점 설명 지정되지 않음.";
-                int shopLevel = 0;
+                string? shopName = null;
+                string? shopdescription = null;
+                int shopLevel = 1;
                 Dictionary<EquipType, int> equips = new Dictionary<EquipType, int>();
                 List<ItemType> items = new List<ItemType>();
-                
-                foreach (string line in lines)
+                bool hasData = false;
+
+                void FinalizeShop()
                 {
-                    if (line == "#")
+                    if (!hasData)
                     {
-                        Shop shop = new Shop(shopName,shopLevel,shopdescription);
-                        shop.equips = equips;
-                        shop.items = items;
-                        
-                        GameManager.Instance.SetDungeonShops(shop);
+                        return;
+                    }
+
+                    string finalName = string.IsNullOrWhiteSpace(shopName) ? "상점 이름 지정되지 않음." : shopName!;
+                    string finalDescription = string.IsNullOrWhiteSpace(shopdescription) ? "상점 설명 지정되지 않음." : shopdescription!;
+
+                    Shop shop = new Shop(finalName, shopLevel, finalDescription)
+                    {
+                        equips = new Dictionary<EquipType, int>(equips),
+                        items = new List<ItemType>(items)
+                    };
+
+                    GameManager.Instance.SetDungeonShops(shop);
+
+                    hasData = false;
+                }
+
+                foreach (string rawLine in lines)
+                {
+                    string line = rawLine.Trim();
+
+                    if (string.IsNullOrWhiteSpace(line))
+                    {
                         continue;
                     }
-                    string[] curLine = line.Split(':');
-                    
+
+                    if (line == "#")
+                    {
+                        FinalizeShop();
+
+                        shopName = null;
+                        shopdescription = null;
+                        shopLevel = 1;
+                        equips = new Dictionary<EquipType, int>();
+                        items = new List<ItemType>();
+                        continue;
+                    }
+
+                    string[] curLine = line.Split(':', 2, StringSplitOptions.TrimEntries);
+                    if (curLine.Length < 2)
+                    {
+                        Console.WriteLine($"[경고] : 잘못된 형식의 줄을 건너뜀 -> {line}");
+                        continue;
+                    }
+
+                    string key = curLine[0].Trim().ToUpperInvariant();
+                    string value = curLine[1].Trim();
+
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        Console.WriteLine($"[경고] : '{key}'의 값이 비어 있습니다.");
+                        continue;
+                    }
+
+                    switch (key)
+                    {
+                        case "NAME":
+                            shopName = value;
+                            hasData = true;
+                            break;
+                        case "DESCRIPTION":
+                            shopdescription = value;
+                            hasData = true;
+                            break;
+                        case "LEVEL":
+                            if (!int.TryParse(value, out shopLevel) || shopLevel < 1)
+                            {
+                                Console.WriteLine($"[경고] : 유효하지 않은 레벨 '{value}'을(를) 1로 대체합니다.");
+                                shopLevel = 1;
+                            }
+                            hasData = true;
+                            break;
+                        case "ITEM":
+                            if (Enum.TryParse<ItemType>(value, true, out var itemType) && itemType != ItemType.NONE)
+                            {
+                                items.Add(itemType);
+                                hasData = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine($"[경고] : 존재하지 않는 아이템 '{value}'은(는) 무시되었습니다.");
+                            }
+                            break;
+                        default:
+                            if (Enum.TryParse<EquipType>(key, true, out var equipType) && equipType != EquipType.NONE && equipType != EquipType.MAX)
+                            {
+                                if (!int.TryParse(value, out int equipId))
+                                {
+                                    Console.WriteLine($"[경고] : '{key}'의 장비 ID '{value}'을(를) 해석할 수 없습니다.");
+                                    break;
+                                }
+
+                                if (equips.ContainsKey(equipType))
+                                {
+                                    Console.WriteLine($"[경고] : '{key}' 항목이 중복되어 가장 처음 값을 유지합니다.");
+                                    break;
+                                }
+
+                                equips[equipType] = equipId;
+                                hasData = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine($"[경고] : 알 수 없는 키 '{key}'");
+                            }
+                            break;
+                    }
                 }
+
+                FinalizeShop();
             }
             catch (Exception e)
             {
