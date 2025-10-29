@@ -386,10 +386,10 @@ namespace newgame.Locations
         #endregion
 
         #region 던전 상점 방
-        
+
         private void EnterDungeonShop()
         {
-            Shop shop = GameManager.Instance.GetDungeonShops(0);
+            Shop shop = GameManager.Instance.GetDungeonShop(floor);
             shop.Start();
         }
         #endregion

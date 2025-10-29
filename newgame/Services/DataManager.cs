@@ -655,6 +655,7 @@ namespace newgame.Services
                 return;
             }
 
+            GameManager.Instance.ResetDungeonShops();
             SetDungeonShopData(filePath);
         }
 
@@ -681,13 +682,15 @@ namespace newgame.Services
                     string finalName = string.IsNullOrWhiteSpace(shopName) ? "상점 이름 지정되지 않음." : shopName!;
                     string finalDescription = string.IsNullOrWhiteSpace(shopdescription) ? "상점 설명 지정되지 않음." : shopdescription!;
 
-                    Shop shop = new Shop(finalName, shopLevel, finalDescription)
+                    int finalLevel = shopLevel < 1 ? 1 : shopLevel;
+
+                    Shop shop = new Shop(finalName, finalLevel, finalDescription)
                     {
                         equips = new Dictionary<EquipType, int>(equips),
                         items = new List<ItemType>(items)
                     };
 
-                    GameManager.Instance.SetDungeonShops(shop);
+                    GameManager.Instance.SetDungeonShop(shop);
 
                     hasData = false;
                 }
