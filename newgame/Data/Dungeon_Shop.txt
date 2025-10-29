@@ -1,3 +1,15 @@
-﻿NAME : 고블린 상점
+NAME : 고블린 상점
+DESCRIPTION : 케헤헤..어서오시게 모험가여...
 LEVEL : 1
-ITEM : 
+WEAPON : 2
+HELMET : 2
+SHIRT : 2
+PANTS : 2
+GLOVE : 2
+SHOES : 2
+SHOES : 3
+SHOES : 1
+ITEM : F_POTION_LOW_HP
+ITEM : F_POTION_MIDDLE_HP
+ITEM : M_WOOD
+#
