@@ -15,9 +15,7 @@ namespace newgame.Locations.DungeonRooms
 
     internal class EventRoomsCreater
     {
-        Player player = GameManager.Instance.player;
-        EventRooms eventRoom;
-
+        private Player Player => GameManager.Instance.RequirePlayer();
         #region 던전 이벤트 방 유틸
 
         void DungeonEventRoomEventTrigger(Func<int> dungeonEvent, Action<Type>[] callbacks)
@@ -45,7 +43,7 @@ namespace newgame.Locations.DungeonRooms
         //                CreateCallbacks(
         //                    tt => Console.WriteLine("선택: 1"),
         //                    tt => Console.WriteLine("선택: 2"),
-        //                    tt => GameManager.Instance.player.MyStatus.Hp += 10
+        //                    tt => GameManager.Instance.Player.MyStatus.Hp += 10
         //                )
         //            ),
         //            t => Console.WriteLine("선택: 1"),
@@ -88,13 +86,13 @@ namespace newgame.Locations.DungeonRooms
             switch (selectedEventRoom)
             {
                 case EventRoomsId.OldNotice:
-                    eventRoom = new EventRooms("낡은 표지판", "저 멀리 무언가가 깜빡인다.", OldNotice);
+                    _ = new EventRooms("낡은 표지판", "저 멀리 무언가가 깜빡인다.", OldNotice);
                     break;
                 case EventRoomsId.SlimeRaid:
-                    eventRoom = new EventRooms("슬라임 습격", "축축한 방 안에 들어섰다", SlimeRaid);
+                    _ = new EventRooms("슬라임 습격", "축축한 방 안에 들어섰다", SlimeRaid);
                     break;
                 case EventRoomsId.MirrorPuzzle:
-                    eventRoom = new EventRooms("신비한 거울", "눈앞에 거울이 수없이 펼쳐진 방이 보인다..", MirrorPuzzle);
+                    _ = new EventRooms("신비한 거울", "눈앞에 거울이 수없이 펼쳐진 방이 보인다..", MirrorPuzzle);
                     break;
             }
         }
@@ -124,9 +122,9 @@ namespace newgame.Locations.DungeonRooms
                 int chance = rand.Next(1,3);
                 if (chance > 1)
                 {
-                    UiHelper.TxtOut(["글자를 해독하는데 성공했다!","최대 마나가 소량 늘어났다",$"최대 마나:{player.MyStatus.MaxMp}+8 -> {player.MyStatus.MaxMp + 8}"]);
-                    player.MyStatus.MaxMp += 8;
-                    player.MyStatus.Mp += 8;
+                    UiHelper.TxtOut(["글자를 해독하는데 성공했다!","최대 마나가 소량 늘어났다",$"최대 마나:{Player.MyStatus.MaxMp}+8 -> {Player.MyStatus.MaxMp + 8}"]);
+                    Player.MyStatus.MaxMp += 8;
+                    Player.MyStatus.Mp += 8;
                 }
                 else
                 {
@@ -157,7 +155,7 @@ namespace newgame.Locations.DungeonRooms
                 Random rand = new Random();
                 int bonus = rand.Next(10, 150);
                 UiHelper.TxtOut(["슬라임을 모두 물리쳤다!", "슬라임 방 뒤쪽에 보물 상자가 있다!","\n",$"보물 상자에서 {bonus}만큼의 골드를 획득했다!"]);
-                player.MyStatus.gold += bonus;
+                Player.MyStatus.gold += bonus;
             },
             t =>
             {
@@ -213,7 +211,7 @@ namespace newgame.Locations.DungeonRooms
             int roll = UiHelper.GetRandomInt1To100();
             if (roll > need)
             {
-                int before = player.MyStatus.MaxMp;
+                int before = Player.MyStatus.MaxMp;
                 int gainMp = 12;
                 Random rand = new Random();
                 int bonusGold = rand.Next(60, 161);
@@ -228,10 +226,10 @@ namespace newgame.Locations.DungeonRooms
                     SlowTxtLineTime: 800
                 );
 
-                player.MyStatus.MaxMp += gainMp;
-                player.MyStatus.Mp += gainMp;
+                Player.MyStatus.MaxMp += gainMp;
+                Player.MyStatus.Mp += gainMp;
                 
-                player.MyStatus.gold += bonusGold;
+                Player.MyStatus.gold += bonusGold;
             }
             else
             {
@@ -260,13 +258,13 @@ namespace newgame.Locations.DungeonRooms
                 UiHelper.TxtOut(new[] {
                     "거울 틈새에서 숨겨진 스위치를 발견했다!",
                     "약하게 반사된 빛이 문양을 돕는다.",
-                    $"최대 마나가 소량 늘어났다: {player.MyStatus.MaxMp}+{addMp} -> {player.MyStatus.MaxMp + addMp}",
+                    $"최대 마나가 소량 늘어났다: {Player.MyStatus.MaxMp}+{addMp} -> {Player.MyStatus.MaxMp + addMp}",
                     $"주변에서 귀금속 파편을 모아 {gold} 골드를 얻었다."
                 });
 
-                player.MyStatus.MaxMp += addMp;
-                player.MyStatus.Mp += addMp;
-                player.MyStatus.gold += gold;
+                Player.MyStatus.MaxMp += addMp;
+                Player.MyStatus.Mp += addMp;
+                Player.MyStatus.gold += gold;
             }
             else
             {
@@ -296,7 +294,7 @@ namespace newgame.Locations.DungeonRooms
                 $"깨진 은 파편을 모아 {scrap} 골드를 팔아치웠다."
             });
 
-            player.MyStatus.gold += scrap;
+            Player.MyStatus.gold += scrap;
         }
         ));
 

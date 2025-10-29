@@ -89,6 +89,6 @@ namespace newgame.Items
             }
         }
 
-        private Status PlayerStatus => GameManager.Instance.player.MyStatus;
+        private Status PlayerStatus => GameManager.Instance.RequirePlayer().MyStatus;
     }
 }
