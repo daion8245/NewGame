@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using newgame.UI;
 
-namespace newgame
+namespace newgame.Locations
 {
     internal class ClassHall
     {

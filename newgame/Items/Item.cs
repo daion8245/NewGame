@@ -1,6 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using newgame.Characters;
+using newgame.Services;
+using newgame.UI;
+using Newtonsoft.Json;
 
-namespace newgame
+namespace newgame.Items
 {
     // 아이템 타입 설정 규칙
     // 타입명은 [0]_[1]_[2]
@@ -86,6 +89,6 @@ namespace newgame
             }
         }
 
-        private Status PlayerStatus => GameManager.Instance.player.MyStatus;
+        private Status PlayerStatus => GameManager.Instance.RequirePlayer().MyStatus;
     }
 }

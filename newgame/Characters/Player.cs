@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using SkiaSharp;
+﻿using newgame.Items;
+using newgame.Locations;
+using newgame.Services;
+using newgame.UI;
 
-namespace newgame
+namespace newgame.Characters
 {
     internal class Player : Character
     {
@@ -340,17 +341,17 @@ namespace newgame
             int chance = random.Next(1, 101);
             if (chance >= 50)
             {
-                isbattleRun = true;
+                IsbattleRun = true;
                 Console.Clear();
                 Console.WriteLine("전투에서 탈출했다");
 
                 GameManager.Instance.ReturnToLobby();
-                isbattleRun = false;
+                IsbattleRun = false;
             }
             //만약 실패할시 플레이어에게 실패 메세지를 띄움
             else
             {
-                isbattleRun = false;
+                IsbattleRun = false;
                 Console.WriteLine("도망치는데 실패했다");
                 UiHelper.WaitForInput("[ENTER]를 눌러 계속");
             }

@@ -1,7 +1,6 @@
-using System;
-using System.Collections.Generic;
+using newgame.Characters;
 
-namespace newgame
+namespace newgame.Services
 {
     internal readonly struct SkillTickLog
     {

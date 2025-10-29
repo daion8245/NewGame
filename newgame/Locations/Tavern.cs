@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using newgame.Characters;
+using newgame.Services;
+using newgame.UI;
 
-namespace newgame
+namespace newgame.Locations
 {
     internal class Tavern
     {

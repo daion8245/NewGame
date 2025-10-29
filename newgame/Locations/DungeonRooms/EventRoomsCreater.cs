@@ -1,23 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using newgame.Characters;
+using newgame.Enemies;
+using newgame.Services;
+using newgame.Systems;
+using newgame.UI;
 
-namespace newgame.DungeonRooms
+namespace newgame.Locations.DungeonRooms
 {
     internal enum EventRoomsId
     {
         OldNotice, //낡은 안내문
         SlimeRaid, //슬라임 습격
-        //MirrorPuzzle //거울 퍼즐
+        MirrorPuzzle //거울 퍼즐
     }
 
     internal class EventRoomsCreater
     {
-        Player player = GameManager.Instance.player;
-        EventRooms eventRoom;
-
+        private Player Player => GameManager.Instance.RequirePlayer();
         #region 던전 이벤트 방 유틸
 
         void DungeonEventRoomEventTrigger(Func<int> dungeonEvent, Action<Type>[] callbacks)
@@ -45,7 +43,7 @@ namespace newgame.DungeonRooms
         //                CreateCallbacks(
         //                    tt => Console.WriteLine("선택: 1"),
         //                    tt => Console.WriteLine("선택: 2"),
-        //                    tt => GameManager.Instance.player.MyStatus.Hp += 10
+        //                    tt => GameManager.Instance.Player.MyStatus.Hp += 10
         //                )
         //            ),
         //            t => Console.WriteLine("선택: 1"),
@@ -88,14 +86,14 @@ namespace newgame.DungeonRooms
             switch (selectedEventRoom)
             {
                 case EventRoomsId.OldNotice:
-                    eventRoom = new EventRooms("낡은 표지판", "저 멀리 무언가가 깜빡인다.", OldNotice);
+                    _ = new EventRooms("낡은 표지판", "저 멀리 무언가가 깜빡인다.", OldNotice);
                     break;
                 case EventRoomsId.SlimeRaid:
-                    eventRoom = new EventRooms("슬라임 습격", "축축한 방 안에 들어섰다", SlimeRaid);
+                    _ = new EventRooms("슬라임 습격", "축축한 방 안에 들어섰다", SlimeRaid);
                     break;
-                    //case EventRoomsId.MirrorPuzzle:
-                    //    // 거울 퍼즐 이벤트 방 생성 로직
-                    //    break;
+                case EventRoomsId.MirrorPuzzle:
+                    _ = new EventRooms("신비한 거울", "눈앞에 거울이 수없이 펼쳐진 방이 보인다..", MirrorPuzzle);
+                    break;
             }
         }
 
@@ -124,9 +122,9 @@ namespace newgame.DungeonRooms
                 int chance = rand.Next(1,3);
                 if (chance > 1)
                 {
-                    UiHelper.TxtOut(["글자를 해독하는데 성공했다!","최대 마나가 소량 늘어났다",$"최대 마나:{player.MyStatus.MaxMp}+8 -> {player.MyStatus.MaxMp + 8}"]);
-                    player.MyStatus.MaxMp += 8;
-                    player.MyStatus.Mp += 8;
+                    UiHelper.TxtOut(["글자를 해독하는데 성공했다!","최대 마나가 소량 늘어났다",$"최대 마나:{Player.MyStatus.MaxMp}+8 -> {Player.MyStatus.MaxMp + 8}"]);
+                    Player.MyStatus.MaxMp += 8;
+                    Player.MyStatus.Mp += 8;
                 }
                 else
                 {
@@ -157,7 +155,7 @@ namespace newgame.DungeonRooms
                 Random rand = new Random();
                 int bonus = rand.Next(10, 150);
                 UiHelper.TxtOut(["슬라임을 모두 물리쳤다!", "슬라임 방 뒤쪽에 보물 상자가 있다!","\n",$"보물 상자에서 {bonus}만큼의 골드를 획득했다!"]);
-                player.MyStatus.gold += bonus;
+                Player.MyStatus.gold += bonus;
             },
             t =>
             {
@@ -178,7 +176,130 @@ namespace newgame.DungeonRooms
                     Console.WriteLine("슬라임을 모두 물리쳤다.");
                 }
             }
+        )); 
+        
+        // 거울 퍼즐
+    void MirrorPuzzle() => DungeonEventRoomEventTrigger(
+        () => UiHelper.MessageAndSelect(
+            new[] {
+                "벽면 가득 거울이 늘어서 있다.",
+                "중앙 문양은 빛을 기다리는 듯 미세하게 깜빡인다.",
+                "문엔 새겨져 있다: \"빛을 잃은 길은 닫힌다\""
+            },
+            new[] {
+                "1. 거울 각도를 맞춰 본다(퍼즐 시도)",
+                "2. 주변을 조사한다",
+                "3. 거울을 깨뜨린다" 
+            }
+        ),
+        CreateCallbacks(
+            // 1) 퍼즐 시도
+            t =>
+        {
+            Console.WriteLine();
+            int route = UiHelper.MessageAndSelect(
+                new[] { "세 개의 거울이 있다. 어떤 순서로 조정할까?" },
+                new[] { "1. 왼-중-오", "2. 오-중-왼", "3. 되는대로 막 돌린다" }
+            );
+
+            // 선택별 성공 난이도(작을수록 쉬움): 0→60%, 1→40%, 2→20%
+            int need = 0;
+            if (route == 0) need = 40;      // 61~100 성공
+            else if (route == 1) need = 60; // 61~100 성공(=40%)
+            else need = 80;                 // 81~100 성공(=20%)
+
+            int roll = UiHelper.GetRandomInt1To100();
+            if (roll > need)
+            {
+                int before = Player.MyStatus.MaxMp;
+                int gainMp = 12;
+                Random rand = new Random();
+                int bonusGold = rand.Next(60, 161);
+
+                UiHelper.TxtOut(
+                    new[] {
+                        "빛이 반사되어 문양이 밝게 점등된다!",
+                        "내면의 마력이 깨어난 듯하다.",
+                        $"최대 마나: {before}+{gainMp} -> {before + gainMp}",
+                        $"보물 상자에서 {bonusGold} 골드를 획득했다!"
+                    },
+                    SlowTxtLineTime: 800
+                );
+
+                Player.MyStatus.MaxMp += gainMp;
+                Player.MyStatus.Mp += gainMp;
+                
+                Player.MyStatus.gold += bonusGold;
+            }
+            else
+            {
+                UiHelper.TxtOut(
+                    new[] {
+                        "거울이 역광을 뿜어내며 퍼즐이 초기화됐다...",
+                        "차가운 기운이 방을 메운다. 유령이 나타났다!"
+                    },
+                    SlowTxtLineTime: 800
+                );
+                MonsterBattle(6);
+            }
+        },
+
+        // 2) 주변을 조사
+        t =>
+        {
+            Console.WriteLine();
+            int chance = UiHelper.GetRandomInt1To100();
+            if (chance > 55)
+            {
+                Random rand = new Random();
+                int addMp = 6;
+                int gold = rand.Next(30, 91);
+
+                UiHelper.TxtOut(new[] {
+                    "거울 틈새에서 숨겨진 스위치를 발견했다!",
+                    "약하게 반사된 빛이 문양을 돕는다.",
+                    $"최대 마나가 소량 늘어났다: {Player.MyStatus.MaxMp}+{addMp} -> {Player.MyStatus.MaxMp + addMp}",
+                    $"주변에서 귀금속 파편을 모아 {gold} 골드를 얻었다."
+                });
+
+                Player.MyStatus.MaxMp += addMp;
+                Player.MyStatus.Mp += addMp;
+                Player.MyStatus.gold += gold;
+            }
+            else
+            {
+                UiHelper.TxtOut(new[] {
+                    "발판을 잘못 밟았다!",
+                    "거울이 흔들리며 어둠이 스며든다... 유령이 나타났다!"
+                }, SlowTxtLineTime: 800);
+                MonsterBattle(6);
+            }
+        },
+
+        // 3) 거울을 깨뜨린다
+        t =>
+        {
+            Console.WriteLine();
+            UiHelper.TxtOut(new[] {
+                "거울을 강하게 내려쳤다!",
+                "깨진 파편 속에서 한기가 피어오른다... 유령이 나타났다!"
+            }, SlowTxtLineTime: 800);
+
+            MonsterBattle(6);
+
+            Random rand = new Random();
+            int scrap = rand.Next(40, 81);
+            UiHelper.TxtOut(new[] {
+                "전투가 끝났다.",
+                $"깨진 은 파편을 모아 {scrap} 골드를 팔아치웠다."
+            });
+
+            Player.MyStatus.gold += scrap;
+        }
         ));
+
+        
+        
         #endregion
     }
 }

@@ -1,6 +1,9 @@
-﻿using static newgame.UiHelper;
+﻿using newgame.Characters;
+using newgame.Items;
+using newgame.Services;
+using newgame.UI;
 
-namespace newgame
+namespace newgame.Locations
 {
     internal class Lobby
     {

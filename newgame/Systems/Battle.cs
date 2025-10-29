@@ -1,4 +1,7 @@
-﻿namespace newgame
+﻿using newgame.Characters;
+using newgame.Services;
+
+namespace newgame.Systems
 {
     internal class Battle : Character //Battle 클래스 생성 Character를 상속받는다
     {
@@ -25,7 +28,7 @@
 
             Character[] chars = new Character[] { player, monster };
 
-            player.isbattleRun = false;     // 필요시 monster도 false 초기화
+            player.IsbattleRun = false;     // 필요시 monster도 false 초기화
 
             int current = 0; // 0: player, 1: monster
 
@@ -49,7 +52,7 @@
                 }
 
                 // 1) 공격자가 '도주' 선택했으면 종료
-                if (attacker.isbattleRun)
+                if (attacker.IsbattleRun)
                     break;
 
                 // 2) 피격자가 죽었으면 즉시 종료

@@ -1,4 +1,8 @@
-﻿namespace newgame
+﻿using newgame.Characters;
+using newgame.Services;
+using newgame.UI;
+
+namespace newgame.Enemies
 {
     internal class Monster : Character
     {

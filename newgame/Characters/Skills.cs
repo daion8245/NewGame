@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using newgame.Services;
+using newgame.UI;
 
-namespace newgame
+namespace newgame.Characters
 {
     public struct SkillType
     {

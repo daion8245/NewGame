@@ -1,7 +1,8 @@
-using System;
-using System.Collections.Generic;
+using newgame.Characters;
+using newgame.Services;
+using newgame.UI;
 
-namespace newgame
+namespace newgame.Enemies
 {
     internal class Boss : Monster
     {

@@ -1,7 +1,9 @@
-using System;
-using newgame.Systems;
+using newgame.Characters;
+using newgame.Items;
+using newgame.Services;
+using newgame.UI;
 
-namespace newgame
+namespace newgame.Systems
 {
     /// <summary>
     /// Composition root responsible for wiring the manual dependency graph.

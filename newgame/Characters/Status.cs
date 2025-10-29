@@ -1,9 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Net.NetworkInformation;
-using static newgame.UiHelper;
+﻿using newgame.Items;
+using newgame.UI;
+using Newtonsoft.Json;
 
-namespace newgame
+namespace newgame.Characters
 {
     public enum CharType
     {
@@ -26,12 +25,12 @@ namespace newgame
         {
             get
             {
+                int equipAtk = 0;
                 if (charType == CharType.PLAYER)
                 {
-                    // 무기 포함 장비 공격력 합산
-                    equipatk = GetStrAtk();
+                    equipAtk = GetEquippedStatTotal().Atk;
                 }
-                return (int)((atk + equipatk) * clatk);
+                return (int)((atk + equipAtk) * clatk);
             }
             set => atk = value; // 기본 능력치만 대입
         }
@@ -42,19 +41,12 @@ namespace newgame
         {
             get
             {
+                int equipDef = 0;
                 if (charType == CharType.PLAYER)
                 {
-                    Equipment? equip = null;
-
-                    equip = Inventory.Instance.GetEquip(EquipType.SHIRT);
-                    int shirt = equip == null ? 0 : equip.GetEquipStat;
-
-                    equip = Inventory.Instance.GetEquip(EquipType.PANTS);
-                    int pants = equip == null ? 0 : equip.GetEquipStat;
-
-                    equipdef = shirt + pants;
+                    equipDef = GetEquippedStatTotal().Def;
                 }
-                return (int)((def + equipdef) * cldef);
+                return (int)((def + equipDef) * cldef);
             }
             set => def = value;
         }
@@ -74,7 +66,16 @@ namespace newgame
 
         public int MaxHp
         {
-            get => (int)((maxHp) * clhp);
+            get
+            {
+                int bonusHp = 0;
+                if (charType == CharType.PLAYER)
+                {
+                    bonusHp = GetEquippedStatTotal().Hp;
+                }
+
+                return (int)((maxHp + bonusHp) * clhp);
+            }
             set => maxHp = value;
         }
 
@@ -87,19 +88,46 @@ namespace newgame
         private int maxMp;
         public int MaxMp
         {
-            get { return (int)((maxMp) * clmp); }
+            get
+            {
+                int bonusMp = 0;
+                if (charType == CharType.PLAYER)
+                {
+                    bonusMp = GetEquippedStatTotal().Mp;
+                }
+
+                return (int)((maxMp + bonusMp) * clmp);
+            }
             set => maxMp = value;
         }
         private int criticalChance;
         public int CriticalChance
         {
-            get { return (int)((criticalChance) * clcrit); }
+            get
+            {
+                int bonusCrit = 0;
+                if (charType == CharType.PLAYER)
+                {
+                    bonusCrit = GetEquippedStatTotal().CriChance;
+                }
+
+                return (int)((criticalChance + bonusCrit) * clcrit);
+            }
             set => criticalChance = value;
         }
         private int criticalDamage;
         public int CriticalDamage
         {
-            get { return (int)((criticalDamage) * clcd); }
+            get
+            {
+                int bonusCd = 0;
+                if (charType == CharType.PLAYER)
+                {
+                    bonusCd = GetEquippedStatTotal().CrlDam;
+                }
+
+                return (int)((criticalDamage + bonusCd) * clcd);
+            }
             set => criticalDamage = value;
         }
 
@@ -108,30 +136,32 @@ namespace newgame
         public int nextEXP;
 
         #endregion
-        int equipatk = 0; // 장비 공격력 합산용
-        int equipdef = 0;
-
         public Status Clone()
         {
             return (Status)this.MemberwiseClone();
         }
-        int GetStrAtk()
+
+        EquipStat GetEquippedStatTotal()
         {
-            Equipment? equip = null;
+            if (charType != CharType.PLAYER)
+            {
+                return new EquipStat();
+            }
 
-            equip = Inventory.Instance.GetEquip(EquipType.WEAPON);
-            int weapon = equip == null ? 0 : equip.GetEquipStat;
+            EquipStat total = new EquipStat();
 
-            equip = Inventory.Instance.GetEquip(EquipType.HELMET);
-            int helmet = equip == null ? 0 : equip.GetEquipStat;
+            foreach (Equipment equip in Inventory.Instance.GetEquippedItems())
+            {
+                EquipStat stat = equip.GetEquipStat;
+                total.Hp += stat.Hp;
+                total.Mp += stat.Mp;
+                total.Atk += stat.Atk;
+                total.Def += stat.Def;
+                total.CriChance += stat.CriChance;
+                total.CrlDam += stat.CrlDam;
+            }
 
-            equip = Inventory.Instance.GetEquip(EquipType.GLOVE);
-            int glove = equip == null ? 0 : equip.GetEquipStat;
-
-            equip = Inventory.Instance.GetEquip(EquipType.SHOES);
-            int shoes = equip == null ? 0 : equip.GetEquipStat;
-
-            return weapon + helmet + glove + shoes;
+            return total;
         }
 
         public void ShowStatus()

@@ -1,6 +1,7 @@
-using System;
+using newgame.Items;
+using newgame.UI;
 
-namespace newgame
+namespace newgame.Characters
 {
     internal class PlayerInitializer
     {

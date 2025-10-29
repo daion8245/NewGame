@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using newgame.UI;
 
-namespace newgame.DungeonRooms
+namespace newgame.Locations.DungeonRooms
 {
     //이벤트 방 내용 담을 델리게이트
     delegate void EventRoomAction();

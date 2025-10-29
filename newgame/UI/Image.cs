@@ -1,7 +1,4 @@
-﻿using System;
-using SkiaSharp;
-
-namespace newgame
+﻿namespace newgame.UI
 {
     internal class Image
     {

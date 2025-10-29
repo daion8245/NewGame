@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace newgame
+namespace newgame.Items
 {
     [JsonObject(MemberSerialization.Fields)]
     internal class ItemSlot

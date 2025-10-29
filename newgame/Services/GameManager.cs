@@ -1,4 +1,9 @@
-﻿using System.Text.Json.Serialization.Metadata;
+using System.Text.Json.Serialization.Metadata;
+using newgame.Characters;
+using newgame.Enemies;
+using newgame.Items;
+using newgame.Locations;
+using newgame.Services;
 using newgame.Systems;
 
 namespace newgame
@@ -30,9 +35,10 @@ namespace newgame
 
         // 전투 메시지를 한 곳에서 관리하는 서비스 (UI/로그 출력 일관성 유지)
         private readonly BattleLogService battleLogService;
-        private readonly QuestManager questManager;
         // 지연 생성되는 로비 인스턴스 (필요할 때만 생성)
         private Lobby? _lobby;
+        // 퀘스트 매니저 인스턴스
+        private readonly QuestManager questManager;
 
         /// <summary>
         /// 외부 생성 방지. 내부에서만 생성하도록 막는다.
@@ -48,6 +54,9 @@ namespace newgame
         /// </summary>
         public BattleLogService BattleLogService => battleLogService;
 
+        /// <summary>
+        /// 퀘스트 매니저에 대한 읽기 전용 참조
+        /// </summary>
         public QuestManager QuestManager => questManager;
 
         /// <summary>

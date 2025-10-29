@@ -1,28 +1,29 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using newgame.Characters;
+using newgame.Services;
+using newgame.UI;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace newgame
+namespace newgame.Items
 {
     [JsonObject(MemberSerialization.Fields)]
     internal class Inventory
     {
-        static Inventory? instance;
+        private static Inventory? _instance;
         //외부에서 접근할 수 있도록 static 형식으로 자신을 호출할 때 사용한다.
         //Instance = 싱글톤 이라고도 한다.
         public static Inventory Instance
         {
             get
             {
-                if (instance == null)
-                {
-                    instance = new Inventory();
-                }
+                _instance ??= new Inventory();
 
-                return instance;
+                return _instance;
             }
         }
 
-        private Dictionary<EquipType, Equipment?> equips =
+        private Dictionary<EquipType, Equipment?> _equips =
             new Dictionary<EquipType, Equipment?>()
             {
                 {EquipType.WEAPON, null! },
@@ -34,14 +35,13 @@ namespace newgame
             };
 
         //착용 가능한 장비
-        List<Equipment> canEquips = new List<Equipment>();
+        private List<Equipment> _canEquips = [];
 
         #region 아이템 관련 추가
         [JsonProperty]
-        List<ItemSlot> items = new List<ItemSlot>();
+        private List<ItemSlot> _items = [];
 
-        [JsonProperty]
-        Dictionary<ItemType, string> itemNames = new Dictionary<ItemType, string>()
+        [JsonProperty] private Dictionary<ItemType, string> _itemNames = new Dictionary<ItemType, string>()
                 {
                     {ItemType.F_POTION_LOW_HP, "하급 회복 물약" },
                     {ItemType.F_POTION_MIDDLE_HP, "중급 회복 물약" },
@@ -55,11 +55,11 @@ namespace newgame
                     #endregion
         };
 
-        public string GetItemName(ItemType _type)
+        public string GetItemName(ItemType type)
         {
-            foreach (var names in itemNames)
+            foreach (var names in _itemNames)
             {
-                if (names.Key == _type)
+                if (names.Key == type)
                 {
                     return names.Value;
                 }
@@ -71,12 +71,12 @@ namespace newgame
 
         public void SetEquip(int idx)
         {
-            if (idx < 1 || idx > canEquips.Count)
+            if (idx < 1 || idx > _canEquips.Count)
             {
                 Console.WriteLine("착용가능 장비 없음");
                 return;
             }
-            Equipment equip = canEquips[idx - 1];
+            Equipment equip = _canEquips[idx - 1];
             EquipType type = equip.GetEquipType;
             int id = equip.GetEquipID;
 
@@ -84,10 +84,10 @@ namespace newgame
 
         }
 
-        public void SetEquip(EquipType _type, int _id)
+        public void SetEquip(EquipType type, int id)
         {
             //현제 착용하고 있는 장비를 확인하는 함수
-            Equipment? item = GameManager.Instance.FindEquipment(_type, _id);//equipment 타입item변수에
+            Equipment? item = GameManager.Instance.FindEquipment(type, id);//equipment 타입item변수에
                                                                             //착용 가능한 장비의
                                                                             //타입과 id를 넣는다.
             if (item == null)
@@ -97,46 +97,52 @@ namespace newgame
 
             Equipment equipItem = item;
 
-            if (equips.ContainsKey(_type) == false)
+            if (_equips.TryGetValue(type, out var currentlyEquipped) == false)
             {
                 return;
             }
 
-            Equipment? currentlyEquipped = equips[_type];
             if (currentlyEquipped != null)
             {
 
-                foreach (var can in canEquips)//그니깐 이건 리스트에 들어있는 모든 장비를 하나씩 꺼내서 can변수에 넣는 코드
+                foreach (var can in _canEquips)//그니깐 이건 리스트에 들어있는 모든 장비를 하나씩 꺼내서 can변수에 넣는 코드
                 {
                     //canEquips 변수에 저장된 value 값과
                     //지금 착용하려는 아이템이 동일하다면,
                     //내가 현재 가지고 있는 장비 = 착용 가능한 장비
                     if (can == equipItem)
                     {
-                        canEquips.Remove(equipItem); //장비 꺼내기, 착용 가능한 장비에서 삭제
+                        _canEquips.Remove(equipItem); //장비 꺼내기, 착용 가능한 장비에서 삭제
                         break;
                     }
                 }
                 //현제 착용하고 있는 장비를 다시 canEquips 에 저장
                 // 위에서 착용하지 않고 가지고 있던 장비를 꺼냈으니깐
-                canEquips.Add(currentlyEquipped);
+                _canEquips.Add(currentlyEquipped);
             }
             //해당 Key 값이 item에 추가되게 한다
-            equips[_type] = equipItem;
+            _equips[type] = equipItem;
         }
 
-        public Equipment? GetEquip(EquipType _type)
+        public Equipment? GetEquip(EquipType type)
         {
-            return equips.TryGetValue(_type, out Equipment? equip) ? equip : null;
+            return _equips.GetValueOrDefault(type);
+        }
+
+        public IEnumerable<Equipment> GetEquippedItems()
+        {
+            foreach (Equipment? equip in _equips.Values)
+            {
+                if (equip != null)
+                {
+                    yield return equip;
+                }
+            }
         }
 
         #region 착용 장비 보이기
         public void ShowEquipList()
         {
-            // 기존 구현은 콘솔 화면에 상자를 그리며 장비를 표시하려 했으나
-            // 미완성된 상태여서 컴파일 오류가 발생하였다. 간단한 텍스트
-            // 형식으로 현재 장비 목록을 출력하도록 수정한다.
-
             Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
             Console.WriteLine("┃          장착 장비           ┃");
             Console.WriteLine("┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫");
@@ -148,32 +154,55 @@ namespace newgame
                     continue;
                 }
 
-                string equipName = "없음";
-                if (equips.TryGetValue(type, out Equipment? equipped) && equipped != null)
-                {
-                    equipName = equipped.GetEquipName;
-                }
-
-                Console.WriteLine($"┃ {type,-6} : {equipName,-14}");
+                Equipment? equipped = _equips.GetValueOrDefault(type);
+                PrintEquipmentWithStats(type, equipped);
             }
 
             Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+        }
+
+        static void PrintEquipmentWithStats(EquipType type, Equipment? equipment)
+        {
+            string equipName = equipment?.GetEquipName ?? "없음";
+            Console.WriteLine($"┃ {type,-6} : {equipName,-14}");
+
+            if (equipment == null)
+            {
+                return;
+            }
+
+            List<string> statLines = new List<string>();
+            foreach (string part in equipment.GetEquipStat.EnumerateSummaryParts())
+            {
+                statLines.Add(part);
+            }
+
+            if (statLines.Count == 0)
+            {
+                Console.WriteLine("┃          - 능력치 없음");
+                return;
+            }
+
+            foreach (string stat in statLines)
+            {
+                Console.WriteLine($"┃          - {stat}");
+            }
         }
         #endregion
 
         public void AddEquip(Equipment equip)
         {
-            canEquips.Add(equip);
+            _canEquips.Add(equip);
         }
 
         public void RemoveCanEquip(int idx)
         {
             int temp = idx - 1;
-            if (temp >= 0 && temp < canEquips.Count)
+            if (temp >= 0 && temp < _canEquips.Count)
             {
                 Player player = GameManager.Instance.RequirePlayer();
-                player.MyStatus.gold += canEquips[idx - 1].GetPrice;
-                canEquips.RemoveAt(idx - 1);
+                player.MyStatus.gold += _canEquips[idx - 1].GetPrice;
+                _canEquips.RemoveAt(idx - 1);
                 return;
             }
 
@@ -182,34 +211,23 @@ namespace newgame
 
         public int ShowCanEquips()
         {
-            if (canEquips == null || canEquips.Count == 0)
+            if (_canEquips.Count == 0)
             {
                 return -1;
             }
 
-            List<string> equipItemList = new List<string>();
+            List<string> equipItemList = [];
 
-            string? upType = null;
-
-            for (int i = 0; i < canEquips.Count; i++)
+            foreach (Equipment t in _canEquips)
             {
-                if (canEquips[i].GetEquipType is EquipType.WEAPON or EquipType.HELMET or EquipType.GLOVE or EquipType.SHOES)
-                {
-                    upType = "공격력";
-                }
-                else
-                {
-                    upType = "방어력";
-                }
-                equipItemList.Add($"{canEquips[i].GetEquipName} -> {upType}+{canEquips[i].GetEquipStat} 증가");
-                //equipItemList.Add($"┃ {canEquips[i].GetEquipName} ");
+                equipItemList.Add($"{t.GetEquipName} -> {t.GetEquipStat.ToSummary()}");
             }
 
             Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
             Console.WriteLine("┃          인벤토리            ┃");
             Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
-            int SelectEquip = UiHelper.SelectMenu(equipItemList.ToArray());
-            return SelectEquip;
+            int selectEquip = UiHelper.SelectMenu(equipItemList.ToArray());
+            return selectEquip;
         }
 
         public void Load()
@@ -224,17 +242,14 @@ namespace newgame
                     Converters = new List<JsonConverter> { new StringEnumConverter() }
                 };
 
-                instance = JsonConvert.DeserializeObject<Inventory>(data, settings);
+                _instance = JsonConvert.DeserializeObject<Inventory>(data, settings);
             }
         }
 
         #region 아이템 관련 추가
         public void AddItem(Item item, int count = 1)
         {
-            if (items == null)
-                items = new List<ItemSlot>();
-
-            foreach (ItemSlot slot in items)
+            foreach (ItemSlot slot in _items)
             {
                 if (slot.Item.ItemType == item.ItemType)
                 {
@@ -243,7 +258,7 @@ namespace newgame
                 }
             }
 
-            items.Add(new ItemSlot(item, count));
+            _items.Add(new ItemSlot(item, count));
         }
 
         public bool AddItem(ItemType type, int count = 1)
@@ -261,7 +276,7 @@ namespace newgame
 
         public void RemoveItem(ItemType type, int count = 1)
         {
-            foreach (ItemSlot slot in items)
+            foreach (ItemSlot slot in _items)
             {
                 if (slot.Item.ItemType == type)
                 {
@@ -275,7 +290,7 @@ namespace newgame
 
                     if (slot.Count <= 0)
                     {
-                        items.Remove(slot);
+                        _items.Remove(slot);
                     }
 
                     return;
@@ -287,7 +302,7 @@ namespace newgame
 
         public void UseItem(int index)
         {
-            var slot = items[index - 1];
+            var slot = _items[index - 1];
             var item = slot.Item;
 
             item.Use(); // 효과 메시지 출력
@@ -301,13 +316,13 @@ namespace newgame
             slot.Decrease(1);
             if (slot.Count <= 0)
             {
-                items.Remove(slot);
+                _items.Remove(slot);
             }
         }
 
         public bool ShowItems()
         {
-            if (items.Count == 0)
+            if (_items.Count == 0)
             {
                 Console.WriteLine("보유 아이템이 존재하지 않습니다.");
                 return false;
@@ -315,19 +330,19 @@ namespace newgame
 
             Console.WriteLine("보유 아이템 목록:");
 
-            for (int i = 0; i < items.Count; i++)
+            for (int i = 0; i < _items.Count; i++)
             {
-                Console.WriteLine($"[{i + 1}] {GetItemName(items[i].Item.ItemType)} x {items[i].Count}");
+                Console.WriteLine($"[{i + 1}] {GetItemName(_items[i].Item.ItemType)} x {_items[i].Count}");
             }
 
             return true;
         }
 
-        public int SelectedItem(string _input)
+        public int SelectedItem(string input)
         {
-            if (int.TryParse(_input, out int idx))
+            if (int.TryParse(input, out int idx))
             {
-                if (idx > items.Count)
+                if (idx > _items.Count)
                 {
                     return -1;
                 }

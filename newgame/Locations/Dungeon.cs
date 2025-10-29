@@ -1,8 +1,12 @@
 ﻿using System.Drawing;
-using static newgame.UiHelper;
-using newgame.DungeonRooms;
+using newgame.Characters;
+using newgame.Enemies;
+using newgame.Locations.DungeonRooms;
+using newgame.Services;
+using newgame.Systems;
+using newgame.UI;
 
-namespace newgame
+namespace newgame.Locations
 {
     internal class Dungeon
     {

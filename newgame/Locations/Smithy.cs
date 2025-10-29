@@ -1,4 +1,8 @@
-﻿namespace newgame
+﻿using newgame.Items;
+using newgame.Services;
+using newgame.UI;
+
+namespace newgame.Locations
 {
     internal class Smithy
     {
