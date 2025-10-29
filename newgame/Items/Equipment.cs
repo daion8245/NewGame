@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace newgame.Items
 {
@@ -22,6 +23,43 @@ namespace newgame.Items
         public int Mp = mp;
         public int CriChance = criChance;
         public int CrlDam = crlDam;
+
+        public string ToSummary()
+        {
+            List<string> parts = new List<string>();
+
+            if (Hp != 0)
+            {
+                parts.Add($"HP+{Hp}");
+            }
+
+            if (Mp != 0)
+            {
+                parts.Add($"MP+{Mp}");
+            }
+
+            if (Atk != 0)
+            {
+                parts.Add($"ATK+{Atk}");
+            }
+
+            if (Def != 0)
+            {
+                parts.Add($"DEF+{Def}");
+            }
+
+            if (CriChance != 0)
+            {
+                parts.Add($"CC+{CriChance}");
+            }
+
+            if (CrlDam != 0)
+            {
+                parts.Add($"CD+{CrlDam}");
+            }
+
+            return parts.Count == 0 ? "능력치 없음" : string.Join(", ", parts);
+        }
     }
     
     internal class Equipment
@@ -56,11 +94,11 @@ namespace newgame.Items
             get => price;
             private set => price = value;
         }
-        [JsonProperty] private int updateCount = 0;
+        [JsonProperty] private int _upgradeCount = 0;
         public int GetUpgradeCount
         {
-            get => updateCount;
-            private set => updateCount = value;
+            get => _upgradeCount;
+            private set => _upgradeCount = value;
         }
 
         public Equipment(EquipType _equipType, int _equipID, string _equipName, EquipStat _equipStat, int _GetPrice)
@@ -80,8 +118,46 @@ namespace newgame.Items
                 Console.WriteLine("장비 강화 실패");
                 return;
             }
-            updateCount++;
+            _upgradeCount++;
+
+            ScaleBy1Point2(ref equipStat.Hp);
+            ScaleBy1Point2(ref equipStat.Atk);
+            ScaleBy1Point2(ref equipStat.Def);
+            ScaleBy1Point2(ref equipStat.Mp);
+            ScaleBy1Point2(ref equipStat.CrlDam);
+            ScaleBy1Point2(ref equipStat.CriChance);
+            
             Console.WriteLine("강화 성공");
+        }
+        
+        private void ScaleBy1Point2(ref int value)
+        {
+            int original = value;
+
+            float multiplyTheMultiplier = 1.5f;
+            float upgrade = _upgradeCount;
+
+            if (_upgradeCount >= 4)
+            {
+                multiplyTheMultiplier -= (upgrade / 10);
+            }
+            else
+            {
+                multiplyTheMultiplier = 1.1f;
+            }
+
+            // 1) 1.2를 곱한 뒤 정수로 변환(소수부 버림). 범위를 벗어나면 예외 발생(checked).
+            value = checked((int)(value * multiplyTheMultiplier));
+
+            // 2) 곱했는데 결과가 기존 값과 같다면 +1 (가능한 경우에만)
+            if (value == original && value < int.MaxValue)
+            {
+                if (value == 0)
+                {
+                    return;
+                }
+                value += 1;
+            }
         }
     }
 }
