@@ -54,6 +54,7 @@ namespace newgame.Systems
             _dataManager.LoadDungeonMap();
             _dataManager.LoadSkillData();
             _dataManager.LoadPlayer_ClassData();
+            _dataManager.LoadDungeonShopData();
             _gameManager.SetItemList();
         }
 

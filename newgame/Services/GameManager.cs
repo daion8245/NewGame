@@ -579,16 +579,53 @@ namespace newgame
 
         #region 던전 상점
 
-        private List<Shop> _dungeonShops = new List<Shop>();
+        private readonly Dictionary<int, Shop> _dungeonShops = new Dictionary<int, Shop>();
 
-        public void SetDungeonShops(Shop dungeonShops)
+        public void ResetDungeonShops()
         {
-            _dungeonShops.Add(dungeonShops);
+            _dungeonShops.Clear();
         }
 
-        public Shop GetDungeonShops(int level)
+        public void SetDungeonShop(Shop dungeonShop)
         {
-            return _dungeonShops[level];
+            if (dungeonShop == null)
+            {
+                return;
+            }
+
+            int level = dungeonShop.Level;
+            if (level < 1)
+            {
+                level = 1;
+            }
+
+            Shop copy = new Shop(dungeonShop.Name, level, dungeonShop.Description)
+            {
+                equips = new Dictionary<EquipType, int>(dungeonShop.equips),
+                items = new List<ItemType>(dungeonShop.items)
+            };
+
+            _dungeonShops[level] = copy;
+        }
+
+        public Shop GetDungeonShop(int level)
+        {
+            if (level < 1)
+            {
+                level = 1;
+            }
+
+            if (_dungeonShops.TryGetValue(level, out Shop? shop))
+            {
+                return shop;
+            }
+
+            if (_dungeonShops.TryGetValue(1, out Shop? firstFloorShop))
+            {
+                return firstFloorShop;
+            }
+
+            return new Shop("임시 상점", level, "상점 데이터가 없습니다.");
         }
 
         #endregion
