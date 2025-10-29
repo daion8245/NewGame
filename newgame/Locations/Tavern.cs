@@ -1,5 +1,7 @@
 ﻿using newgame.Characters;
+using newgame.Items;
 using newgame.Services;
+using newgame.Systems;
 using newgame.UI;
 
 namespace newgame.Locations
@@ -67,6 +69,7 @@ namespace newgame.Locations
                     }
                 case 3:
                     {
+                        ShowQuestBoard();
                         break;
                     }
                 case 4:
@@ -162,6 +165,141 @@ namespace newgame.Locations
         #endregion
 
         #region 퀘스트
+
+        void ShowQuestBoard()
+        {
+            QuestManager questManager = GameManager.Instance.QuestManager;
+
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("┏━━━━━━━━━━━━━━┓");
+                Console.WriteLine("┃  퀘스트 게시판  ┃");
+                Console.WriteLine("┗━━━━━━━━━━━━━━┛");
+                Console.WriteLine();
+
+                List<Quest> activeQuests = questManager.GetActiveQuests().ToList();
+                List<Quest> readyQuests = questManager.GetReadyToClaimQuests().ToList();
+                List<Quest> availableQuests = questManager.GetAvailableQuests().ToList();
+
+                if (activeQuests.Count == 0)
+                {
+                    Console.WriteLine("진행 중인 퀘스트가 없습니다.");
+                }
+                else
+                {
+                    Console.WriteLine("[진행 중인 퀘스트]");
+                    foreach (Quest quest in activeQuests)
+                    {
+                        Console.WriteLine($"- {quest.Name}: {quest.CurrentCount}/{quest.RequiredCount} (목표: {quest.TargetMobName})");
+                    }
+                }
+
+                Console.WriteLine();
+
+                if (readyQuests.Count > 0)
+                {
+                    Console.WriteLine("[완료 퀘스트]");
+                    foreach (Quest quest in readyQuests)
+                    {
+                        Console.WriteLine($"- {quest.Name}: 보상 수령 대기 중");
+                    }
+                    Console.WriteLine();
+                }
+
+                if (availableQuests.Count > 0)
+                {
+                    Console.WriteLine("[신규 퀘스트]");
+                    foreach (Quest quest in availableQuests)
+                    {
+                        Console.WriteLine($"- {quest.Name}: {quest.Description}");
+                    }
+                    Console.WriteLine();
+                }
+
+                List<string> menu = new List<string>();
+                if (availableQuests.Count > 0)
+                {
+                    menu.Add("퀘스트 수락");
+                }
+                if (readyQuests.Count > 0)
+                {
+                    menu.Add("보상 수령");
+                }
+                menu.Add("돌아가기");
+
+                int selection = UiHelper.SelectMenu(menu.ToArray());
+                string selectedOption = menu[selection];
+
+                if (selectedOption == "퀘스트 수락")
+                {
+                    AcceptQuest(questManager, availableQuests);
+                }
+                else if (selectedOption == "보상 수령")
+                {
+                    ClaimQuestReward(questManager, readyQuests);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            Start();
+        }
+
+        static void AcceptQuest(QuestManager questManager, List<Quest> availableQuests)
+        {
+            Console.Clear();
+            Console.WriteLine("수락할 퀘스트를 선택하세요.");
+            Console.WriteLine();
+
+            string[] questNames = availableQuests
+                .Select(q => $"{q.Name} - 목표: {q.TargetMobName} {q.RequiredCount}마리")
+                .ToArray();
+
+            int selectedIndex = UiHelper.SelectMenu(questNames);
+            Quest selectedQuest = availableQuests[selectedIndex];
+
+            Console.Clear();
+            UiHelper.TxtOut([
+                $"퀘스트 이름 : {selectedQuest.Name}",
+                $"설명 : {selectedQuest.Description}",
+                $"목표 : {selectedQuest.TargetMobName} {selectedQuest.RequiredCount}마리",
+                $"보상 : 골드 {selectedQuest.RewardGold}"
+            ], SlowTxtOut: false);
+
+            foreach ((ItemType type, int count) in selectedQuest.ItemRewards)
+            {
+                string itemName = Inventory.Instance.GetItemName(type);
+                Console.WriteLine($"추가 보상 : {itemName} x {count}");
+            }
+
+            Console.WriteLine();
+            int accept = UiHelper.SelectMenu(["수락", "취소"]);
+            if (accept == 0)
+            {
+                if (questManager.TryAcceptQuest(selectedQuest))
+                {
+                    UiHelper.WaitForInput();
+                }
+            }
+        }
+
+        static void ClaimQuestReward(QuestManager questManager, List<Quest> readyQuests)
+        {
+            Console.Clear();
+            Console.WriteLine("보상을 받을 퀘스트를 선택하세요.");
+            Console.WriteLine();
+
+            string[] questNames = readyQuests
+                .Select(q => q.Name)
+                .ToArray();
+
+            int selectedIndex = UiHelper.SelectMenu(questNames);
+            Quest selectedQuest = readyQuests[selectedIndex];
+            questManager.TryClaimReward(selectedQuest);
+        }
 
         #endregion
 
