@@ -3,9 +3,6 @@ NAME : 초보자 신발
 HP : 1
 ATK : 1
 DEF : 1
-MP : 0
-CC : 0
-CD : 0
 PRICE : 0
 #
 ID : 2
@@ -13,9 +10,7 @@ NAME : 가죽 신발
 HP : 1
 ATK : 1
 DEF : 2
-MP : 0
 CC : 1
-CD : 0
 PRICE : 10
 #
 ID : 3
@@ -23,7 +18,6 @@ NAME : 질긴 가죽 신발
 HP : 2
 ATK : 2
 DEF : 2
-MP : 0
 CC : 1
 CD : 1
 PRICE : 20

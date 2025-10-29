@@ -3,27 +3,22 @@ NAME : 초보자 장갑
 HP : 1
 ATK : 1
 DEF : 1
-MP : 0
 CC : 1
 CD : 1
 PRICE : 0
 #
 ID : 2
 NAME : 가죽 장갑
-HP : 0
 ATK : 2
 DEF : 1
-MP : 0
 CC : 1
 CD : 2
 PRICE : 10
 #
 ID : 3
 NAME : 질긴 가죽 장갑
-HP : 0
 ATK : 3
 DEF : 1
-MP : 0
 CC : 2
 CD : 3
 PRICE : 20

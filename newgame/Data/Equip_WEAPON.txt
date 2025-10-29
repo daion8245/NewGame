@@ -1,29 +1,17 @@
 ID : 1
 NAME : 나무막대기
-HP : 0
 ATK : 1
-DEF : 0
-MP : 0
-CC : 0
-CD : 0
 PRICE : 0
 #
 ID : 2
 NAME : 목검
-HP : 0
 ATK : 2
-DEF : 0
-MP : 0
 CC : 1
-CD : 0
 PRICE : 10
 #
 ID : 3
 NAME : 금간 검
-HP : 0
 ATK : 3
-DEF : 0
-MP : 0
 CC : 1
 CD : 1
 PRICE : 15
