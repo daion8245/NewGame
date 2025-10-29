@@ -1,4 +1,5 @@
-﻿using newgame.Characters;
+﻿using System;
+using newgame.Characters;
 using newgame.Items;
 using newgame.Services;
 using newgame.UI;
@@ -7,7 +8,8 @@ namespace newgame.Locations
 {
     internal class Shop
     {
-        public Dictionary<EquipType,int> equips = new Dictionary<EquipType,int>();
+        public Dictionary<EquipType, int> equips = new Dictionary<EquipType, int>();
+        public List<ItemType> items = new List<ItemType>();
 
         public void Start()
         {
@@ -54,8 +56,9 @@ namespace newgame.Locations
             UiHelper.TxtOut(["\t 「상점/구매」",
                 ""]);
 
-            List<Equipment> equips = new List<Equipment>();
-            List<string> itemNames = new List<string>();
+            List<Equipment> equipProducts = new List<Equipment>();
+            List<Item> itemProducts = new List<Item>();
+            List<string> menuNames = new List<string>();
 
             foreach (var item in this.equips)
             {
@@ -63,29 +66,64 @@ namespace newgame.Locations
                 {
                     if (equip.GetEquipType == item.Key && equip.GetEquipID == item.Value)
                     {
-                        itemNames.Add($"{equip.GetEquipName} - {equip.GetPrice}골드");
-                        equips.Add(equip);
+                        menuNames.Add($"{equip.GetEquipName} - {equip.GetPrice}골드");
+                        equipProducts.Add(equip);
                     }
                 }
             }
-            itemNames.Add("나가기");
+            foreach (ItemType itemType in items)
+            {
+                Item? item = GameManager.Instance.FindItem(itemType);
+                if (item == null)
+                {
+                    continue;
+                }
 
-            int menuSelect = UiHelper.SelectMenu(itemNames.ToArray());
+                string itemName = Inventory.Instance.GetItemName(item.ItemType);
+                menuNames.Add($"{itemName} - {item.ItemPrice}골드");
+                itemProducts.Add(item);
+            }
 
-            if (menuSelect == itemNames.Count - 1)
+            menuNames.Add("나가기");
+
+            int menuSelect = UiHelper.SelectMenu(menuNames.ToArray());
+
+            if (menuSelect == menuNames.Count - 1)
             {
                 ShowMenu();
                 return;
             }
 
+            bool isEquipSelected = menuSelect < equipProducts.Count;
+
+            int price;
+            string productName;
+            Action addToInventory;
+
             Player player = GameManager.Instance.RequirePlayer();
 
-            if (player.MyStatus.gold >= equips[menuSelect].GetPrice)
+            if (isEquipSelected)
             {
-                player.MyStatus.gold -= equips[menuSelect].GetPrice;
-                Inventory.Instance.AddEquip(equips[menuSelect]);
+                Equipment selectedEquip = equipProducts[menuSelect];
+                price = selectedEquip.GetPrice;
+                productName = selectedEquip.GetEquipName;
+                addToInventory = () => Inventory.Instance.AddEquip(selectedEquip);
+            }
+            else
+            {
+                int itemIndex = menuSelect - equipProducts.Count;
+                Item selectedItem = itemProducts[itemIndex];
+                price = selectedItem.ItemPrice;
+                productName = Inventory.Instance.GetItemName(selectedItem.ItemType);
+                addToInventory = () => Inventory.Instance.AddItem(selectedItem);
+            }
 
-                UiHelper.TxtOut(["", $"{equips[menuSelect].GetEquipName} 구매 완료",""]);
+            if (player.MyStatus.gold >= price)
+            {
+                player.MyStatus.gold -= price;
+                addToInventory();
+
+                UiHelper.TxtOut(["", $"{productName} 구매 완료", ""]);
 
                 int GoLobbySel = UiHelper.SelectMenu(["구매 계속하기","나가기"]);
                 if (GoLobbySel == 0)
@@ -230,6 +268,7 @@ namespace newgame.Locations
         public void ResetShopItems()
         {
             equips.Clear();
+            items.Clear();
         }
         #endregion
     }

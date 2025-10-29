@@ -63,13 +63,16 @@ namespace newgame.Locations
                         Console.Clear();
 
                         Shop shop = new Shop();
-                        
+
                         shop.equips.Add(EquipType.WEAPON, 2);
                         shop.equips.Add(EquipType.GLOVE, 2);
                         shop.equips.Add(EquipType.HELMET, 2);
                         shop.equips.Add(EquipType.SHIRT, 2);
                         shop.equips.Add(EquipType.PANTS, 2);
                         shop.equips.Add(EquipType.SHOES, 2);
+                        shop.items.Add(ItemType.F_POTION_LOW_HP);
+                        shop.items.Add(ItemType.F_POTION_MIDDLE_HP);
+                        shop.items.Add(ItemType.F_ETC_RESETNAME);
                         shop.Start();
                         break;
                     }
