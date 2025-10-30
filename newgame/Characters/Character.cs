@@ -148,8 +148,18 @@ namespace newgame.Characters
             {
                 MyStatus.Mp -= skill.skillMana;
             }
+            
+            int damage;
+            bool isCritical;
 
-            (int damage, bool isCritical) = Damage(targetCharacter, skill.skillDamage);
+            if (skill.PhyDamage != 0)
+            {
+                (damage, isCritical) = AtkSkillDamage(targetCharacter, skill.skillDamage, skill.PhyDamage);
+            }
+            else
+            {
+                (damage, isCritical) = Damage(targetCharacter, skill.skillDamage);    
+            }
 
             bool defeated = targetStatus.Hp <= 0;
             string message = battleLogService.BuildActionMessage(this, targetCharacter, damage, skill.name, defeated, isCritical);
@@ -419,6 +429,22 @@ namespace newgame.Characters
             targetStatus.Hp -= totaldamage;
             return (totaldamage, isCritical);
         }
+        #endregion
+
+        #region 플레이어 공격력 비례 데미지 게산
+
+        // csharp
+        protected (int Damage, bool IsCritical) AtkSkillDamage(Character target, int damage, int playerDamage)
+        {
+            Status myStatus = MyStatus;
+            Status targetStatus = target.MyStatus;
+        
+            int atkPortion = (int)Math.Round(myStatus.ATK * (playerDamage / 100.0));
+            int finalDamage = damage + atkPortion;
+        
+            return Damage(target, finalDamage);
+        }
+
         #endregion
 
     }

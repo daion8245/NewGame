@@ -533,7 +533,7 @@ namespace newgame.Services
                     }
                     else if (curLine[0].Trim() == "P_DAMAGE")
                     {
-                        
+                        skills.PhyDamage = int.Parse(curLine[1].Trim());
                     }
                 }
             }

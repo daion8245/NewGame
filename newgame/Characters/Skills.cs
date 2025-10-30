@@ -9,7 +9,7 @@ namespace newgame.Characters
         public int skillId;
         public int skillMana;
         public int skillDamage;
-        public int skillTurn;
+        public int skillTurn; 
         public int PhyDamage;
     }
 
@@ -88,7 +88,7 @@ namespace newgame.Characters
                 {
                     if (skill.PhyDamage != 0)
                     {
-                        extra = $" , 데미지: {skill.skillDamage}";
+                        extra = $" , 데미지: {skill.skillDamage} + 공격력의 {skill.PhyDamage}%";
                     }
                     else
                     {
