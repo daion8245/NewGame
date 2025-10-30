@@ -11,7 +11,7 @@ SKILL : 깔아뭉개기
 NAME : 스켈레톤 킹
 LEVEL : 7
 hp : 135
-ATK : 10
+ATK : 6
 DEF :5
 EXP : 70
 COIN : 125
