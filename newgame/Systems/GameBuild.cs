@@ -253,7 +253,7 @@ namespace newgame.Systems
             int def = 0;
             int mp = 0;
 
-            int statcoin = 10;
+            int statcoin = 15;
 
             while (statcoin > 0)
             {
