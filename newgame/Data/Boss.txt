@@ -1,6 +1,6 @@
 NAME : 슬라임 킹
 LEVEL : 5
-hp : 100
+hp : 80
 ATK : 4
 DEF : 3
 EXP : 55
@@ -10,7 +10,7 @@ SKILL : 깔아뭉개기
 #
 NAME : 죽은자의 영혼
 LEVEL : 7
-hp : 250
+hp : 135
 ATK : 10
 DEF :5
 EXP : 70
