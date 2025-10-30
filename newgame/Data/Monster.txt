@@ -8,6 +8,16 @@ COIN : 10
 CRICHANCE : 1
 CRIDMG : 9999
 #
+NAME : 빅슬라임
+LEVEL : 2
+hp : 30
+ATK : 4
+DEF : 4
+EXP : 5
+COIN : 10
+CRICHANCE : 2
+CRIDMG : 9999
+#
 NAME : 스켈레톤
 LEVEL : 2
 hp : 30
@@ -17,6 +27,26 @@ EXP : 10
 COIN : 15
 CRICHANCE : 16
 CRIDMG : 155
+#
+NAME : 스켈레톤 영혼
+LEVEL : 3
+hp : 50
+ATK : 7
+DEF : 3
+EXP : 20
+COIN : 15
+CRICHANCE : 15
+CRIDMG : 200
+#
+NAME : 스켈레톤 기사
+LEVEL : 4
+hp : 80
+ATK : 5
+DEF : 25
+EXP : 10
+COIN : 15
+CRICHANCE : 10
+CRIDMG : 100
 #
 NAME : 고블린
 LEVEL : 3
@@ -33,7 +63,7 @@ LEVEL : 5
 hp : 40
 ATK : 9
 DEF : 4
-EXP : 15
+EXP : 20
 COIN : 50
 CRICHANCE : 15
 CRIDMG : 170

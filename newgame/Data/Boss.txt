@@ -8,7 +8,7 @@ COIN : 100
 SKILL : 점액 폭탄
 SKILL : 깔아뭉개기
 #
-NAME : 죽은자의 영혼
+NAME : 스켈레톤 킹
 LEVEL : 7
 hp : 135
 ATK : 10
