@@ -57,12 +57,9 @@ namespace newgame.Items
 
         public string GetItemName(ItemType type)
         {
-            foreach (var names in _itemNames)
+            if (_itemNames.TryGetValue(type, out string? name))
             {
-                if (names.Key == type)
-                {
-                    return names.Value;
-                }
+                return name;
             }
 
             return string.Empty;

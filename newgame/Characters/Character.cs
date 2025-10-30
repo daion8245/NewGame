@@ -27,7 +27,7 @@ namespace newgame.Characters
         //플레이어가 죽었는지
         public bool IsDead;
         //플레이어가 전투에서 도망쳤는지
-        public bool IsbattleRun = false;
+        public bool IsBattleRun = false;
         //이전 HP 값을 저장하는 배열 (플레이어[0], 적[1])
         protected int[] beforHP = new int[2];
 
@@ -227,39 +227,6 @@ namespace newgame.Characters
                 Console.WriteLine("눈앞이 깜깜해졌다.");
                 Thread.Sleep(2000);
             }
-        }
-        #endregion
-
-        #region 아이템 관련 추가
-        [JsonProperty]
-        List<ItemSlot> items = new List<ItemSlot>();
-
-        [JsonProperty]
-        Dictionary<ItemType, string> itemNames = new Dictionary<ItemType, string>()
-            {
-                {ItemType.F_POTION_LOW_HP, "하급 회복 물약" },
-                {ItemType.F_POTION_MIDDLE_HP, "중급 회복 물약" },
-                {ItemType.F_POTION_HIGH_HP, "상급 회복 물약" },
-                {ItemType.T_POTION_EXPUP, "경험치 획득량 증가" },
-                {ItemType.T_POTION_ATKUP, "공격력 증가" },
-                {ItemType.F_ETC_RESETNAME, "닉네임 변경" },
-
-                #region 제작 재료
-                {ItemType.M_WOOD, "나무" }
-                #endregion
-        };
-
-        public string GetItemName(ItemType _type)
-        {
-            foreach (var names in itemNames)
-            {
-                if (names.Key == _type)
-                {
-                    return names.Value;
-                }
-            }
-
-            return string.Empty;
         }
         #endregion
 
