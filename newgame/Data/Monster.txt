@@ -50,7 +50,7 @@ CRIDMG : 100
 #
 NAME : 고블린
 LEVEL : 3
-hp : 45
+hp : 50
 ATK : 7
 DEF : 3
 EXP : 15
@@ -60,7 +60,7 @@ CRIDMG : 160
 #
 NAME : 갱 고블린
 LEVEL : 5
-hp : 40
+hp : 60
 ATK : 9
 DEF : 4
 EXP : 20
@@ -70,13 +70,23 @@ CRIDMG : 170
 #
 NAME : 좀비
 LEVEL : 4
-hp : 40
+hp : 70
 ATK : 6
-DEF : 4
+DEF : 5
 EXP : 20
 COIN : 30
 CRICHANCE : 17
 CRIDMG : 150
+#
+NAME : 애기 좀비
+LEVEL : 5
+hp : 65
+ATK : 20
+DEF : 4
+EXP : 25
+COIN : 45
+CRICHANCE : 20
+CRIDMG : 200
 #
 NAME : 거미
 LEVEL : 6

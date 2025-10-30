@@ -28,3 +28,13 @@ COIN : 150
 SKILL : 마구치기
 SKILL : 고블린 집결
 #
+NAME : 좀비 킹
+LEVEL : 13
+hp : 200
+ATK : 20
+DEF :10
+EXP : 175
+COIN : 175
+SKILL : 물기
+SKILL : 난폭 난타
+#
