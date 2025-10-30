@@ -111,7 +111,36 @@ namespace newgame.Locations.DungeonRooms
         #endregion
 
         #region 던전 이벤트 방 내용
-        //낡은 안내문
+
+        #region 튜토리얼
+
+        /*
+         * 이벤트 방 만드는법
+         *
+         * 1. void (이벤트 방 이름(영어로)) => DungeonEventRoomEventTrigger(.....);을 쓴다
+         * 
+         * 2. () 괄호 안에 넣고싶은걸 넣는다 왠만해서는 UiHelper.MessageAndSelect(new [] {메세지(예: 테스트 방인듯 하다..) , // <- 콤마 넣기 \\(1.1번 선택지를 고른다 2.2번 선택지를 고른다 3.3번 선택지를 고른다 )}
+         * , CreateCallbacks(t=> console.WriteLine("1번 선택지 고름"), t=> console.writeline("2번 선택지 고름"), t=> console.writeline("3번 선택지 고름")) ); 형식으로 넣는다
+         *  CreateCallbacks() <- 선택지를 구현하는 함수 이 안에 다시 CrateCallbacks가능 선택지 안에 선택지 만들고 싶을때 사용
+         * }) 형식으로 넣는다
+         *
+         * 3. 다 만든 후 맨 위의 EventRoomsId enum에다가 (영어로 된 이벤트 방 이름)을 넣는다
+         *
+         * 4.그 후 던전 이벤트 방 생성 region을 열고 그 맨 아레 switch문에다가
+         * case EventRoomsId.(영어로 된 이벤트 방 이름): _ = new EventRooms("(한글로 된 이벤트 방 이름)", "(이벤트 방 설명)", (영어로 된 이벤트 방 이름)); break; 형식으로 넣는다
+        */
+        
+        void TutorialRoom() => DungeonEventRoomEventTrigger(() => UiHelper.MessageAndSelect(
+            new []{"이 방은 튜토리얼 방이다..","무언가 선택지를 고를 수 있을것 같다.."},
+            new []{"1.1번 선택지를 고른다","2.2번 선택지를 고른다","3.3번 선택지를 고른다"}), CreateCallbacks(
+            t => Console.WriteLine("1번 선택지 고름"),
+            t => Console.WriteLine("2번 선택지 고름"),
+            t => Console.WriteLine("3번 선택지 고름")
+        ));
+        #endregion
+
+        #region 낡은 안내문 
+
         void OldNotice() => DungeonEventRoomEventTrigger(() => UiHelper.MessageAndSelect(
             new []{"안개 낀 표지판이 미세하게 깜빡인다.."},
             new []{"1.글자를 해독한다","2.표지판을 부순다","3.무시하고 지나간다"}), CreateCallbacks(
@@ -140,7 +169,10 @@ namespace newgame.Locations.DungeonRooms
             t => Console.WriteLine("\n"+"표지판을 무시하고 지나갔다.")
         ));
 
-        //슬라임 습격
+        #endregion
+
+        #region 슬라임 습격
+
         void SlimeRaid() => DungeonEventRoomEventTrigger(() => UiHelper.MessageAndSelect(
             new[] { "방 안이 축축하다... 슬라임의 습격이다!" },
             new[] { "1.싸운다", "2.도망친다" }), CreateCallbacks(
@@ -177,9 +209,12 @@ namespace newgame.Locations.DungeonRooms
                 }
             }
         )); 
-        
-        // 거울 퍼즐
-    void MirrorPuzzle() => DungeonEventRoomEventTrigger(
+
+        #endregion
+
+        #region 거울 퍼즐
+
+            void MirrorPuzzle() => DungeonEventRoomEventTrigger(
         () => UiHelper.MessageAndSelect(
             new[] {
                 "벽면 가득 거울이 늘어서 있다.",
@@ -298,7 +333,7 @@ namespace newgame.Locations.DungeonRooms
         }
         ));
 
-        
+        #endregion
         
         #endregion
     }
