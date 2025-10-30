@@ -14,14 +14,18 @@ namespace newgame.Systems
             // 생성자에서 전투를 바로 시작하지 않는다.
         }
 
-        public void Start()
+        public bool Start()
         {
             Console.Clear();
 
-            Start_Battle();
+            return Start_Battle();
         }
-
-        private static void Start_Battle()
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private static bool Start_Battle()
         {
             Character player = GameManager.Instance.RequirePlayer();
             Character monster = GameManager.Instance.RequireMonster();
@@ -34,6 +38,8 @@ namespace newgame.Systems
 
             player.EnteringBattle(monster);
             monster.EnteringBattle(player);
+            
+            bool playerBattelWin = false;
 
             while (true)
             {
@@ -53,17 +59,25 @@ namespace newgame.Systems
 
                 // 1) 공격자가 '도주' 선택했으면 종료
                 if (attacker.IsbattleRun)
+                {
+                    playerBattelWin = false;
                     break;
+                }
 
                 // 2) 피격자가 죽었으면 즉시 종료
                 if (defender.IsDead)
+                {
+                    playerBattelWin = defender is Player ? false : true;
                     break;
+                }
 
                 // 턴 교대
                 current = defenderIdx;
 
                 Thread.Sleep(1000);
             }
+            
+            return playerBattelWin;
         }
 
     }
