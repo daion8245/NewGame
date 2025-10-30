@@ -14,7 +14,17 @@ hp : 135
 ATK : 10
 DEF :5
 EXP : 70
-COIN : 150
+COIN : 125
 SKILL : 소드 어택
 SKILL : 영혼 흡수
+#
+NAME : 고블린 킹
+LEVEL : 10
+hp : 175
+ATK : 15
+DEF :7
+EXP : 150
+COIN : 150
+SKILL : 마구치기
+SKILL : 고블린 집결
 #

@@ -334,7 +334,10 @@ namespace newgame.Locations.DungeonRooms
         ));
 
         #endregion
-        
+
+        #region 강한 보스의 시련
+        #endregion
+
         #endregion
     }
 }
