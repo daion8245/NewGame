@@ -31,10 +31,10 @@ namespace newgame.Characters
         public void SetDefStat(int atk, int hp, int def, int mp)
         {
             status.level = 1;
-            status.ATK = 8 + atk;
-            status.MaxHp = 45 + (hp * 10);
+            status.ATK = 5 + atk;
+            status.MaxHp = 50 + (hp * 10);
             status.Hp = status.MaxHp;
-            status.DEF = 2 + def;
+            status.DEF = 3 + def;
             status.MaxMp = 30 + (mp * 2);
             status.Mp = status.MaxMp;
             status.CriticalChance = 10;
