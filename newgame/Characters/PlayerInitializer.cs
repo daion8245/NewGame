@@ -68,7 +68,6 @@ namespace newgame.Characters
                 charType = CharType.PLAYER
             };
             SetPlayerStarterItem();
-            SetPlayerStarterSkill();
             return status;
         }
 
@@ -80,13 +79,6 @@ namespace newgame.Characters
             }
 
             inventory.ShowEquipList();
-        }
-
-        private void SetPlayerStarterSkill()
-        {
-            skills.ClearAllCanUseSkills();
-            skills.AddCanUseSkill("파이어볼");
-            skills.AddCanUseSkill("아쿠아 볼");
         }
     }
 }
