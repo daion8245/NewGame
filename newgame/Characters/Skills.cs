@@ -87,15 +87,8 @@ namespace newgame.Characters
                 if (skill.skillDamage != 0)
                 {
                     if (skill.PhyDamage != 0)
-                    {
-                        if (skill.skillDamage == 0)
-                        {
-                            extra = $" , 공격력의 {skill.PhyDamage}% 데미지";
-                        }
-                        else
-                        {
-                            extra = $" , 데미지: {skill.skillDamage} + 공격력의 {skill.PhyDamage}%";
-                        }
+                    { 
+                        extra = $" , 데미지: {skill.skillDamage} + 공격력의 {skill.PhyDamage}%";
                     }
                     else
                     {
@@ -105,6 +98,10 @@ namespace newgame.Characters
                 else if (skill.skillTurn != 0)
                 {
                     extra = $" , 효과 지속 시간: {skill.skillTurn}";
+                }
+                else if (skill.PhyDamage != 0 && skill.skillDamage == 0)
+                {
+                    extra = $" , 공격력의 {skill.PhyDamage}%";
                 }
 
                 canUseSkillList.Add($"{skill.name} --- 마나 사용량 : {skill.skillMana}{extra}");
