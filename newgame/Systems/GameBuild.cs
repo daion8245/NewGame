@@ -260,7 +260,7 @@ namespace newgame.Systems
                 Console.Clear();
                 Console.WriteLine($"남은 포인트 : {statcoin}");
 
-                int selstat = UiHelper.SelectMenu(new[] { "공격력", "체력", "방어력" });
+                int selstat = UiHelper.SelectMenu(new[] { "공격력", "체력", "방어력", "마나" });
 
                 switch (selstat)
                 {
@@ -273,7 +273,7 @@ namespace newgame.Systems
                     case 2:
                         def++;
                         break;
-                    default:
+                    case 3:
                         mp++;
                         break;
                 }
