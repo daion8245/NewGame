@@ -20,15 +20,15 @@ namespace newgame.Locations
 
         enum RoomType
         {
-            Wall, //0
-            Empty, //1
-            Ladder, //2
-            Monster, //3
-            Treasure, //4
-            Shop, //5
-            Event, //6
-            Boss, //7
-            Exit //8
+            Wall, //0 벽
+            Empty, //1 없음
+            Ladder, //2 사다리(다음 층 가는거)
+            Monster, //3 몬스터
+            Treasure, //4 보물방(미구현)
+            Shop, //5 상점
+            Event, //6 이벤트방
+            Boss, //7 보스
+            Exit //8 나가는곳 (마을로 가기)
         }
 
         public static int floor = 1; // 현재 층수
@@ -370,7 +370,7 @@ namespace newgame.Locations
         {
             Boss boss = new Boss();
             GameManager.Instance.monster = boss;
-            boss.StartBoss(floor + 1);
+            boss.StartBoss(floor);
             Battle battle = new Battle();
             battle.Start();
         }

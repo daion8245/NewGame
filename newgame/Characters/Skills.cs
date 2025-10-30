@@ -88,7 +88,14 @@ namespace newgame.Characters
                 {
                     if (skill.PhyDamage != 0)
                     {
-                        extra = $" , 데미지: {skill.skillDamage} + 공격력의 {skill.PhyDamage}%";
+                        if (skill.skillDamage == 0)
+                        {
+                            extra = $" , 공격력의 {skill.PhyDamage}% 데미지";
+                        }
+                        else
+                        {
+                            extra = $" , 데미지: {skill.skillDamage} + 공격력의 {skill.PhyDamage}%";
+                        }
                     }
                     else
                     {

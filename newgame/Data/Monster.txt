@@ -20,7 +20,7 @@ CRIDMG : 155
 #
 NAME : 고블린
 LEVEL : 3
-hp : 55
+hp : 45
 ATK : 7
 DEF : 3
 EXP : 15
@@ -39,7 +39,7 @@ CRICHANCE : 17
 CRIDMG : 150
 #
 NAME : 거미
-LEVEL : 5
+LEVEL : 6
 hp : 80
 ATK : 14
 DEF : 10
