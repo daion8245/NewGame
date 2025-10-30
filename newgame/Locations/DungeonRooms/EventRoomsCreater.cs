@@ -11,6 +11,7 @@ namespace newgame.Locations.DungeonRooms
         OldNotice, //낡은 안내문
         SlimeRaid, //슬라임 습격
         MirrorPuzzle //거울 퍼즐
+        
     }
 
     internal class EventRoomsCreater
@@ -336,6 +337,33 @@ namespace newgame.Locations.DungeonRooms
         #endregion
 
         #region 강한 보스의 시련
+
+        void HardBossTrial() => DungeonEventRoomEventTrigger(() => UiHelper.MessageAndSelect(
+            new[] { "앞에 범접하지 못할 무시무시한 몬스터가 보인다." }, new[] { "1.싸운다", "2.도망친다" }), CreateCallbacks(t =>
+        {
+            Console.WriteLine();
+            UiHelper.TxtOut(["강력한 몬스터와의 전투가 시작된다!"], SlowTxtLineTime: 1000);
+            
+            Boss boss = new Boss();
+            GameManager.Instance.monster = boss;
+            boss.StartBoss(Dungeon.floor + 1);
+            Battle battle = new Battle();
+            bool win = battle.Start();
+            
+            if (win)
+            {
+                Random rand = new Random();
+                //스킬 보상 로직
+                
+                UiHelper.WaitForInput();
+            }
+            else
+            {
+                UiHelper.TxtOut(["강력한 몬스터에게 패배했다...", "던전 밖으로 쫓겨났다..."]);
+                UiHelper.WaitForInput();
+            }
+        }));
+
         #endregion
 
         #endregion
