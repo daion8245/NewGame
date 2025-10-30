@@ -10,6 +10,7 @@ namespace newgame.Characters
         public int skillMana;
         public int skillDamage;
         public int skillTurn;
+        public int PhyDamage;
     }
 
 
@@ -85,7 +86,14 @@ namespace newgame.Characters
                 string extra = string.Empty;
                 if (skill.skillDamage != 0)
                 {
-                    extra = $" , 데미지: {skill.skillDamage}";
+                    if (skill.PhyDamage != 0)
+                    {
+                        extra = $" , 데미지: {skill.skillDamage}";
+                    }
+                    else
+                    {
+                        extra = $" , 데미지: {skill.skillDamage}";    
+                    }
                 }
                 else if (skill.skillTurn != 0)
                 {

@@ -531,6 +531,10 @@ namespace newgame.Services
                     {
                         skills.skillTurn = int.Parse(curLine[1].Trim());
                     }
+                    else if (curLine[0].Trim() == "P_DAMAGE")
+                    {
+                        
+                    }
                 }
             }
             catch (Exception ex)
