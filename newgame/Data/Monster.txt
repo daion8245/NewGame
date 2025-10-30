@@ -28,6 +28,16 @@ COIN : 40
 CRICHANCE : 15
 CRIDMG : 160
 #
+NAME : 갱 고블린
+LEVEL : 5
+hp : 40
+ATK : 9
+DEF : 4
+EXP : 15
+COIN : 50
+CRICHANCE : 15
+CRIDMG : 170
+#
 NAME : 좀비
 LEVEL : 4
 hp : 40
@@ -50,7 +60,7 @@ CRIDMG : 170
 #
 NAME : 유령
 LEVEL : 8
-hp : 8
+hp : 10
 ATK : 8
 DEF : 888
 EXP : 88
