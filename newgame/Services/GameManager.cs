@@ -159,6 +159,31 @@ namespace newgame
         }
 
         /// <summary>
+        /// 몬스터의 인덱스를 이름으로 찾는 함수
+        /// </summary>
+        /// <param name="name">찾을 몬스터 이름(대소문자 무시)</param>
+        /// <returns>찾은 몬스터 키(1부터). 없으면 -1</returns>
+        public int FindAMonsterName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return -1;
+            }
+
+            foreach (var kv in monsterInfo)
+            {
+                string? monsterName = kv.Value?.Name;
+                if (!string.IsNullOrWhiteSpace(monsterName) &&
+                    string.Equals(monsterName.Trim(), name.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    return kv.Key;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         /// 특정 보스 층수에 스킬 이름 목록을 등록한다.
         /// </summary>
         /// <param name="bossKey">보스 층수</param>
