@@ -320,10 +320,10 @@ namespace newgame.Characters
                         break;
                     }
                 case "아쿠아 볼":
-                    {
-                        StatusEffects.AddTickSkill(useSkill.name, useSkill.skillTurn);
-                        break;
-                    }
+                {
+                    StatusEffects.AddTickSkill(useSkill.name, useSkill.skillTurn);
+                    break;
+                }
                 default:
                     {
                         break;

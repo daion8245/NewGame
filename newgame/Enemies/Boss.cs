@@ -112,6 +112,21 @@ namespace newgame.Enemies
                         StatusEffects.AddTickSkill(useSkill.name, useSkill.skillTurn);
                         break;
                     }
+                case "소드 어택":
+                {
+                    StatusEffects.EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
+                    break;
+                }
+                case "영혼 흡수":
+                {
+                    StatusEffects.EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
+                    break;
+                }
+                case "물기":
+                {
+                    StatusEffects.EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
+                    break;
+                }
                 default:
                     {
                         break;

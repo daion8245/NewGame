@@ -163,6 +163,9 @@ namespace newgame.Services
             return skillName switch
             {
                 "파이어볼" => "화상",
+                "소드 어택" => "출혈",
+                "영혼 흡수" => "저주",
+                "물기" => "출혈",
                 _ => skillName
             };
         }
@@ -176,6 +179,40 @@ namespace newgame.Services
                         Character? target = targetResolver();
                         int referenceHp = target?.HasStatus == true ? target.MyStatus.Hp : owner.MyStatus.Hp;
                         int dotDamage = 1 + (referenceHp / 20);
+                        owner.MyStatus.Hp = Math.Max(0, owner.MyStatus.Hp - dotDamage);
+                        bool defeated = owner.MyStatus.Hp <= 0;
+                        int remain = Math.Max(remainingTurns, 0);
+                        string label = $"{skill}(지속)";
+                        string message = messageBuilder(caster, owner, dotDamage, label, defeated, false) + $" (남은 턴: {remain})";
+                        return new SkillTickLog(caster, owner, message, defeated);
+                    }
+                case "소드 어택":
+                    {
+                        Character? target = targetResolver();
+                        int dotDamage = 5;
+                        owner.MyStatus.Hp = Math.Max(0, owner.MyStatus.Hp - dotDamage);
+                        bool defeated = owner.MyStatus.Hp <= 0;
+                        int remain = Math.Max(remainingTurns, 0);
+                        string label = $"{skill}(지속)";
+                        string message = messageBuilder(caster, owner, dotDamage, label, defeated, false) + $" (남은 턴: {remain})";
+                        return new SkillTickLog(caster, owner, message, defeated);
+                    }
+                case "영혼 흡수":
+                    {
+                        Character? target = targetResolver();
+                        int dotDamage = 7;
+                        owner.MyStatus.Hp = Math.Max(0, owner.MyStatus.Hp - dotDamage);
+                        target.MyStatus.Hp += 7;
+                        bool defeated = owner.MyStatus.Hp <= 0;
+                        int remain = Math.Max(remainingTurns, 0);
+                        string label = $"{skill}(지속)";
+                        string message = messageBuilder(caster, owner, dotDamage, label, defeated, false) + $" (남은 턴: {remain})";
+                        return new SkillTickLog(caster, owner, message, defeated);
+                    }
+                case "물기":
+                    {
+                        Character? target = targetResolver();
+                        int dotDamage = 3;
                         owner.MyStatus.Hp = Math.Max(0, owner.MyStatus.Hp - dotDamage);
                         bool defeated = owner.MyStatus.Hp <= 0;
                         int remain = Math.Max(remainingTurns, 0);
