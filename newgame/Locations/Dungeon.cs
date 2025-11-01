@@ -68,13 +68,13 @@ namespace newgame.Locations
 
                 // 키 입력 받기
                 ConsoleKeyInfo key = Console.ReadKey(true);
-                
+
                 Player? activePlayerForCleanup = GameManager.Instance.Player;
                 if (activePlayerForCleanup != null && !activePlayerForCleanup.IsDead)
                 {
                     RoomDelete();
                 }
-                
+
                 GameManager.Instance.UpdateDungeonMap(floor, map);
                 // 이동 처리
                 int newX = player.X, newY = player.Y;
@@ -91,9 +91,10 @@ namespace newgame.Locations
                     player.Y = newY;
                 }
 
-                RoomEvent((RoomType)map[player.Y][player.X]);
+                RoomType currentRoom = (RoomType)map[player.Y][player.X];
+                RoomEvent(currentRoom);
 
-                if (HandlePlayerDefeatIfNeeded())
+                if (HandlePlayerDefeatIfNeeded(currentRoom))
                 {
                     return;
                 }
@@ -164,7 +165,7 @@ namespace newgame.Locations
                         }
                         if (GameManager.Instance.monster?.IsDead ?? false)
                         {
-                            RoomDelete(); // 승리 시 방 삭제
+                            RoomDelete(true); // 승리 시 방 삭제
                         }
                         break;
                     }
@@ -304,7 +305,7 @@ namespace newgame.Locations
             Console.Write('@');
         }
 
-        bool HandlePlayerDefeatIfNeeded()
+        bool HandlePlayerDefeatIfNeeded(RoomType roomBeforeDefeat)
         {
             Player? activePlayer = GameManager.Instance.Player;
             if (activePlayer == null || !activePlayer.IsDead)
@@ -312,11 +313,17 @@ namespace newgame.Locations
                 return false;
             }
 
+            if (roomBeforeDefeat == RoomType.Monster || roomBeforeDefeat == RoomType.Boss)
+            {
+                map[player.Y][player.X] = (int)roomBeforeDefeat;
+            }
+
             GameManager.Instance.UpdateDungeonMap(floor, map);
             UiHelper.WaitForInput("던전에서 패배하여 마을로 돌아갑니다. [ENTER를 눌러 계속]");
 
             activePlayer.RespawnAtTavern();
             activePlayer.IsDead = false;
+            GameManager.Instance.monster = null;
 
             player.X = 1; // 플레이어 위치 초기화
             player.Y = 1; // 플레이어 위치 초기화
@@ -324,13 +331,15 @@ namespace newgame.Locations
             return true;
         }
 
-        void RoomDelete()
+        void RoomDelete(bool force = false)
         {
-            if (player.Y >= 0 && player.Y < map.Count && player.X >= 0 && player.X < map[player.Y].Count &&
-                (RoomType)map[player.Y][player.X] != RoomType.Empty &&
-                (RoomType)map[player.Y][player.X] != RoomType.Exit)
+            if (player.Y >= 0 && player.Y < map.Count && player.X >= 0 && player.X < map[player.Y].Count)
             {
-                map[player.Y][player.X] = (int)RoomType.Empty;
+                RoomType current = (RoomType)map[player.Y][player.X];
+                if (force || (current != RoomType.Empty && current != RoomType.Exit && current != RoomType.Monster && current != RoomType.Boss))
+                {
+                    map[player.Y][player.X] = (int)RoomType.Empty;
+                }
             }
         }
         #endregion
