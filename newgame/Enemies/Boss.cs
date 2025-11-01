@@ -97,42 +97,60 @@ namespace newgame.Enemies
 
             string[] log = UseAttackSkill(useSkill);
 
-            // 지속효과 적용은 대상이 누구인지 명확히 지정해서 적용
-            switch (useSkill.name)
+            bool appliedEffect = TryApplyTickSkill(target, useSkill);
+
+            if (appliedEffect)
+            {
+                battleLogService.ShowBattleInfo(this, target);
+                log = battleLogService.SnapshotBattleLog();
+            }
+
+            return log;
+        }
+
+        bool TryApplyTickSkill(Character target, SkillType skill)
+        {
+            if (skill.skillTurn <= 0)
+            {
+                return false;
+            }
+
+            if (target == null)
+            {
+                return false;
+            }
+
+            if (target.IsDead && !ReferenceEquals(target, this))
+            {
+                return false;
+            }
+
+            switch (skill.name)
             {
                 case "파이어볼":
+                case "소드 어택":
+                case "영혼 흡수":
+                case "물기":
                     {
-                        // 파이어볼은 적(target)에게 지속 효과를 남겨야 함
-                        StatusEffects.EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
-                        break;
+                        StatusEffects.EnemyAddTickSkill(skill.name, skill.skillTurn);
+                        return true;
                     }
                 case "아쿠아 볼":
                     {
-                        // 아쿠아 볼은 보스(self)에게 적용
-                        StatusEffects.AddTickSkill(useSkill.name, useSkill.skillTurn);
+                        if (!IsDead)
+                        {
+                            StatusEffects.AddTickSkill(skill.name, skill.skillTurn);
+                            return true;
+                        }
                         break;
                     }
-                case "소드 어택":
-                {
-                    StatusEffects.EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
-                    break;
-                }
-                case "영혼 흡수":
-                {
-                    StatusEffects.EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
-                    break;
-                }
-                case "물기":
-                {
-                    StatusEffects.EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
-                    break;
-                }
                 default:
                     {
                         break;
                     }
             }
-            return log;
+
+            return false;
         }
     }
 }

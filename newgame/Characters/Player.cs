@@ -312,22 +312,37 @@ namespace newgame.Characters
 
             UseAttackSkill(useSkill);
 
+            bool appliedEffect = false;
+
             switch (useSkill.name)
             {
                 case "파이어볼":
                     {
-                        StatusEffects.EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
+                        if (target != null && !target.IsDead && useSkill.skillTurn > 0)
+                        {
+                            StatusEffects.EnemyAddTickSkill(useSkill.name, useSkill.skillTurn);
+                            appliedEffect = true;
+                        }
                         break;
                     }
                 case "아쿠아 볼":
-                {
-                    StatusEffects.AddTickSkill(useSkill.name, useSkill.skillTurn);
-                    break;
-                }
+                    {
+                        if (!IsDead && useSkill.skillTurn > 0)
+                        {
+                            StatusEffects.AddTickSkill(useSkill.name, useSkill.skillTurn);
+                            appliedEffect = true;
+                        }
+                        break;
+                    }
                 default:
                     {
                         break;
                     }
+            }
+
+            if (appliedEffect)
+            {
+                battleLogService.ShowBattleInfo(this, target);
             }
         }
 
