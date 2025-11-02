@@ -85,7 +85,6 @@ namespace newgame.Items
                         PlayerStatus.Hp += ItemStatus;
                         break;
                     }
-                // TODO
             }
         }
 

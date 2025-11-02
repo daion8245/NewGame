@@ -55,12 +55,20 @@ namespace newgame.Locations
 
         void SetDungeon()
         {
-            int height = map.Count;
-            int width = map[0].Count;
-
             // 게임 시작
             while (true)
             {
+                int height = map.Count;
+                int width = (height > 0 && map[0].Count > 0) ? map[0].Count : 0;
+
+                if (width == 0)
+                {
+                    Console.Clear();
+                    UiHelper.WaitForInput("던전 맵 정보를 불러오지 못했습니다. [ENTER를 눌러 계속]");
+                    GameManager.Instance.ReturnToLobby();
+                    return;
+                }
+
                 Console.Clear();
 
                 DrawMap(width, height);
@@ -348,9 +356,9 @@ namespace newgame.Locations
 
         #region 몬스터 소환/배틀
 
-        #region 층별 몬스터 지정 
+        #region 층별 몬스터 지정
 
-        Dictionary<int, List<int>> floorMonsters = new Dictionary<int, List<int>>()
+        private readonly Dictionary<int, List<int>> _floorMonsters = new Dictionary<int, List<int>>()
         {
             { 0, new List<int> { 1, 2 } }, // 1층 몬스터 ID
             { 1, new List<int> { 3, 4, 5 } }, // 2층 몬스터 ID
@@ -361,13 +369,23 @@ namespace newgame.Locations
         #endregion
         void MonsterCreate()
         {
+            int floorMonsterId;
             //층별 몬스터 설정
             Random rand = new Random();
-            int floorMonsterId = rand.Next(UiHelper.FindMinIndex(floorMonsters[floor]), floorMonsters[floor].Count);
+            _floorMonsters.TryGetValue((floor - 1), out var monsterIds);
+            if (monsterIds != null)
+            {
+                floorMonsterId = monsterIds[rand.Next(monsterIds.Count)];
+            }
+            else
+            {
+                floorMonsterId = -1;
+            }
             
             Monster monster = new Monster();
             GameManager.Instance.monster = monster;
             monster.Start(floorMonsterId);
+
             Battle battle = new Battle();
             battle.Start();
         }

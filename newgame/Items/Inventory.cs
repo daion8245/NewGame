@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using newgame.Characters;
-using newgame.Services;
+﻿using newgame.Characters;
 using newgame.UI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -313,18 +311,20 @@ namespace newgame.Items
                 player.AddEffect(item);
             }
 
-            slot.Decrease(1);
+            slot.Decrease((!item.IsMaterial())? 1 : 0);
             if (slot.Count <= 0)
             {
                 _items.Remove(slot);
             }
         }
 
-        public bool ShowItems()
+        public bool ShowItems(out List<string> items)
         {
+            items = new List<string>();
+            
             if (_items.Count == 0)
             {
-                Console.WriteLine("보유 아이템이 존재하지 않습니다.");
+                items.Add("보유 아이템이 존재하지 않습니다.");
                 return false;
             }
 
@@ -332,7 +332,7 @@ namespace newgame.Items
 
             for (int i = 0; i < _items.Count; i++)
             {
-                Console.WriteLine($"[{i + 1}] {GetItemName(_items[i].Item.ItemType)} x {_items[i].Count}");
+                items.Add($"[{i + 1}] {GetItemName(_items[i].Item.ItemType)} x {_items[i].Count}");
             }
 
             return true;

@@ -276,28 +276,14 @@ namespace newgame.Characters
         #region 아이템 관련 추가
         public void UseItem()
         {
-            if (Inventory.Instance.ShowItems() == false)
+            if (!Inventory.Instance.ShowItems(items: out var inventoryIndex))
             {
                 return;
             }
 
-            Console.Write("입력 : ");
-            string? input = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(input))
-            {
-                Console.WriteLine("입력이 비어 있습니다.");
-                return;
-            }
+            int idx = UiHelper.SelectMenu(inventoryIndex.ToArray(), upTxt: "사용할 아이템을 선택하세요 : ");
 
-            int idx = Inventory.Instance.SelectedItem(input);
-            if (idx == -1)
-            {
-                Console.WriteLine("잘못입력하였습니다.");
-                //UseItem();
-                return;
-            }
-
-            Inventory.Instance.UseItem(idx);
+            Inventory.Instance.UseItem(idx + 1);
         }
 
         /// <summary>
