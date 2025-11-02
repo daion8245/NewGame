@@ -55,12 +55,20 @@ namespace newgame.Locations
 
         void SetDungeon()
         {
-            int height = map.Count;
-            int width = map[0].Count;
-
             // 게임 시작
             while (true)
             {
+                int height = map.Count;
+                int width = (height > 0 && map[0].Count > 0) ? map[0].Count : 0;
+
+                if (width == 0)
+                {
+                    Console.Clear();
+                    UiHelper.WaitForInput("던전 맵 정보를 불러오지 못했습니다. [ENTER를 눌러 계속]");
+                    GameManager.Instance.ReturnToLobby();
+                    return;
+                }
+
                 Console.Clear();
 
                 DrawMap(width, height);
