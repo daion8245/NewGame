@@ -40,7 +40,7 @@ namespace newgame.Characters
             status.CriticalChance = 10;
             status.CriticalDamage = 150;
             status.exp = 0;
-            status.nextEXP = 20;
+            status.nextEXP = 50;
             status.gold = 25;
         }
 
