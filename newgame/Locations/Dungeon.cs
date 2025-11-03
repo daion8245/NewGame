@@ -191,6 +191,7 @@ namespace newgame.Locations
                 case (RoomType.Event):
                     {
                         EventRoomCreate();
+                        RoomDelete(true);
                         break;
                     }
                 case (RoomType.Ladder):
@@ -419,6 +420,7 @@ namespace newgame.Locations
         {
             EventRoomsCreater eventRoomsCreater = new EventRoomsCreater();
             eventRoomsCreater.CreateDungeonEventRoom();
+
         }
 
         #endregion

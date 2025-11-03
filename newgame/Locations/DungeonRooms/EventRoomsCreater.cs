@@ -10,8 +10,8 @@ namespace newgame.Locations.DungeonRooms
     {
         OldNotice, //낡은 안내문
         SlimeRaid, //슬라임 습격
-        MirrorPuzzle //거울 퍼즐
-        
+        MirrorPuzzle, //거울 퍼즐
+        HardBossTrial //강한 보스의 시련
     }
 
     internal class EventRoomsCreater
