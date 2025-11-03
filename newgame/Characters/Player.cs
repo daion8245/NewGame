@@ -123,7 +123,11 @@ namespace newgame.Characters
 
         #region 패배 후 복구
         public void RespawnAtTavern()
+        
         {
+            Dungeon.PlayerPos.X = 1;
+            Dungeon.PlayerPos.Y = 1;
+            
             MyStatus.Hp = Math.Max(1, MyStatus.MaxHp / 2);
             MyStatus.Mp = MyStatus.MaxMp;
             IsDead = false;
@@ -235,7 +239,12 @@ namespace newgame.Characters
         #region 플레이어가 선택한 액션 실행
         public void PerformAction(Character target)
         {
-            battleLogService.ShowBattleInfo(this, target);
+            ProcessTurnStart(target, showInfo: true);
+
+            if (IsDead)
+            {
+                return;
+            }
 
             int input = SelectBattleAction();
 
@@ -245,16 +254,19 @@ namespace newgame.Characters
                 case 0:
                     {
                         Attack(target);
+                        ResetTurnStartState();
                         break;
                     }
                 case 1:
                     {
                         BattleSkillLogic(target);
+                        ResetTurnStartState();
                         break;
                     }
                 case 2:
                     {
                         UseItem();
+                        ResetTurnStartState();
                         break;
                     }
                 case 3:
@@ -274,6 +286,7 @@ namespace newgame.Characters
                 case 4:
                     {
                         BattleRun();
+                        ResetTurnStartState();
                         break;
                     }
                 default:

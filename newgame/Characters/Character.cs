@@ -21,6 +21,9 @@ namespace newgame.Characters
         //현제 활성화 되어있는 포션 효과
         private List<ActiveItemEffect> _activeEffects = new();
         private readonly StatusEffectTracker _statusEffects;
+        private readonly List<SkillTickLog> _currentTurnTickLogs = new();
+        private bool _hasProcessedTurnStart;
+        private bool _turnStartInfoShown;
 
         public StatusEffectTracker StatusEffects => _statusEffects;
 
@@ -70,17 +73,11 @@ namespace newgame.Characters
 
             Status targetStatus = target.MyStatus;
 
-            battleLogService.ClearBattleMessageForActor(this);
+            IReadOnlyList<SkillTickLog> tickLogs = ProcessTurnStart(target, showInfo: false);
 
-            List<SkillTickLog> tickLogs = _statusEffects.TickSkillTurns();
-
-            // 지속 피해로 사망자가 발생하면 즉시 처리 후 return
-            bool anyDeath = tickLogs.Any(log => log.TargetDefeated);
-            if (anyDeath)
+            if (tickLogs.Any(log => ReferenceEquals(log.Target, this) && log.TargetDefeated) || IsDead)
             {
-                battleLogService.ApplyTickLogs(tickLogs);
-                battleLogService.ShowBattleInfo(this, target);
-                StatusEffectTracker.ResolveTickDeaths(tickLogs);
+                ResetTurnStartState();
                 return battleLogService.SnapshotBattleLog();
             }
 
@@ -93,8 +90,6 @@ namespace newgame.Characters
             bool clearOpponent = battleLogService.IsPlayer(this);
             battleLogService.UpdateBattleMessage(this, message, clearOpponent);
 
-            battleLogService.ApplyTickLogs(tickLogs);
-
             battleLogService.ShowBattleInfo(this, target);
 
             if (defeated)
@@ -103,10 +98,10 @@ namespace newgame.Characters
                 target.Dead(this);
             }
 
-            StatusEffectTracker.ResolveTickDeaths(tickLogs);
-
             beforHP[0] = MyStatus.Hp;
             beforHP[1] = targetStatus.Hp;
+
+            ResetTurnStartState();
 
             return battleLogService.SnapshotBattleLog();
         }
@@ -129,18 +124,14 @@ namespace newgame.Characters
 
             Status targetStatus = targetCharacter.MyStatus;
 
-            battleLogService.ClearBattleMessageForActor(this);
+            IReadOnlyList<SkillTickLog> tickLogs = ProcessTurnStart(targetCharacter, showInfo: false);
 
-            List<SkillTickLog> tickLogs = _statusEffects.TickSkillTurns();
-
-            bool attackerDiedFromTick = tickLogs.Any(log => ReferenceEquals(log.Target, this) && log.TargetDefeated);
+            bool attackerDiedFromTick = tickLogs.Any(log => ReferenceEquals(log.Target, this) && log.TargetDefeated) || IsDead;
             bool preserveOpponentLog = tickLogs.Any(log => battleLogService.IsPlayer(log.Actor) != battleLogService.IsPlayer(this));
 
             if (attackerDiedFromTick)
             {
-                battleLogService.ApplyTickLogs(tickLogs);
-                battleLogService.ShowBattleInfo(this, targetCharacter);
-                StatusEffectTracker.ResolveTickDeaths(tickLogs);
+                ResetTurnStartState();
                 return battleLogService.SnapshotBattleLog();
             }
 
@@ -167,8 +158,6 @@ namespace newgame.Characters
             bool clearOpponent = battleLogService.IsPlayer(this) && !preserveOpponentLog;
             battleLogService.UpdateBattleMessage(this, message, clearOpponent);
 
-            battleLogService.ApplyTickLogs(tickLogs);
-
             battleLogService.ShowBattleInfo(this, targetCharacter);
 
             if (defeated)
@@ -177,7 +166,7 @@ namespace newgame.Characters
                 targetCharacter.Dead(this);
             }
 
-            StatusEffectTracker.ResolveTickDeaths(tickLogs);
+            ResetTurnStartState();
 
             return battleLogService.SnapshotBattleLog();
         }
@@ -362,6 +351,58 @@ namespace newgame.Characters
                     }
                 }
             }
+        }
+
+        protected IReadOnlyList<SkillTickLog> ProcessTurnStart(Character? explicitTarget, bool showInfo)
+        {
+            Character? resolvedTarget = explicitTarget ?? target;
+            if (resolvedTarget == null)
+            {
+                throw new InvalidOperationException("Battle target is not set.");
+            }
+
+            if (!_hasProcessedTurnStart)
+            {
+                battleLogService.ClearBattleMessageForActor(this);
+
+                _currentTurnTickLogs.Clear();
+                _currentTurnTickLogs.AddRange(_statusEffects.TickSkillTurns());
+                _hasProcessedTurnStart = true;
+
+                if (_currentTurnTickLogs.Count > 0)
+                {
+                    battleLogService.ApplyTickLogs(_currentTurnTickLogs);
+
+                    bool anyDeath = _currentTurnTickLogs.Any(log => log.TargetDefeated);
+
+                    if (showInfo || anyDeath)
+                    {
+                        battleLogService.ShowBattleInfo(this, resolvedTarget);
+                        _turnStartInfoShown = true;
+                    }
+
+                    StatusEffectTracker.ResolveTickDeaths(_currentTurnTickLogs);
+                }
+                else if (showInfo)
+                {
+                    battleLogService.ShowBattleInfo(this, resolvedTarget);
+                    _turnStartInfoShown = true;
+                }
+            }
+            else if (showInfo && !_turnStartInfoShown)
+            {
+                battleLogService.ShowBattleInfo(this, resolvedTarget);
+                _turnStartInfoShown = true;
+            }
+
+            return _currentTurnTickLogs;
+        }
+
+        protected void ResetTurnStartState()
+        {
+            _currentTurnTickLogs.Clear();
+            _hasProcessedTurnStart = false;
+            _turnStartInfoShown = false;
         }
 
         public int GetTotalBonus(ItemType effectType)

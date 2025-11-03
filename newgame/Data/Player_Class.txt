@@ -13,10 +13,21 @@ NAME : 검사
 DESCRIPTION : [검을 능숙하게 다루며 근접 전투에 특화된 클래스]
 ATK : 12
 HP : 8
-DEF : 0
+DEF : 3
 MP : 0
 CC : 0
 CD : 0
 SKILL : 가르기
 SKILL : 전투의 함성
+#
+NAME : 무투가
+DESCRIPTION : [맨손 전투에 능하며 강력한 일격을 자랑하는 클래스]
+ATK : 10
+HP : 7
+DEF : 3
+MP : 0
+CC : 50
+CD : 30
+SKILL : 카운터
+SKILL : 연타
 #

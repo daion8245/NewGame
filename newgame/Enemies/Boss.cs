@@ -129,7 +129,15 @@ namespace newgame.Enemies
             {
                 case "파이어볼":
                 case "소드 어택":
+                {
+                    StatusEffects.EnemyAddTickSkill(skill.name, skill.skillTurn);
+                    return true;
+                }
                 case "영혼 흡수":
+                {
+                    StatusEffects.EnemyAddTickSkill(skill.name, skill.skillTurn);
+                    return true;
+                }
                 case "물기":
                     {
                         StatusEffects.EnemyAddTickSkill(skill.name, skill.skillTurn);
