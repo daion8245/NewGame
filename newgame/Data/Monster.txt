@@ -1,7 +1,7 @@
 NAME : 슬라임
 LEVEL : 1
-hp : 20
-ATK : 2
+hp : 40
+ATK : 5
 DEF : 3
 EXP : 5
 COIN : 10
@@ -10,8 +10,8 @@ CRIDMG : 9999
 #
 NAME : 빅슬라임
 LEVEL : 2
-hp : 30
-ATK : 4
+hp : 50
+ATK : 7
 DEF : 4
 EXP : 5
 COIN : 10
@@ -20,8 +20,8 @@ CRIDMG : 9999
 #
 NAME : 스켈레톤
 LEVEL : 2
-hp : 30
-ATK : 4
+hp : 50
+ATK : 10
 DEF : 3
 EXP : 10
 COIN : 15
@@ -30,8 +30,8 @@ CRIDMG : 155
 #
 NAME : 스켈레톤 영혼
 LEVEL : 3
-hp : 50
-ATK : 7
+hp : 80
+ATK : 13
 DEF : 3
 EXP : 20
 COIN : 15
@@ -40,8 +40,8 @@ CRIDMG : 200
 #
 NAME : 스켈레톤 기사
 LEVEL : 4
-hp : 80
-ATK : 5
+hp : 100
+ATK : 12
 DEF : 25
 EXP : 10
 COIN : 15
@@ -50,8 +50,8 @@ CRIDMG : 100
 #
 NAME : 고블린
 LEVEL : 3
-hp : 50
-ATK : 7
+hp : 90
+ATK : 14
 DEF : 3
 EXP : 15
 COIN : 40
@@ -60,8 +60,8 @@ CRIDMG : 160
 #
 NAME : 갱 고블린
 LEVEL : 5
-hp : 60
-ATK : 9
+hp : 85
+ATK : 17
 DEF : 4
 EXP : 20
 COIN : 50
@@ -70,8 +70,8 @@ CRIDMG : 170
 #
 NAME : 좀비
 LEVEL : 4
-hp : 70
-ATK : 6
+hp : 100
+ATK : 20
 DEF : 5
 EXP : 20
 COIN : 30
@@ -80,8 +80,8 @@ CRIDMG : 150
 #
 NAME : 애기 좀비
 LEVEL : 5
-hp : 65
-ATK : 20
+hp : 97
+ATK : 24
 DEF : 4
 EXP : 25
 COIN : 45
@@ -90,8 +90,8 @@ CRIDMG : 200
 #
 NAME : 거미
 LEVEL : 6
-hp : 80
-ATK : 14
+hp : 120
+ATK : 25
 DEF : 10
 EXP : 35
 COIN : 60
@@ -100,8 +100,8 @@ CRIDMG : 170
 #
 NAME : 독 거미
 LEVEL : 7
-hp : 87
-ATK : 18
+hp : 113
+ATK : 27
 DEF : 8
 EXP : 40
 COIN : 60
@@ -111,7 +111,7 @@ CRIDMG : 170
 NAME : 유령
 LEVEL : 8
 hp : 10
-ATK : 8
+ATK : 10
 DEF : 888
 EXP : 88
 COIN : 8

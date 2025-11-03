@@ -165,7 +165,7 @@ namespace newgame.Locations.DungeonRooms
             {
                 Console.WriteLine();
                 UiHelper.TxtOut(["표지판을 박살냈다...","야생의 유령이 나타났다!"], SlowTxtLineTime: 1000);
-                MonsterBattle(6);
+                MonsterBattle(12);
             },
             t => Console.WriteLine("\n"+"표지판을 무시하고 지나갔다.")
         ));
@@ -276,7 +276,7 @@ namespace newgame.Locations.DungeonRooms
                     },
                     SlowTxtLineTime: 800
                 );
-                MonsterBattle(6);
+                MonsterBattle(12);
             }
         },
 
