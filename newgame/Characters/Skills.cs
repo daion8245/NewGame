@@ -66,6 +66,18 @@ namespace newgame.Characters
             Console.WriteLine("해당 번호의 스킬이 존재하지 않습니다.");
         }
 
+        public SkillType ? FindSkill(string name)
+        {
+            foreach(SkillType skill in canUseSkill)
+            {
+                if(skill.name == name)
+                {
+                    return skill;
+                }
+            }
+            return null;
+        }
+
         /// <summary>
         /// 플레이어가 현제 사용 가능한 스킬 목록을 보여주는 함수
         /// </summary>

@@ -7,7 +7,7 @@ namespace newgame.Characters
 {
     internal class Player : Character
     {
-        private readonly Skills skillSystem;
+        public readonly Skills skillSystem;
         private readonly PlayerInitializer initializer;
         private CharacterClassType? currentClass;
 
@@ -304,6 +304,22 @@ namespace newgame.Characters
         #region 스킬 리스트 표시
         public SkillType ShowSkillList() => skillSystem.ShowCanUseSkill();
         #endregion
+
+        public bool FindSkill(string name, out SkillType outskill)
+        {
+            outskill = new SkillType();
+            SkillType? skill = skillSystem.FindSkill(name);
+            if (skill == null)
+            {
+                outskill = default;
+                return false;
+            }
+            else
+            {
+                outskill = (SkillType)skill;
+                return true;
+            }
+        }
 
         //스킬 클래스에서 스킬을 가져와 사용하는 함수
 

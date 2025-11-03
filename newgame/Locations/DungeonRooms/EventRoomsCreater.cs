@@ -352,8 +352,15 @@ namespace newgame.Locations.DungeonRooms
             
             if (win)
             {
-                Random rand = new Random();
-                //스킬 보상 로직
+                if(!Player.FindSkill("강타", out SkillType skill))
+                {
+                    Player.skillSystem.AddCanUseSkill("강타");
+                }
+                else
+                {
+                    skill.skillDamage += 2;
+                    skill.skillMana += 1;
+                }
                 
                 UiHelper.WaitForInput();
             }
