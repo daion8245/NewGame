@@ -73,6 +73,8 @@ namespace newgame.Characters
             battleLogService.ClearBattleMessageForActor(this);
 
             List<SkillTickLog> tickLogs = _statusEffects.TickSkillTurns();
+            bool preserveOpponentLog = tickLogs.Any(log =>
+                battleLogService.IsPlayer(log.Actor) != battleLogService.IsPlayer(this));
 
             // 지속 피해로 사망자가 발생하면 즉시 처리 후 return
             bool anyDeath = tickLogs.Any(log => log.TargetDefeated);
@@ -90,7 +92,7 @@ namespace newgame.Characters
             bool defeated = targetStatus.Hp <= 0;
             string message = battleLogService.BuildActionMessage(this, target, damage, null, defeated, isCritical);
 
-            bool clearOpponent = battleLogService.IsPlayer(this);
+            bool clearOpponent = battleLogService.IsPlayer(this) && !preserveOpponentLog;
             battleLogService.UpdateBattleMessage(this, message, clearOpponent);
 
             battleLogService.ApplyTickLogs(tickLogs);
