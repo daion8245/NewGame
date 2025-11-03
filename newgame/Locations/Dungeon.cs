@@ -364,6 +364,7 @@ namespace newgame.Locations
             { 1, new List<int> { 3, 4, 5 } }, // 2층 몬스터 ID
             { 2, new List<int> { 6, 7 } },    // 3층 몬스터 ID
             { 3, new List<int> { 8, 9 } },    // 4층 몬스터 ID
+            { 4, new List<int> { 10, 11 } },  // 5층 몬스터 ID
             // 필요시 추가 층수 및 몬스터 ID
         };
 
