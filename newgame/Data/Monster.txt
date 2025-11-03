@@ -4,7 +4,7 @@ hp : 40
 ATK : 5
 DEF : 3
 EXP : 5
-COIN : 10
+COIN : 3
 CRICHANCE : 1
 CRIDMG : 9999
 #
@@ -14,7 +14,7 @@ hp : 50
 ATK : 7
 DEF : 4
 EXP : 5
-COIN : 10
+COIN : 5
 CRICHANCE : 2
 CRIDMG : 9999
 #
@@ -24,7 +24,7 @@ hp : 50
 ATK : 10
 DEF : 3
 EXP : 10
-COIN : 15
+COIN : 8
 CRICHANCE : 16
 CRIDMG : 155
 #
@@ -34,7 +34,7 @@ hp : 80
 ATK : 13
 DEF : 3
 EXP : 20
-COIN : 15
+COIN : 9
 CRICHANCE : 15
 CRIDMG : 200
 #
@@ -44,7 +44,7 @@ hp : 100
 ATK : 12
 DEF : 25
 EXP : 10
-COIN : 15
+COIN : 10
 CRICHANCE : 10
 CRIDMG : 100
 #
@@ -55,7 +55,7 @@ ATK : 14
 DEF : 3
 EXP : 15
 COIN : 40
-CRICHANCE : 15
+CRICHANCE : 9
 CRIDMG : 160
 #
 NAME : 갱 고블린
@@ -64,7 +64,7 @@ hp : 85
 ATK : 17
 DEF : 4
 EXP : 20
-COIN : 50
+COIN : 12
 CRICHANCE : 15
 CRIDMG : 170
 #
@@ -75,7 +75,7 @@ ATK : 20
 DEF : 5
 EXP : 20
 COIN : 30
-CRICHANCE : 17
+CRICHANCE : 10
 CRIDMG : 150
 #
 NAME : 애기 좀비
@@ -84,7 +84,7 @@ hp : 97
 ATK : 24
 DEF : 4
 EXP : 25
-COIN : 45
+COIN : 12
 CRICHANCE : 20
 CRIDMG : 200
 #
@@ -94,7 +94,7 @@ hp : 120
 ATK : 25
 DEF : 10
 EXP : 35
-COIN : 60
+COIN : 15
 CRICHANCE : 14
 CRIDMG : 170
 #
@@ -104,7 +104,7 @@ hp : 113
 ATK : 27
 DEF : 8
 EXP : 40
-COIN : 60
+COIN : 20
 CRICHANCE : 14
 CRIDMG : 170
 #
@@ -114,7 +114,7 @@ hp : 10
 ATK : 10
 DEF : 888
 EXP : 88
-COIN : 8
+COIN : 5
 CRICHANCE : 8
 CRIDMG : 88
 #
