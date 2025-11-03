@@ -165,7 +165,7 @@ namespace newgame.Locations.DungeonRooms
             {
                 Console.WriteLine();
                 UiHelper.TxtOut(["표지판을 박살냈다...","야생의 유령이 나타났다!"], SlowTxtLineTime: 1000);
-                MonsterBattle(12);
+                MonsterBattle(GameManager.Instance.FindAMonsterName("유령"));
             },
             t => Console.WriteLine("\n"+"표지판을 무시하고 지나갔다.")
         ));
@@ -183,7 +183,7 @@ namespace newgame.Locations.DungeonRooms
                 UiHelper.TxtOut(["야생의 슬라임이 많이 나타났다!"], SlowTxtLineTime: 1000);
                 for (int i = 0; i < 3; i++)
                 {
-                    MonsterBattle(1);
+                    MonsterBattle(GameManager.Instance.FindAMonsterName("슬라임"));
                 }
                 Random rand = new Random();
                 int bonus = rand.Next(10, 150);
@@ -203,7 +203,7 @@ namespace newgame.Locations.DungeonRooms
                     UiHelper.TxtOut(["도망치는데 실패했다...", "야생의 슬라임이 매우 많이 나타났다!"], SlowTxtLineTime: 1000);
                     for (int i = 0; i < 5; i++)
                     {
-                        MonsterBattle(1);
+                        MonsterBattle(GameManager.Instance.FindAMonsterName("슬라임"));
                     }
 
                     Console.WriteLine("슬라임을 모두 물리쳤다.");
@@ -276,7 +276,7 @@ namespace newgame.Locations.DungeonRooms
                     },
                     SlowTxtLineTime: 800
                 );
-                MonsterBattle(12);
+                MonsterBattle(GameManager.Instance.FindAMonsterName("유령"));
             }
         },
 
@@ -308,7 +308,7 @@ namespace newgame.Locations.DungeonRooms
                     "발판을 잘못 밟았다!",
                     "거울이 흔들리며 어둠이 스며든다... 유령이 나타났다!"
                 }, SlowTxtLineTime: 800);
-                MonsterBattle(6);
+                MonsterBattle(GameManager.Instance.FindAMonsterName("유령"));
             }
         },
 
@@ -321,7 +321,7 @@ namespace newgame.Locations.DungeonRooms
                 "깨진 파편 속에서 한기가 피어오른다... 유령이 나타났다!"
             }, SlowTxtLineTime: 800);
 
-            MonsterBattle(6);
+            MonsterBattle(GameManager.Instance.FindAMonsterName("유령"));
 
             Random rand = new Random();
             int scrap = rand.Next(40, 81);
