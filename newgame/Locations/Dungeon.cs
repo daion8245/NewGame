@@ -207,11 +207,12 @@ namespace newgame.Locations
                     }
                 case (RoomType.Boss):
                     {
-                        BossCreate(); // 보스 몬스터 생성
-                        
-                        if (GameManager.Instance.monster?.IsDead ?? false)
+                        bool bossDefeated = BossCreate(); // 보스 몬스터 생성 및 전투 시작
+
+                        if (bossDefeated)
                         {
                             RoomDelete(true); // 승리 시 방 삭제
+                            GameManager.Instance.UpdateDungeonMap(floor, map);
                         }
                         break;
                     }
@@ -399,13 +400,16 @@ namespace newgame.Locations
 
         #region 보스 소환/배틀
 
-        void BossCreate()
+        bool BossCreate()
         {
             Boss boss = new Boss();
             GameManager.Instance.monster = boss;
             boss.StartBoss(floor);
             Battle battle = new Battle();
-            battle.Start();
+            bool playerWon = battle.Start();
+            bool bossDefeated = playerWon || (GameManager.Instance.monster?.IsDead ?? false);
+
+            return bossDefeated;
         }
         #endregion
 
