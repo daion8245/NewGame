@@ -318,7 +318,7 @@ namespace newgame.Items
             }
         }
 
-        public bool ShowItems(out List<string> items)
+        public bool ShowItems(out List<string> items, bool battle = true)
         {
             items = new List<string>();
             
