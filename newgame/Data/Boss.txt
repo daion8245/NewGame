@@ -38,3 +38,13 @@ COIN : 175
 SKILL : 물기
 SKILL : 난폭 난타
 #
+NAME : 거미 킹
+LEVEL : 14
+hp : 225
+ATK : 25
+DEF :13
+EXP : 200
+COIN : 200
+SKILL : 그물 폭발
+SKILL : 그림자 송곳
+#
