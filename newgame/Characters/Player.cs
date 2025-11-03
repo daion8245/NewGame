@@ -123,7 +123,11 @@ namespace newgame.Characters
 
         #region 패배 후 복구
         public void RespawnAtTavern()
+        
         {
+            Dungeon.PlayerPos.X = 1;
+            Dungeon.PlayerPos.Y = 1;
+            
             MyStatus.Hp = Math.Max(1, MyStatus.MaxHp / 2);
             MyStatus.Mp = MyStatus.MaxMp;
             IsDead = false;

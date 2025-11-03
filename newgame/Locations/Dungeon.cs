@@ -51,9 +51,9 @@ namespace newgame.Locations
         }
 
         // 플레이어 위치
-        static Point player = new Point(1,1);
+        public static Point PlayerPos = new Point(1,1);
 
-        void SetDungeon()
+        private void SetDungeon()
         {
             // 게임 시작
             while (true)
@@ -85,7 +85,7 @@ namespace newgame.Locations
 
                 GameManager.Instance.UpdateDungeonMap(floor, map);
                 // 이동 처리
-                int newX = player.X, newY = player.Y;
+                int newX = PlayerPos.X, newY = PlayerPos.Y;
 
                 if (key.Key == ConsoleKey.UpArrow) newY--;      // 위로
                 else if (key.Key == ConsoleKey.DownArrow) newY++; // 아래로
@@ -95,11 +95,11 @@ namespace newgame.Locations
                 // 이동 가능한지 확인 (맵 안에 있고 벽이 아닌 경우)
                 if (newX >= 0 && newX < width && newY >= 0 && newY < height && map[newY][newX] != 0)
                 {
-                    player.X = newX;
-                    player.Y = newY;
+                    PlayerPos.X = newX;
+                    PlayerPos.Y = newY;
                 }
 
-                RoomType currentRoom = (RoomType)map[player.Y][player.X];
+                RoomType currentRoom = (RoomType)map[PlayerPos.Y][PlayerPos.X];
                 RoomEvent(currentRoom);
 
                 if (HandlePlayerDefeatIfNeeded(currentRoom))
@@ -131,7 +131,7 @@ namespace newgame.Locations
         #region 방 이벤트 처리
         void RoomEvent(RoomType playerRoom)
         {
-            RoomType room = (RoomType)map[player.Y][player.X];
+            RoomType room = (RoomType)map[PlayerPos.Y][PlayerPos.X];
             Console.SetCursorPosition(0, map.Count + 1);
             switch (room)
             {
@@ -201,13 +201,18 @@ namespace newgame.Locations
                         GameManager.Instance.UpdateDungeonMap(currentFloor, map);
                         floor++; // 층수 증가
                         LoadMapData(floor); // 다음 층 맵 데이터 로드
-                        player.X = 1; // 플레이어 위치 초기화
-                        player.Y = 1; // 플레이어 위치 초기화
+                        PlayerPos.X = 1; // 플레이어 위치 초기화
+                        PlayerPos.Y = 1; // 플레이어 위치 초기화
                         break;
                     }
                 case (RoomType.Boss):
                     {
                         BossCreate(); // 보스 몬스터 생성
+                        
+                        if (GameManager.Instance.monster?.IsDead ?? false)
+                        {
+                            RoomDelete(true); // 승리 시 방 삭제
+                        }
                         break;
                     }
                 #region 마을로 돌아가기
@@ -221,14 +226,14 @@ namespace newgame.Locations
                         {
                             UiHelper.WaitForInput("마을로 돌아갑니다. [ENTER를 눌러 계속]");
                             GameManager.Instance.UpdateDungeonMap(floor, map);
-                            player.X = 1; // 플레이어 위치 초기화
-                            player.Y = 1; // 플레이어 위치 초기화
+                            PlayerPos.X = 1; // 플레이어 위치 초기화
+                            PlayerPos.Y = 1; // 플레이어 위치 초기화
                             GameManager.Instance.ReturnToLobby();
                         }
                         else
                         {
                             UiHelper.WaitForInput("던전 탐험을 계속합니다. [ENTER를 눌러 계속]");
-                            player.Offset(1,1);
+                            PlayerPos.Offset(1,1);
                         }
                         break;
                     }
@@ -272,15 +277,15 @@ namespace newgame.Locations
 
             Console.WriteLine();
             Console.WriteLine("현제 층: " + floor);
-            Console.WriteLine("현재 방: " + GetRoomName((RoomType)map[player.Y][player.X]));
+            Console.WriteLine("현재 방: " + GetRoomName((RoomType)map[PlayerPos.Y][PlayerPos.X]));
             Console.WriteLine();
             Console.WriteLine("[■ = 벽] [ = 빈 방] [▲ 사다리] [M = 몬스터] [T = 보물] [S = 상점] [E = 이벤트] [B = 보스] [X = 출구]");
             Console.WriteLine();
             // 인접 방 경계 체크
-            Console.WriteLine($"\t↑{GetRoomName(GetRoomTypeSafe(player.Y - 1, player.X))}");
-            Console.WriteLine($"←{GetRoomName(GetRoomTypeSafe(player.Y, player.X - 1))}" +
-                              $"\t\t→{GetRoomName(GetRoomTypeSafe(player.Y, player.X + 1))}");
-            Console.WriteLine($"\t↓{GetRoomName(GetRoomTypeSafe(player.Y + 1, player.X))}");
+            Console.WriteLine($"\t↑{GetRoomName(GetRoomTypeSafe(PlayerPos.Y - 1, PlayerPos.X))}");
+            Console.WriteLine($"←{GetRoomName(GetRoomTypeSafe(PlayerPos.Y, PlayerPos.X - 1))}" +
+                              $"\t\t→{GetRoomName(GetRoomTypeSafe(PlayerPos.Y, PlayerPos.X + 1))}");
+            Console.WriteLine($"\t↓{GetRoomName(GetRoomTypeSafe(PlayerPos.Y + 1, PlayerPos.X))}");
         }
 
         RoomType GetRoomTypeSafe(int y, int x)
@@ -307,8 +312,8 @@ namespace newgame.Locations
         
         void DrawPlayer()
         {
-            int left = player.X;
-            int top = player.Y;
+            int left = PlayerPos.X;
+            int top = PlayerPos.Y;
             Console.SetCursorPosition(left, top);
             Console.Write('@');
         }
@@ -323,7 +328,7 @@ namespace newgame.Locations
 
             if (roomBeforeDefeat == RoomType.Monster || roomBeforeDefeat == RoomType.Boss)
             {
-                map[player.Y][player.X] = (int)roomBeforeDefeat;
+                map[PlayerPos.Y][PlayerPos.X] = (int)roomBeforeDefeat;
             }
 
             GameManager.Instance.UpdateDungeonMap(floor, map);
@@ -333,20 +338,20 @@ namespace newgame.Locations
             activePlayer.IsDead = false;
             GameManager.Instance.monster = null;
 
-            player.X = 1; // 플레이어 위치 초기화
-            player.Y = 1; // 플레이어 위치 초기화
+            PlayerPos.X = 1; // 플레이어 위치 초기화
+            PlayerPos.Y = 1; // 플레이어 위치 초기화
 
             return true;
         }
 
         void RoomDelete(bool force = false)
         {
-            if (player.Y >= 0 && player.Y < map.Count && player.X >= 0 && player.X < map[player.Y].Count)
+            if (PlayerPos.Y >= 0 && PlayerPos.Y < map.Count && PlayerPos.X >= 0 && PlayerPos.X < map[PlayerPos.Y].Count)
             {
-                RoomType current = (RoomType)map[player.Y][player.X];
+                RoomType current = (RoomType)map[PlayerPos.Y][PlayerPos.X];
                 if (force || (current != RoomType.Empty && current != RoomType.Exit && current != RoomType.Monster && current != RoomType.Boss))
                 {
-                    map[player.Y][player.X] = (int)RoomType.Empty;
+                    map[PlayerPos.Y][PlayerPos.X] = (int)RoomType.Empty;
                 }
             }
         }
