@@ -1,5 +1,5 @@
 NAME : 슬라임 킹
-LEVEL : ???
+LEVEL : 5
 hp : 100
 ATK : 10
 DEF : 3
@@ -9,7 +9,7 @@ SKILL : 점액 폭탄
 SKILL : 깔아뭉개기
 #
 NAME : 스켈레톤 킹
-LEVEL : ???
+LEVEL : 10
 hp : 150
 ATK : 20
 DEF :5
@@ -19,7 +19,7 @@ SKILL : 소드 어택
 SKILL : 영혼 흡수
 #
 NAME : 고블린 킹
-LEVEL : ???
+LEVEL : 15
 hp : 200
 ATK : 30
 DEF :7
@@ -29,7 +29,7 @@ SKILL : 마구치기
 SKILL : 고블린 집결
 #
 NAME : 좀비 킹
-LEVEL : ???
+LEVEL : 20
 hp : 250
 ATK : 30
 DEF :10
@@ -39,7 +39,7 @@ SKILL : 물기
 SKILL : 난폭 난타
 #
 NAME : 거미 킹
-LEVEL : ???
+LEVEL : 25
 hp : 300
 ATK : 40
 DEF :13
@@ -49,7 +49,7 @@ SKILL : 그물 폭발
 SKILL : 그림자 송곳
 #
 NAME : 고대의 여신
-LEVEL : ???
+LEVEL : 30
 hp : 350
 ATK : 50
 DEF :20
