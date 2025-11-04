@@ -194,7 +194,7 @@ namespace newgame.Locations.DungeonRooms
                     MonsterBattle(GameManager.Instance.FindAMonsterName("슬라임"));
                 }
                 Random rand = new Random();
-                int bonus = rand.Next(10, 150);
+                int bonus = rand.Next(1, 100);
                 UiHelper.TxtOut(["슬라임을 모두 물리쳤다!", "슬라임 방 뒤쪽에 보물 상자가 있다!","\n",$"보물 상자에서 {bonus}만큼의 골드를 획득했다!"]);
                 Player.MyStatus.gold += bonus;
             },
@@ -363,11 +363,13 @@ namespace newgame.Locations.DungeonRooms
                 if(!Player.FindSkill("강타", out SkillType skill))
                 {
                     Player.skillSystem.AddCanUseSkill("강타");
+                    UiHelper.TxtOut(["강타라는 스킬을 얻었습니다."]);
                 }
                 else
                 {
                     skill.skillDamage += 5;
                     skill.skillMana += 3;
+                    UiHelper.TxtOut(["강타 스킬이 강화되었습니다.(스킬데미지 : +5, 스킬마나 : +3)"]);
                 }
                 
                 UiHelper.WaitForInput();
