@@ -95,6 +95,9 @@ namespace newgame.Locations.DungeonRooms
                 case EventRoomsId.MirrorPuzzle:
                     _ = new EventRooms("신비한 거울", "눈앞에 거울이 수없이 펼쳐진 방이 보인다..", MirrorPuzzle);
                     break;
+                case EventRoomsId.HardBossTrial:
+                    _ = new EventRooms("보스의 시련", "눈 앞에 강한 보스가 보인다.",HardBossTrial);
+                    break;
             }
         }
 
