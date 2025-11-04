@@ -16,10 +16,10 @@ namespace newgame.Locations.DungeonRooms
 
     internal class EventRoomsCreater
     {
-        private Player Player => GameManager.Instance.RequirePlayer();
+        protected Player Player => GameManager.Instance.RequirePlayer();
         #region 던전 이벤트 방 유틸
 
-        void DungeonEventRoomEventTrigger(Func<int> dungeonEvent, Action<Type>[] callbacks)
+        protected void DungeonEventRoomEventTrigger(Func<int> dungeonEvent, Action<Type>[] callbacks)
         {
             int result = dungeonEvent();
 
@@ -30,7 +30,7 @@ namespace newgame.Locations.DungeonRooms
         }
 
         // 간편한 콜백 배열 생성을 위한 헬퍼 메서드
-        Action<Type>[] CreateCallbacks(params Action<Type>[] callbacks) => callbacks;
+        protected Action<Type>[] CreateCallbacks(params Action<Type>[] callbacks) => callbacks;
 
         #region 예제용 구문
 
@@ -60,9 +60,9 @@ namespace newgame.Locations.DungeonRooms
         #region 던전 이벤트 방 생성
 
         // 이미 사용된 이벤트 방 ID를 추적하는 집합
-        private static HashSet<int> _usedEventRoomIds = new HashSet<int>();
+        protected static HashSet<int> _usedEventRoomIds = new HashSet<int>();
 
-        public void CreateDungeonEventRoom()
+        public virtual void CreateDungeonEventRoom()
         {
             int randomRoomSelect;
             Random rand = new Random();
@@ -83,8 +83,13 @@ namespace newgame.Locations.DungeonRooms
             
             // 선택된 ID에 따라 이벤트 방 생성
             EventRoomsId selectedEventRoom = (EventRoomsId)randomRoomSelect;
-
-            switch (selectedEventRoom)
+            
+            SelectedEventRoom(selectedEventRoom);
+        }
+        
+        public void SelectedEventRoom(EventRoomsId eventRoomId)
+        {
+            switch (eventRoomId)
             {
                 case EventRoomsId.OldNotice:
                     _ = new EventRooms("낡은 표지판", "저 멀리 무언가가 깜빡인다.", OldNotice);
@@ -104,7 +109,7 @@ namespace newgame.Locations.DungeonRooms
         #endregion
 
         #region 몬스터와 배틀
-        private void MonsterBattle(int monsterId)
+        protected void MonsterBattle(int monsterId)
         {
             Monster monster = new Monster();
             GameManager.Instance.monster = monster;
