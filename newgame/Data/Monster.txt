@@ -138,7 +138,7 @@ COIN : 100
 CRICHANCE : 10
 CRIDMG : 999
 #
-NAME : 보물상자 몬스터
+NAME : 미믹
 LEVEL : 20
 hp : 300
 ATK : 10
