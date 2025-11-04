@@ -189,7 +189,7 @@ namespace newgame.Locations.DungeonRooms
                     MonsterBattle(GameManager.Instance.FindAMonsterName("슬라임"));
                 }
                 Random rand = new Random();
-                int bonus = rand.Next(10, 150);
+                int bonus = rand.Next(1, 100);
                 UiHelper.TxtOut(["슬라임을 모두 물리쳤다!", "슬라임 방 뒤쪽에 보물 상자가 있다!","\n",$"보물 상자에서 {bonus}만큼의 골드를 획득했다!"]);
                 Player.MyStatus.gold += bonus;
             },
