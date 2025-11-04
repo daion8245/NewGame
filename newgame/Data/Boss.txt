@@ -63,7 +63,7 @@ LEVEL : 100
 hp : 1000
 ATK : 500
 DEF :50
-EXP : 99999
+EXP : 1000
 COIN : 1000
 SKILL : 수호신의 어설픈 한방
 SKILL : 수호신의 어설픈 세상 쪼개기
