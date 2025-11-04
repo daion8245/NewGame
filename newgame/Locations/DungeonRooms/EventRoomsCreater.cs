@@ -361,8 +361,8 @@ namespace newgame.Locations.DungeonRooms
                 }
                 else
                 {
-                    skill.skillDamage += 2;
-                    skill.skillMana += 1;
+                    skill.skillDamage += 5;
+                    skill.skillMana += 3;
                 }
                 
                 UiHelper.WaitForInput();
