@@ -437,5 +437,11 @@ namespace newgame.Locations
             shop.SetExitAction(null);
         }
         #endregion
+
+        #region 보물 방
+
+        
+
+        #endregion
     }
 }
