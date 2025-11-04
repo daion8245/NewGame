@@ -8,6 +8,7 @@ CC : 0
 CD : 0
 SKILL : 돌 던지기
 SKILL : 강하게 치기
+SKILL : 운영자의 한방
 #
 NAME : 검사
 DESCRIPTION : [검을 능숙하게 다루며 근접 전투에 특화된 클래스]
