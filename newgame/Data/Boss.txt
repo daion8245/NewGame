@@ -58,3 +58,13 @@ COIN : 225
 SKILL : 여신의 분노
 SKILL : 할퀴기
 #
+NAME : 수호신의 오른팔
+LEVEL : 100
+hp : 1000
+ATK : 500
+DEF :50
+EXP : 99999
+COIN : 1000
+SKILL : 수호신의 어설픈 한방
+SKILL : 수호신의 어설픈 세상 쪼개기
+#
