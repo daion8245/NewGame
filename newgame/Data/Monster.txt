@@ -128,7 +128,7 @@ COIN : 25
 CRICHANCE : 20
 CRIDMG : 200
 #
-NAME : 수호신의 아주작은 생명체
+NAME : 수호신의 아주작은 정체불가의 생명체
 LEVEL : 35
 hp : 500
 ATK : 100
