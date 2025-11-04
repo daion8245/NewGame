@@ -110,7 +110,7 @@ CRIDMG : 170
 #
 NAME : 유령
 LEVEL : 8
-hp : 10
+hp : 20
 ATK : 10
 DEF : 888
 EXP : 88
