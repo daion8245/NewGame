@@ -358,11 +358,13 @@ namespace newgame.Locations.DungeonRooms
                 if(!Player.FindSkill("강타", out SkillType skill))
                 {
                     Player.skillSystem.AddCanUseSkill("강타");
+                    UiHelper.TxtOut(["강타라는 스킬을 얻었습니다."]);
                 }
                 else
                 {
                     skill.skillDamage += 5;
                     skill.skillMana += 3;
+                    UiHelper.TxtOut(["강타 스킬이 강화되었습니다.(스킬데미지 : +5, 스킬마나 : +3)"]);
                 }
                 
                 UiHelper.WaitForInput();
