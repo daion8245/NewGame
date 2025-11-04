@@ -20,15 +20,15 @@ namespace newgame.Locations
 
         enum RoomType
         {
-            Wall, //0 벽
-            Empty, //1 없음
-            Ladder, //2 사다리(다음 층 가는거)
-            Monster, //3 몬스터
-            Treasure, //4 보물방(미구현)
-            Shop, //5 상점
-            Event, //6 이벤트방
-            Boss, //7 보스
-            Exit //8 나가는곳 (마을로 가기)
+            Wall,      //0 벽
+            Empty,     //1 없음
+            Ladder,    //2 사다리(다음 층 가는거)
+            Monster,   //3 몬스터
+            Treasure,  //4 보물방(미구현)
+            Shop,      //5 상점
+            Event,     //6 이벤트방
+            Boss,      //7 보스
+            Exit       //8 나가는곳 (마을로 가기)
         }
 
         public static int floor = 1; // 현재 층수
@@ -87,9 +87,9 @@ namespace newgame.Locations
                 // 이동 처리
                 int newX = PlayerPos.X, newY = PlayerPos.Y;
 
-                if (key.Key == ConsoleKey.UpArrow) newY--;      // 위로
-                else if (key.Key == ConsoleKey.DownArrow) newY++; // 아래로
-                else if (key.Key == ConsoleKey.LeftArrow) newX--; // 왼쪽으로
+                if (key.Key == ConsoleKey.UpArrow) newY--;         // 위로
+                else if (key.Key == ConsoleKey.DownArrow) newY++;  // 아래로
+                else if (key.Key == ConsoleKey.LeftArrow) newX--;  // 왼쪽으로
                 else if (key.Key == ConsoleKey.RightArrow) newX++; // 오른쪽으로
 
                 // 이동 가능한지 확인 (맵 안에 있고 벽이 아닌 경우)
