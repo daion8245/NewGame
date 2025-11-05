@@ -19,18 +19,29 @@ namespace newgame.Characters
         public string Name = "";
         public int level;
         [JsonProperty]
-        int atk;
+        ulong atk;
         [JsonIgnore]
-        public int ATK
+        public ulong ATK
         {
             get
             {
-                int equipAtk = 0;
+                ulong equipAtk = 0;
                 if (charType == CharType.PLAYER)
                 {
-                    equipAtk = GetEquippedStatTotal().Atk;
+                    int rawAtk = GetEquippedStatTotal().Atk;
+                    if (rawAtk > 0)
+                    {
+                        equipAtk = (ulong)rawAtk;
+                    }
                 }
-                return (int)((atk + equipAtk) * clatk);
+                double scaled = (atk + equipAtk) * clatk;
+                if (scaled <= 0)
+                {
+                    return 0;
+                }
+
+                double capped = Math.Min(scaled, ulong.MaxValue);
+                return (ulong)capped;
             }
             set => atk = value; // 기본 능력치만 대입
         }
@@ -51,30 +62,43 @@ namespace newgame.Characters
             set => def = value;
         }
 
-        private int _hp;
+        private ulong _hp;
 
-        public int Hp
+        public ulong Hp
         {
             get => _hp;
             set
             {
-                _hp = (value < 0) ? 0 : value; // set은 return 금지, value를 필드에 대입
+                _hp = value;
             }
         }
 
-        private int maxHp;
+        private ulong maxHp;
 
-        public int MaxHp
+        public ulong MaxHp
         {
             get
             {
-                int bonusHp = 0;
+                long bonusHp = 0;
                 if (charType == CharType.PLAYER)
                 {
                     bonusHp = GetEquippedStatTotal().Hp;
                 }
 
-                return (int)((maxHp + bonusHp) * clhp);
+                long baseValue = (long)maxHp + bonusHp;
+                if (baseValue < 0)
+                {
+                    baseValue = 0;
+                }
+
+                double scaled = baseValue * clhp;
+                if (scaled <= 0)
+                {
+                    return 0;
+                }
+
+                double capped = Math.Min(scaled, ulong.MaxValue);
+                return (ulong)capped;
             }
             set => maxHp = value;
         }
@@ -240,9 +264,9 @@ namespace newgame.Characters
             {
                 // 증가 전 값(효과값) 저장
                 int prevLevel = level;
-                int prevMaxHp = maxHp;
+                ulong prevMaxHp = maxHp;
                 int prevMaxMp = maxMp;
-                int prevATK = ATK; // 장비 포함
+                ulong prevATK = ATK; // 장비 포함
                 int prevDEF = DEF; // 장비 포함
                 int prevCritChance = CriticalChance;
                 int prevCritDamage = CriticalDamage;
@@ -252,7 +276,7 @@ namespace newgame.Characters
                 level++;
 
                 // 체력/마나 최대치 상승 및 전부 회복
-                maxHp += 10;
+                maxHp += 10UL;
                 _hp = maxHp;
 
                 maxMp += 5;
@@ -262,7 +286,7 @@ namespace newgame.Characters
                 nextEXP += 10;
 
                 // 기본 능력치만 상승(프로퍼티 대신 필드 사용)
-                atk += 3;
+                atk += 3UL;
                 def += 2;
                 CriticalChance += 2;
                 CriticalDamage += 5;

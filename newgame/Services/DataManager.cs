@@ -284,11 +284,11 @@ namespace newgame.Services
                             monStat.level = int.Parse(value);
                             break;
                         case "HP":
-                            monStat.Hp = int.Parse(value);
+                            monStat.Hp = ulong.Parse(value);
                             monStat.MaxHp = monStat.Hp;
                             break;
                         case "ATK":
-                            monStat.ATK = int.Parse(value);
+                            monStat.ATK = ulong.Parse(value);
                             break;
                         case "DEF":
                             monStat.DEF = int.Parse(value);
@@ -378,11 +378,11 @@ namespace newgame.Services
                             BossStat.level = int.Parse(value);
                             break;
                         case "HP":
-                            BossStat.Hp = int.Parse(value);
+                            BossStat.Hp = ulong.Parse(value);
                             BossStat.MaxHp = BossStat.Hp;
                             break;
                         case "ATK":
-                            BossStat.ATK = int.Parse(value);
+                            BossStat.ATK = ulong.Parse(value);
                             break;
                         case "DEF":
                             BossStat.DEF = int.Parse(value);

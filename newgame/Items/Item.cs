@@ -77,12 +77,23 @@ namespace newgame.Items
             {
                 case ItemType.F_POTION_LOW_HP or ItemType.F_POTION_MIDDLE_HP or ItemType.F_POTION_HIGH_HP:
                     {
-                        if(PlayerStatus.MaxHp < (PlayerStatus.Hp + ItemStatus))
+                        ulong healAmount = ItemStatus <= 0 ? 0UL : (ulong)ItemStatus;
+                        if (healAmount == 0)
                         {
-                            PlayerStatus.Hp = PlayerStatus.MaxHp;
                             break;
                         }
-                        PlayerStatus.Hp += ItemStatus;
+
+                        ulong maxHp = PlayerStatus.MaxHp;
+                        ulong currentHp = PlayerStatus.Hp;
+
+                        if (currentHp >= maxHp)
+                        {
+                            PlayerStatus.Hp = maxHp;
+                            break;
+                        }
+
+                        ulong healed = currentHp > maxHp - healAmount ? maxHp : currentHp + healAmount;
+                        PlayerStatus.Hp = healed;
                         break;
                     }
             }

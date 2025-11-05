@@ -30,11 +30,11 @@ namespace newgame.Enemies
             bossStatus.Name = displayName;
 
             MyStatus = bossStatus;
-            if (MyStatus.MaxHp <= 0)
+            if (MyStatus.MaxHp == 0)
             {
-                MyStatus.MaxHp = Math.Max(MyStatus.Hp, 1);
+                MyStatus.MaxHp = Math.Max(MyStatus.Hp, 1UL);
             }
-            if (MyStatus.Hp <= 0)
+            if (MyStatus.Hp == 0)
             {
                 MyStatus.Hp = MyStatus.MaxHp;
             }
@@ -42,9 +42,9 @@ namespace newgame.Enemies
             {
                 MyStatus.level = 1;
             }
-            if (MyStatus.ATK <= 0)
+            if (MyStatus.ATK == 0)
             {
-                MyStatus.ATK = 1;
+                MyStatus.ATK = 1UL;
             }
             if (MyStatus.DEF < 0)
             {

@@ -32,7 +32,7 @@ namespace newgame.Characters
         //플레이어가 전투에서 도망쳤는지
         public bool IsbattleRun = false;
         //이전 HP 값을 저장하는 배열 (플레이어[0], 적[1])
-        protected int[] beforHP = new int[2];
+        protected ulong[] beforHP = new ulong[2];
 
         protected readonly BattleLogService battleLogService;
 
@@ -84,7 +84,7 @@ namespace newgame.Characters
             // 사망자가 없을 때만 공격 데미지 계산
             (int damage, bool isCritical) = Damage(target, MyStatus.ATK);
             MyStatus.Mp = Math.Min(MyStatus.MaxMp, MyStatus.Mp + 10);
-            bool defeated = targetStatus.Hp <= 0;
+            bool defeated = targetStatus.Hp == 0;
             string message = battleLogService.BuildActionMessage(this, target, damage, null, defeated, isCritical);
 
             bool clearOpponent = battleLogService.IsPlayer(this);
@@ -149,10 +149,10 @@ namespace newgame.Characters
             }
             else
             {
-                (damage, isCritical) = Damage(targetCharacter, skill.skillDamage);    
+                (damage, isCritical) = Damage(targetCharacter, (ulong)Math.Max(skill.skillDamage, 0));
             }
 
-            bool defeated = targetStatus.Hp <= 0;
+            bool defeated = targetStatus.Hp == 0;
             string message = battleLogService.BuildActionMessage(this, targetCharacter, damage, skill.name, defeated, isCritical);
 
             bool clearOpponent = battleLogService.IsPlayer(this) && !preserveOpponentLog;
@@ -430,12 +430,12 @@ namespace newgame.Characters
         // - 치명타 판정(확률 KC[%]) → 피해를 KD[%] 배율로 증폭
         // - 최종 피해 = max(1, round(A * K / (D + K)))
         //   방어력이 높을수록 분모가 커져 피해가 점진적으로 감소(완만한 방어 효율 곡선)
-        protected (int Damage, bool IsCritical) Damage(Character target, int damage)
+        protected (int Damage, bool IsCritical) Damage(Character target, ulong damage)
         {
             Status myStatus = MyStatus;
             Status targetStatus = target.MyStatus;
 
-            int A = damage;
+            int A = damage >= (ulong)int.MaxValue ? int.MaxValue : (int)damage;
             int D = targetStatus.DEF;
             int K = 50; // D ≈ K일 때 절반 수준으로 완화되는 기준점
 
@@ -453,7 +453,9 @@ namespace newgame.Characters
             // 방어 기반 피해 완화 공식
             int totaldamage = Math.Max(1, (int)Math.Round(A * K / (double)(D + K)));
 
-            targetStatus.Hp -= totaldamage;
+            ulong totalDamageU = (ulong)Math.Max(totaldamage, 0);
+            ulong currentHp = targetStatus.Hp;
+            targetStatus.Hp = totalDamageU >= currentHp ? 0 : currentHp - totalDamageU;
             return (totaldamage, isCritical);
         }
         #endregion
@@ -464,11 +466,19 @@ namespace newgame.Characters
         protected (int Damage, bool IsCritical) AtkSkillDamage(Character target, int damage, int playerDamage)
         {
             Status myStatus = MyStatus;
-            Status targetStatus = target.MyStatus;
-        
-            int atkPortion = (int)Math.Round(myStatus.ATK * (playerDamage / 100.0));
-            int finalDamage = damage + atkPortion;
-        
+
+            double atkPortionRaw = myStatus.ATK * (playerDamage / 100.0);
+            if (atkPortionRaw < 0)
+            {
+                atkPortionRaw = 0;
+            }
+
+            double cappedPortion = Math.Min(atkPortionRaw, int.MaxValue);
+            int atkPortion = (int)Math.Round(cappedPortion);
+
+            long combined = (long)Math.Max(damage, 0) + atkPortion;
+            ulong finalDamage = combined <= 0 ? 0UL : (ulong)Math.Min(combined, int.MaxValue);
+
             return Damage(target, finalDamage);
         }
 

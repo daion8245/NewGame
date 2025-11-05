@@ -31,8 +31,8 @@ namespace newgame.Characters
         public void SetDefStat(int atk, int hp, int def, int mp)
         {
             status.level = 1;
-            status.ATK = 5 + atk;
-            status.MaxHp = 50 + (hp * 10);
+            status.ATK = (ulong)Math.Max(0, 5 + atk);
+            status.MaxHp = (ulong)Math.Max(0, 50 + (hp * 10));
             status.Hp = status.MaxHp;
             status.DEF = 3 + def;
             status.MaxMp = 30 + (mp * 2);

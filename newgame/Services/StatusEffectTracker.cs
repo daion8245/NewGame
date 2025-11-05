@@ -177,10 +177,15 @@ namespace newgame.Services
                 case "파이어볼":
                     {
                         Character? target = targetResolver();
-                        int referenceHp = target?.HasStatus == true ? target.MyStatus.Hp : owner.MyStatus.Hp;
-                        int dotDamage = 1 + (referenceHp / 20);
-                        owner.MyStatus.Hp = Math.Max(0, owner.MyStatus.Hp - dotDamage);
-                        bool defeated = owner.MyStatus.Hp <= 0;
+                        ulong referenceHp = target?.HasStatus == true ? target.MyStatus.Hp : owner.MyStatus.Hp;
+                        ulong rawDamage = 1UL + (referenceHp / 20UL);
+                        int dotDamage = rawDamage >= (ulong)int.MaxValue ? int.MaxValue : (int)rawDamage;
+
+                        ulong currentHp = owner.MyStatus.Hp;
+                        ulong applied = (ulong)Math.Max(dotDamage, 0);
+                        owner.MyStatus.Hp = applied >= currentHp ? 0 : currentHp - applied;
+
+                        bool defeated = owner.MyStatus.Hp == 0;
                         int remain = Math.Max(remainingTurns, 0);
                         string label = $"{skill}(지속)";
                         string message = messageBuilder(caster, owner, dotDamage, label, defeated, false) + $" (남은 턴: {remain})";
@@ -190,8 +195,10 @@ namespace newgame.Services
                     {
                         Character? target = targetResolver();
                         int dotDamage = 5;
-                        owner.MyStatus.Hp = Math.Max(0, owner.MyStatus.Hp - dotDamage);
-                        bool defeated = owner.MyStatus.Hp <= 0;
+                        ulong currentHp = owner.MyStatus.Hp;
+                        ulong applied = (ulong)Math.Max(dotDamage, 0);
+                        owner.MyStatus.Hp = applied >= currentHp ? 0 : currentHp - applied;
+                        bool defeated = owner.MyStatus.Hp == 0;
                         int remain = Math.Max(remainingTurns, 0);
                         string label = $"{skill}(지속)";
                         string message = messageBuilder(caster, owner, dotDamage, label, defeated, false) + $" (남은 턴: {remain})";
@@ -201,9 +208,20 @@ namespace newgame.Services
                     {
                         Character? target = targetResolver();
                         int dotDamage = 7;
-                        owner.MyStatus.Hp = Math.Max(0, owner.MyStatus.Hp - dotDamage);
-                        target.MyStatus.Hp += 7;
-                        bool defeated = owner.MyStatus.Hp <= 0;
+                        ulong applied = (ulong)Math.Max(dotDamage, 0);
+                        ulong currentHp = owner.MyStatus.Hp;
+                        owner.MyStatus.Hp = applied >= currentHp ? 0 : currentHp - applied;
+
+                        if (target != null)
+                        {
+                            ulong healAmount = 7UL;
+                            ulong targetHp = target.MyStatus.Hp;
+                            ulong maxHp = target.MyStatus.MaxHp;
+                            ulong healed = targetHp > maxHp - healAmount ? maxHp : targetHp + healAmount;
+                            target.MyStatus.Hp = healed;
+                        }
+
+                        bool defeated = owner.MyStatus.Hp == 0;
                         int remain = Math.Max(remainingTurns, 0);
                         string label = $"{skill}(지속)";
                         string message = messageBuilder(caster, owner, dotDamage, label, defeated, false) + $" (남은 턴: {remain})";
@@ -213,8 +231,10 @@ namespace newgame.Services
                     {
                         Character? target = targetResolver();
                         int dotDamage = 3;
-                        owner.MyStatus.Hp = Math.Max(0, owner.MyStatus.Hp - dotDamage);
-                        bool defeated = owner.MyStatus.Hp <= 0;
+                        ulong applied = (ulong)Math.Max(dotDamage, 0);
+                        ulong currentHp = owner.MyStatus.Hp;
+                        owner.MyStatus.Hp = applied >= currentHp ? 0 : currentHp - applied;
+                        bool defeated = owner.MyStatus.Hp == 0;
                         int remain = Math.Max(remainingTurns, 0);
                         string label = $"{skill}(지속)";
                         string message = messageBuilder(caster, owner, dotDamage, label, defeated, false) + $" (남은 턴: {remain})";
