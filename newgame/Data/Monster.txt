@@ -3,7 +3,7 @@ LEVEL : 1
 hp : 40
 ATK : 5
 DEF : 3
-EXP : 5
+EXP : 3
 COIN : 3
 CRICHANCE : 1
 CRIDMG : 9999
