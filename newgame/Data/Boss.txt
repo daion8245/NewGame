@@ -58,13 +58,34 @@ COIN : 225
 SKILL : 여신의 분노
 SKILL : 할퀴기
 #
+NAME : 수호신의 왼팔
+LEVEL : 999
+hp : 9999
+ATK : 4444
+DEF :999
+EXP : 10000
+COIN : 1000000
+SKILL : 수호신의 아주 어설픈 한방
+SKILL : 수호신의 아주 어설픈 세상 쪼개기
+#
 NAME : 수호신의 오른팔
-LEVEL : 100
-hp : 1000
-ATK : 500
-DEF :50
-EXP : 1000
-COIN : 1000
+LEVEL : 1000
+hp : 10000
+ATK : 5000
+DEF :1000
+EXP : 10000
+COIN : 1000000
 SKILL : 수호신의 어설픈 한방
 SKILL : 수호신의 어설픈 세상 쪼개기
+#
+NAME : 던전의 주인 수호신
+LEVEL : 100000
+hp : 100000
+ATK : 500000
+DEF :100000
+EXP : 99999999
+COIN : 999999999
+SKILL : 수호신의 한방
+SKILL : 수호신의 세상 쪼개기
+SKILL : 수호신의 숨결
 #
