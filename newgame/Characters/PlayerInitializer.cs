@@ -32,16 +32,16 @@ namespace newgame.Characters
         {
             status.level = 1;
             status.ATK = 5 + atk;
-            status.MaxHp = 50 + (hp * 10);
+            status.MaxHp = 40 + (hp * 5);
             status.Hp = status.MaxHp;
             status.DEF = 3 + def;
-            status.MaxMp = 30 + (mp * 2);
+            status.MaxMp = 30 + mp;
             status.Mp = status.MaxMp;
-            status.CriticalChance = 10;
-            status.CriticalDamage = 150;
+            status.CriticalChance = 5;
+            status.CriticalDamage = 110;
             status.exp = 0;
             status.nextEXP = 50;
-            status.gold = 25;
+            status.gold = 10;
         }
 
         public void ShowStat()
