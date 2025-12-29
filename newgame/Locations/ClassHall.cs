@@ -2,16 +2,32 @@
 
 namespace newgame.Locations
 {
-    internal class ClassHall
+    internal class ClassHall : IRoom
     {
-        void start()
+        List<ClassType> availableClasses = new List<ClassType>
         {
+            ClassType.Warrior,
+            ClassType.Mage,
+            ClassType.Archer,
+            ClassType.Thief
+        };
+        
+        public void Start()
+        {
+            Menu();
         }
 
-        void Menu()
+        public void Menu()
         {
-            UiHelper.SelectMenu([
-                ""]);
+            
         }
+    }
+    
+    enum ClassType
+    {
+        Warrior,
+        Mage,
+        Archer,
+        Thief
     }
 }

@@ -35,6 +35,7 @@ namespace newgame.Locations
 
             switch (menusel)
             {
+                //상태창
                 case 0:
                     {
                         Console.Clear();
@@ -45,6 +46,7 @@ namespace newgame.Locations
                         Console.Clear();
                         break;
                     }
+                //인벤토리
                 case 1:
                     {
                         Console.Clear();
@@ -52,12 +54,14 @@ namespace newgame.Locations
                         player.MyStatus.ShowInventory();
                         break;
                     }
+                //던전
                 case 2:
                     {
                         Console.Clear();
                         Dungeon.Instance.Start();
                         break;
                     }
+                //상점
                 case 3:
                     {
                         Console.Clear();
@@ -76,23 +80,28 @@ namespace newgame.Locations
                         shop.Start();
                         break;
                     }
+                //여관
                 case 4:
                     {
                         Tavern tavern = new Tavern();
                         tavern.Start();
                         return;
                     }
+                //전직소
                 case 5:
                     {
-                        // 비어있는 case 5
+                        ClassHall classHall = new ClassHall();
+                        classHall.Start();
                         break;
                     }
+                //대장간
                 case 6:
                     {
                         Smithy smithy = new Smithy();
                         smithy.Start();
                         break;
                     }
+                //저장
                 case 7:
                     {
                         Console.Clear();
@@ -100,6 +109,7 @@ namespace newgame.Locations
                         UiHelper.WaitForInput("게임 저장됨. (SHIFT를 눌러 계속)");
                         break;
                     }
+                //종료
                 case 8:
                     {
                         Console.Clear();
