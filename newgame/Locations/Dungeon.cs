@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
+using System.Text;
 using newgame.Characters;
 using newgame.Enemies;
 using newgame.Locations.DungeonRooms;
-using newgame.Services;
 using newgame.Systems;
 using newgame.UI;
 
@@ -35,6 +35,10 @@ namespace newgame.Locations
 
         public void Start()
         {
+            for(int i = 0; i < GameManager.Instance.clearedFloors.Count; i++)
+            {
+                GameManager.Instance.clearedFloors.Add(i,false);
+            }
             Console.Clear();
             LoadMapData(floor);
             SetDungeon();
@@ -55,6 +59,9 @@ namespace newgame.Locations
 
         private void SetDungeon()
         {
+            if(GameManager.Instance.clearedFloors[floor])
+                ClearedFloorSetup();
+            
             // 게임 시작
             while (true)
             {
@@ -109,6 +116,24 @@ namespace newgame.Locations
             }
 
         }
+
+        private void ClearedFloorSetup()
+        {
+            for (int y = 0; y < map.Count; y++)
+            {
+                for (int x = 0; x < map[y].Count; x++)
+                {
+                    if ((RoomType)map[y][x] == RoomType.Monster
+                        || ((RoomType)map[y][x] == RoomType.Ladder
+                            || ((RoomType)map[y][x] == RoomType.Exit)))
+                    {}else
+                    {
+                        map[y][x] = (int)RoomType.Empty;
+                    }
+                }
+            }
+        }
+
         #region 방 이름 가져오기
         static string GetRoomName(RoomType room)
         {
@@ -197,6 +222,7 @@ namespace newgame.Locations
                 case (RoomType.Ladder):
                     {
                         Console.Clear();
+                        GameManager.Instance.clearedFloors[floor] = true;
                         UiHelper.WaitForInput($"사다리를 타고 다음 층({floor + 1}층) 으로 이동합니다. [ENTER를 눌러 계속]");
                         int currentFloor = floor;
                         GameManager.Instance.UpdateDungeonMap(currentFloor, map);
@@ -220,23 +246,7 @@ namespace newgame.Locations
                 #region 마을로 돌아가기
                 case (RoomType.Exit):
                     {
-                        Console.Clear();
-                        UiHelper.TxtOut(["던전에서 나가 마을로 돌아가시겠습니까?", ""]);
-                        int sel = UiHelper.SelectMenu(["돌아가기","계속하기"]);
-                        Console.WriteLine();
-                        if (sel == 0)
-                        {
-                            UiHelper.WaitForInput("마을로 돌아갑니다. [ENTER를 눌러 계속]");
-                            GameManager.Instance.UpdateDungeonMap(floor, map);
-                            PlayerPos.X = 1; // 플레이어 위치 초기화
-                            PlayerPos.Y = 1; // 플레이어 위치 초기화
-                            GameManager.Instance.ReturnToLobby();
-                        }
-                        else
-                        {
-                            UiHelper.WaitForInput("던전 탐험을 계속합니다. [ENTER를 눌러 계속]");
-                            PlayerPos.Offset(1,1);
-                        }
+                        MovingFloors();
                         break;
                     }
                 #endregion
@@ -246,6 +256,7 @@ namespace newgame.Locations
                     }
             }
         }
+
         #endregion
 
         #region 방 그리기
@@ -441,6 +452,60 @@ namespace newgame.Locations
         #region 보물 방
 
         
+
+        #endregion
+
+        #region 귀환 사다리
+
+        void MovingFloors()
+        {
+            List<string> options = new List<string>();
+            
+            Console.Clear();
+            UiHelper.TxtOut(["사다리를 타고 다른 층으로 이동합니다.",""]);
+
+            options.Add("마을로 돌아가기");
+            foreach (var keyValuePair in GameManager.Instance.clearedFloors)
+            {
+                if (keyValuePair.Value)
+                {
+                    options.Add($"{keyValuePair.Key}층");
+                }
+            }
+            options.Add("취소");
+            
+            switch (UiHelper.SelectMenu(options.ToArray()))
+            {
+                case 1:
+                {
+                    Console.Clear();
+                    UiHelper.WaitForInput("마을로 돌아갑니다. [ENTER를 눌러 계속]");
+                    GameManager.Instance.UpdateDungeonMap(floor, map);
+                    PlayerPos.X = 1; // 플레이어 위치 초기화
+                    PlayerPos.Y = 1; // 플레이어 위치 초기화
+                    GameManager.Instance.ReturnToLobby();
+                    break;
+                }
+                case int n and >= 2 when n < options.Count - 1:
+                {
+                    int selectedFloor = n - 2;
+                    Console.Clear();
+                    UiHelper.WaitForInput($"{selectedFloor}층으로 이동합니다. [ENTER를 눌러 계속]");
+                    floor = selectedFloor;
+                    LoadMapData(floor); // 선택한 층 맵 데이터 로드
+                    PlayerPos.X = 1; // 플레이어 위치 초기화
+                    PlayerPos.Y = 1; // 플레이어 위치 초기화
+                    break;
+                }
+                case int n when n == options.Count - 1:
+                {
+                    UiHelper.WaitForInput("던전 탐험을 계속합니다. [ENTER를 눌러 계속]");
+                    PlayerPos.Offset(1,1);
+                    break;
+                }
+                
+            }
+        }
 
         #endregion
     }

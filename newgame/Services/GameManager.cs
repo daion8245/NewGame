@@ -394,6 +394,11 @@ namespace newgame
         /// 던전 맵 데이터: key = 층수, value = 타일 맵(행렬)
         /// </summary>
         public Dictionary<int, List<List<int>>> dungeonMapInfo = new Dictionary<int, List<List<int>>>();
+        
+        /// <summary>
+        /// 클리어한 던전의 층 기록: key = 층수, value = 클리어 여부
+        /// </summary>
+        public Dictionary<int, bool> clearedFloors = new Dictionary<int, bool>();
 
         /// <summary>
         /// 새로운 던전 맵을 등록한다. 키는 내부적으로 1부터 증가한다.
@@ -454,6 +459,11 @@ namespace newgame
             dungeonMapInfo[floor] = copy;
         }
         #endregion
+        
+        public void SetDungeonCleared(int floor, bool isCleared)
+        {
+            clearedFloors[floor] = isCleared;
+        }
 
         #region 스킬
 
