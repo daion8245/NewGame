@@ -35,10 +35,7 @@ namespace newgame.Locations
 
         public void Start()
         {
-            for(int i = 0; i < GameManager.Instance.clearedFloors.Count; i++)
-            {
-                GameManager.Instance.clearedFloors.Add(i,false);
-            }
+            EnsureClearedFloorsInitialized();
             Console.Clear();
             LoadMapData(floor);
             SetDungeon();
@@ -59,6 +56,7 @@ namespace newgame.Locations
 
         private void SetDungeon()
         {
+            EnsureClearedFloorsInitialized();
             if(GameManager.Instance.clearedFloors[floor])
                 ClearedFloorSetup();
             
@@ -115,6 +113,33 @@ namespace newgame.Locations
                 }
             }
 
+        }
+
+        private void EnsureClearedFloorsInitialized()
+        {
+            int floorCount = GameManager.Instance.dungeonMapInfo.Count;
+
+            if (floorCount == 0)
+            {
+                if (!GameManager.Instance.clearedFloors.ContainsKey(floor))
+                {
+                    GameManager.Instance.clearedFloors[floor] = false;
+                }
+                return;
+            }
+
+            for (int i = 1; i <= floorCount; i++)
+            {
+                if (!GameManager.Instance.clearedFloors.ContainsKey(i))
+                {
+                    GameManager.Instance.clearedFloors[i] = false;
+                }
+            }
+
+            if (!GameManager.Instance.clearedFloors.ContainsKey(floor))
+            {
+                GameManager.Instance.clearedFloors[floor] = false;
+            }
         }
 
         private void ClearedFloorSetup()
@@ -227,6 +252,7 @@ namespace newgame.Locations
                         int currentFloor = floor;
                         GameManager.Instance.UpdateDungeonMap(currentFloor, map);
                         floor++; // 층수 증가
+                        EnsureClearedFloorsInitialized();
                         LoadMapData(floor); // 다음 층 맵 데이터 로드
                         PlayerPos.X = 1; // 플레이어 위치 초기화
                         PlayerPos.Y = 1; // 플레이어 위치 초기화
