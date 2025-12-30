@@ -259,7 +259,7 @@ namespace newgame.Characters
                 mp = maxMp;
 
                 // 다음 레벨 필요 경험치 증가
-                nextEXP += 10;
+                nextEXP += 30;
 
                 // 기본 능력치만 상승(프로퍼티 대신 필드 사용)
                 atk += 3;

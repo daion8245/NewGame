@@ -581,6 +581,8 @@ namespace newgame
         private readonly List<CharacterClassType> Jobs = new List<CharacterClassType>();
         // 직업명 -> 스킬 이름 목록 매핑
         private readonly Dictionary<string, List<string>> playerClassSkillNames = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        // 해금된(선택 가능한) 직업 이름 목록
+        private readonly HashSet<string> unlockedPlayerClasses = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// 플레이어 직업 정보와 해당 직업의 스킬 이름들을 등록/갱신한다.
@@ -617,6 +619,52 @@ namespace newgame
         /// 등록된 모든 플레이어 직업 목록을 반환한다.
         /// </summary>
         public IReadOnlyList<CharacterClassType> GetPlayerClasses() => Jobs.AsReadOnly();
+
+        /// <summary>
+        /// 전직 메뉴에 노출할 직업만 반환한다.
+        /// </summary>
+        public IReadOnlyList<CharacterClassType> GetAvailablePlayerClasses()
+        {
+            if (unlockedPlayerClasses.Count == 0)
+            {
+                return Array.Empty<CharacterClassType>();
+            }
+
+            List<CharacterClassType> available = new List<CharacterClassType>();
+            foreach (CharacterClassType job in Jobs)
+            {
+                if (unlockedPlayerClasses.Contains(job.name))
+                {
+                    available.Add(job);
+                }
+            }
+
+            return available;
+        }
+
+        /// <summary>
+        /// 특정 직업을 선택 가능하도록 해금한다.
+        /// </summary>
+        public void UnlockPlayerClass(string className)
+        {
+            if (string.IsNullOrWhiteSpace(className))
+            {
+                return;
+            }
+
+            unlockedPlayerClasses.Add(className.Trim());
+        }
+
+        /// <summary>
+        /// 여러 직업을 한번에 해금한다.
+        /// </summary>
+        public void UnlockPlayerClasses(IEnumerable<string> classNames)
+        {
+            foreach (string name in classNames)
+            {
+                UnlockPlayerClass(name);
+            }
+        }
 
         public bool TryGetPlayerClass(string className, out CharacterClassType classType)
         {
