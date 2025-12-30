@@ -16,60 +16,76 @@ PRICE : 40
 ID : 4
 NAME : 강화 가죽 모자
 MP : 10
-PRICE : 56
+PRICE : 60
 #
 ID : 5
 NAME : 두꺼운 가죽 모자
 MP : 13
-PRICE : 68
+PRICE : 80
 #
 ID : 6
 NAME : 경화 가죽 모자
 MP : 16
-PRICE : 92
+PRICE : 100
 #
 ID : 7
 NAME : 강인한 가죽 모자
 MP : 19
-PRICE : 112
+PRICE : 120
 #
 ID : 8
 NAME : 가죽 철편 모자
 MP : 22
-PRICE : 128
+HP : 5
+DEF : 1
+PRICE : 160
 #
 ID : 9
 NAME : 철심 가죽 모자
 MP : 25
-PRICE : 156
+HP : 10
+DEF : 2
+PRICE : 180
 #
 ID : 10
 NAME : 보강 가죽 모자
 MP : 28
-PRICE : 168
+HP : 15
+DEF : 3
+PRICE : 200
 #
 ID : 11
 NAME : 초급 철제 모자
 MP : 31
-PRICE : 180
+HP : 20
+DEF : 4
+PRICE : 220
 #
 ID : 12
 NAME : 전투용 철모자
 MP : 34
-PRICE : 192
+HP : 25
+DEF : 5
+PRICE : 240
 #
 ID : 13
 NAME : 강철 모자
 MP : 37
-PRICE : 204
+HP : 30
+DEF : 6
+PRICE : 260
 #
 ID : 14
 NAME : 기사단 모자
 MP : 40
-PRICE : 216
+HP : 35
+DEF : 7
+PRICE : 280
 #
 ID : 14
 NAME : 은모자
 MP : 43
-PRICE : 228
+HP : 40
+DEF : 8
+PRICE : 300
 #

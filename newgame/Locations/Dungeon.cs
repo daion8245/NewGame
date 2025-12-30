@@ -416,7 +416,7 @@ namespace newgame.Locations
 
         private readonly Dictionary<int, List<int>> _floorMonsters = new Dictionary<int, List<int>>()
         {
-            { 0, new List<int> { 1, 2 } },    // 1층 몬스터 ID
+            { 0, new List<int> { GameManager.Instance.FindAMonsterName("슬라임"), GameManager.Instance.FindAMonsterName("빅 슬라임") } },    // 1층 몬스터 ID
             { 1, new List<int> { 3, 4, 5 } }, // 2층 몬스터 ID
             { 2, new List<int> { 6, 7 } },    // 3층 몬스터 ID
             { 3, new List<int> { 8, 9 } },    // 4층 몬스터 ID
