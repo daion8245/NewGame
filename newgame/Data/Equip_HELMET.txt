@@ -1,117 +1,75 @@
 ID : 1
 NAME : 초보자 모자
-HP : 2
-DEF : 1
+MP : 1
 PRICE : 0
 #
 ID : 2
 NAME : 가죽 모자
-HP : 3
-DEF : 2
-CD : 1
-PRICE : 10
+MP : 3
+PRICE : 20
 #
 ID : 3
 NAME : 질긴 가죽 모자
-HP : 4
-DEF : 3
-CC : 1
-CD : 1
-PRICE : 20
+MP : 7
+PRICE : 40
 #
 ID : 4
 NAME : 강화 가죽 모자
-HP : 4
-DEF : 3
-CC : 1
-CD : 1
-PRICE : 20
+MP : 10
+PRICE : 56
 #
 ID : 5
 NAME : 두꺼운 가죽 모자
-HP : 4
-DEF : 3
-CC : 1
-CD : 1
-PRICE : 20
+MP : 13
+PRICE : 68
 #
 ID : 6
 NAME : 경화 가죽 모자
-HP : 4
-DEF : 3
-CC : 1
-CD : 1
-PRICE : 20
+MP : 16
+PRICE : 92
 #
 ID : 7
 NAME : 강인한 가죽 모자
-HP : 4
-DEF : 3
-CC : 1
-CD : 1
-PRICE : 20
+MP : 19
+PRICE : 112
 #
 ID : 8
 NAME : 가죽 철편 모자
-HP : 4
-DEF : 3
-CC : 1
-CD : 1
-PRICE : 20
+MP : 22
+PRICE : 128
 #
 ID : 9
 NAME : 철심 가죽 모자
-HP : 4
-DEF : 3
-CC : 1
-CD : 1
-PRICE : 20
+MP : 25
+PRICE : 156
 #
 ID : 10
 NAME : 보강 가죽 모자
-HP : 4
-DEF : 3
-CC : 1
-CD : 1
-PRICE : 20
+MP : 28
+PRICE : 168
 #
 ID : 11
 NAME : 초급 철제 모자
-HP : 4
-DEF : 3
-CC : 1
-CD : 1
-PRICE : 20
+MP : 31
+PRICE : 180
 #
 ID : 12
 NAME : 전투용 철모자
-HP : 4
-DEF : 3
-CC : 1
-CD : 1
-PRICE : 20
+MP : 34
+PRICE : 192
 #
 ID : 13
 NAME : 강철 모자
-HP : 4
-DEF : 3
-CC : 1
-CD : 1
-PRICE : 20
+MP : 37
+PRICE : 204
 #
 ID : 14
 NAME : 기사단 모자
-HP : 4
-DEF : 3
-CC : 1
-CD : 1
-PRICE : 20
+MP : 40
+PRICE : 216
 #
 ID : 14
 NAME : 은모자
-HP : 4
-DEF : 3
-CC : 1
-CD : 1
-PRICE : 20
+MP : 43
+PRICE : 228
 #

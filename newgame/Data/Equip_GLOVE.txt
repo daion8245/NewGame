@@ -55,21 +55,21 @@ PRICE : 180
 #
 ID : 12
 NAME : 전투용 철장갑
-CC : 47
-PRICE : 188
+CC : 48
+PRICE : 192
 #
 ID : 13
 NAME : 강철 장갑
-CC : 53
-PRICE : 212
+CC : 51
+PRICE : 204
 #
 ID : 14
 NAME : 기사단 장갑
-CC : 57
-PRICE : 228
+CC : 54
+PRICE : 216
 #
 ID : 15
 NAME : 은장갑
-CC : 60
-PRICE : 240
+CC : 57
+PRICE : 228
 #

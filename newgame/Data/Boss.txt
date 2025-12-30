@@ -3,8 +3,8 @@ LEVEL : 5
 hp : 100
 ATK : 10
 DEF : 3
-EXP : 55
-COIN : 100
+EXP : 35
+COIN : 30
 SKILL : 점액 폭탄
 SKILL : 깔아뭉개기
 #
@@ -13,8 +13,8 @@ LEVEL : 10
 hp : 150
 ATK : 20
 DEF :5
-EXP : 70
-COIN : 125
+EXP : 55
+COIN : 50
 SKILL : 소드 어택
 SKILL : 영혼 흡수
 #
@@ -23,8 +23,8 @@ LEVEL : 15
 hp : 200
 ATK : 30
 DEF :7
-EXP : 150
-COIN : 150
+EXP : 100
+COIN : 70
 SKILL : 마구치기
 SKILL : 고블린 집결
 #
@@ -33,8 +33,8 @@ LEVEL : 20
 hp : 250
 ATK : 30
 DEF :10
-EXP : 175
-COIN : 175
+EXP : 130
+COIN : 100
 SKILL : 물기
 SKILL : 난폭 난타
 #
@@ -43,8 +43,8 @@ LEVEL : 25
 hp : 300
 ATK : 40
 DEF :13
-EXP : 200
-COIN : 200
+EXP : 150
+COIN : 120
 SKILL : 그물 폭발
 SKILL : 그림자 송곳
 #
@@ -53,8 +53,8 @@ LEVEL : 30
 hp : 350
 ATK : 50
 DEF :20
-EXP : 225
-COIN : 225
+EXP : 170
+COIN : 140
 SKILL : 여신의 분노
 SKILL : 할퀴기
 #

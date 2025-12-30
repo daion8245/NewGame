@@ -1,12 +1,15 @@
 ID : 1
 NAME : 나무막대기
 ATK : 1
+CC : 1
+CD : 1
 PRICE : 0
 #
 ID : 2
 NAME : 거친 나무 막대기
 ATK : 2
 CC : 1
+CD : 1
 PRICE : 10
 #
 ID : 3
