@@ -54,6 +54,7 @@ namespace newgame.Systems
             _dataManager.LoadDungeonMap();
             _dataManager.LoadSkillData();
             _dataManager.LoadPlayer_ClassData();
+            _gameManager.UnlockPlayerClass("검사"); // 초기 해금 직업 (추가 해금은 퀘스트/조건에서 호출)
             _dataManager.LoadDungeonShopData();
             _gameManager.SetItemList();
         }
