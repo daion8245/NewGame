@@ -1,132 +1,105 @@
 ID : 1
 NAME : 초보자 신발
-HP : 1
-ATK : 1
-DEF : 1
+CD : 1
 PRICE : 0
 #
 ID : 2
 NAME : 가죽 신발
-HP : 1
-ATK : 1
-DEF : 2
-CC : 1
-PRICE : 10
+CD : 1
+MP : 1
+PRICE : 20
 #
 ID : 3
 NAME : 질긴 가죽 신발
-HP : 2
-ATK : 2
-DEF : 2
-CC : 1
-CD : 1
-PRICE : 20
+CD : 3
+MP : 2
+PRICE : 40
 #
 ID : 4
 NAME : 강화 가죽 신발
-HP : 2
-ATK : 2
-DEF : 2
-CC : 1
-CD : 1
-PRICE : 20
+CD : 5
+MP : 3
+PRICE : 60
 #
 ID : 5
 NAME : 두꺼운 가죽 신발
-HP : 2
-ATK : 2
-DEF : 2
-CC : 1
-CD : 1
-PRICE : 20
+CD : 7
+MP : 4
+PRICE : 80
 #
 ID : 6
 NAME : 경화 가죽 신발
-HP : 2
-ATK : 2
-DEF : 2
-CC : 1
-CD : 1
-PRICE : 20
+CD : 9
+MP : 5
+PRICE : 100
 #
 ID : 7
 NAME : 강인한 가죽 신발
-HP : 2
-ATK : 2
-DEF : 2
-CC : 1
-CD : 1
-PRICE : 20
+CD : 11
+MP : 6
+PRICE : 120
 #
 ID : 8
 NAME : 가죽 철편 신발
-HP : 2
-ATK : 2
-DEF : 2
-CC : 1
-CD : 1
-PRICE : 20
+CD : 15
+MP : 7
+HP : 1
+DEF : 1
+PRICE : 160
 #
 ID : 9
 NAME : 철심 가죽 신발
-HP : 2
-ATK : 2
+CD : 18
+MP : 8
+HP : 5
 DEF : 2
-CC : 1
-CD : 1
-PRICE : 20
+PRICE : 180
 #
 ID : 10
 NAME : 보강 가죽 신발
-HP : 2
-ATK : 2
-DEF : 2
-CC : 1
-CD : 1
-PRICE : 20
+CD : 21
+MP : 9
+HP : 10
+DEF : 3
+PRICE : 200
 #
 ID : 11
 NAME : 초급 철제 신발
-HP : 2
-ATK : 2
-DEF : 2
-CC : 1
-CD : 1
-PRICE : 20
+CD : 24
+MP : 10
+HP : 15
+DEF : 4
+PRICE : 220
 #
 ID : 12
 NAME : 전투용 철신발
-HP : 2
-ATK : 2
-DEF : 2
-CC : 1
-CD : 1
-PRICE : 20
+CD : 27
+MP : 11
+HP : 20
+DEF : 5
+PRICE : 240
 #
 ID : 13
 NAME : 강철 신발
-HP : 2
-ATK : 2
-DEF : 2
-CC : 1
-CD : 1
-PRICE : 20
+CD : 30
+MP : 12
+HP : 25
+DEF : 6
+PRICE : 260
 #
 ID : 14
 NAME : 기사단 신발
-HP : 2
-ATK : 2
-DEF : 2
-CC : 1
-CD : 1
-PRICE : 20
+CD : 33
+MP : 13
+HP : 30
+DEF : 7
+PRICE : 280
 #
 ID : 15
 NAME : 은신발
-HP : 2
-ATK : 2
-DEF : 2
-CC : 1
-CD : 1
-PRICE : 20
+CD : 36
+MP : 14
+HP : 35
+DEF : 8
+PRICE : 300
 #
