@@ -259,7 +259,7 @@ namespace newgame.Characters
                 mp = maxMp;
 
                 // 다음 레벨 필요 경험치 증가
-                nextEXP += 10;
+                nextEXP += 30;
 
                 // 기본 능력치만 상승(프로퍼티 대신 필드 사용)
                 atk += 3;
@@ -292,6 +292,17 @@ namespace newgame.Characters
         float clmp = 1f;
         float clcrit = 1f;
         float clcd = 1f;
+
+        void ResetClassModifiers()
+        {
+            clatk = 1f;
+            cldef = 1f;
+            clhp = 1f;
+            clmp = 1f;
+            clcrit = 1f;
+            clcd = 1f;
+        }
+
         public void ApplyClass(CharacterClassType classType)
         {
             if (string.IsNullOrWhiteSpace(classType.name))
@@ -299,17 +310,15 @@ namespace newgame.Characters
                 throw new ArgumentException("Class name cannot be empty.", nameof(classType));
             }
 
+            ResetClassModifiers();
             ClassName = classType.name;
 
-            clatk += ((float)classType.atk / 100);
-            cldef += ((float)classType.def / 100);
-
-            clhp += ((float)classType.hp / 100);
-
-            clmp += ((float)classType.mp / 100);
-
-            clcrit += ((float)classType.CC / 100);
-            clcd += ((float)classType.CD / 100);
+            clatk = 1f + (classType.atk / 100f);
+            cldef = 1f + (classType.def / 100f);
+            clhp = 1f + (classType.hp / 100f);
+            clmp = 1f + (classType.mp / 100f);
+            clcrit = 1f + (classType.CC / 100f);
+            clcd = 1f + (classType.CD / 100f);
         }
 
         #region 직업 추가를 위한 플래이어에게만 className 추가

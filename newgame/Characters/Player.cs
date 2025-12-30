@@ -63,6 +63,24 @@ namespace newgame.Characters
             ApplyClassSkills(classType.name);
         }
 
+        public void ChangeClass(CharacterClassType classType)
+        {
+            if (string.IsNullOrWhiteSpace(classType.name))
+            {
+                throw new ArgumentException("Class name cannot be empty.", nameof(classType));
+            }
+
+            if (currentClass != null &&
+                string.Equals(currentClass.Value.name, classType.name, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            MyStatus.ApplyClass(classType);
+            currentClass = classType;
+            ApplyClassSkills(classType.name);
+        }
+
         public bool TryAssignClass(string className)
         {
             if (string.IsNullOrWhiteSpace(className))
@@ -76,6 +94,22 @@ namespace newgame.Characters
             }
 
             AssignClass(classType);
+            return true;
+        }
+
+        public bool TryChangeClass(string className)
+        {
+            if (string.IsNullOrWhiteSpace(className))
+            {
+                return false;
+            }
+
+            if (!GameManager.Instance.TryGetPlayerClass(className, out CharacterClassType classType))
+            {
+                return false;
+            }
+
+            ChangeClass(classType);
             return true;
         }
 
@@ -406,4 +440,3 @@ namespace newgame.Characters
         #endregion 플레이어 전투
     }
 }
-
