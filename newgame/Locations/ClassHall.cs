@@ -15,6 +15,7 @@ namespace newgame.Locations
         
         public void Start()
         {
+            Console.Clear();
             Menu();
         }
 
@@ -26,12 +27,28 @@ namespace newgame.Locations
                 availableClasses
                 , true);
             
-            var classes = GameManager.Instance.GetPlayerClasses();
-            
-            CharacterClassType chosen = classes[0];
-            GameManager.Instance.player?.AssignClass(chosen);
-            Console.WriteLine($"기본 직업 [{chosen.name}] 이(가) 적용되었습니다.");
+            ChangeOfJob(selectClass);
         }
+
+        private void ChangeOfJob(ClassType newClass)
+        {
+            switch (newClass)
+            {
+                case ClassType.Warrior:
+                    bool? success = GameManager.Instance.player?.TryChangeClass("검사");
+                    if (success == true)
+                    {
+                        UiHelper.TxtOut(["\t전직 성공!", "당신은 이제 검사입니다!"]);
+                    }
+                    else
+                    {
+                        UiHelper.TxtOut(["\t전직 실패!", "전직 조건을 만족하지 못했습니다."]);
+                    }
+                    break;
+            }
+            //GameManager.Instance.player?.TryChangeClass();
+        }
+        
     }
     
     enum ClassType

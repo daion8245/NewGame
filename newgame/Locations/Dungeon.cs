@@ -413,7 +413,7 @@ namespace newgame.Locations
         #region 몬스터 소환/배틀
 
         #region 층별 몬스터 지정
-
+        
         private readonly Dictionary<int, List<int>> _floorMonsters = new Dictionary<int, List<int>>()
         {
             { 0, new List<int> { GameManager.Instance.FindAMonsterName("슬라임"), GameManager.Instance.FindAMonsterName("빅 슬라임") } },    // 1층 몬스터 ID
