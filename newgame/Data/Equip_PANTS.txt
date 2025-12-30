@@ -8,83 +8,83 @@ ID : 2
 NAME : 가죽 바지
 HP : 3
 DEF : 3
-PRICE : 10
+PRICE : 20
 #
 ID : 3
 NAME : 질긴 가죽 바지
 HP : 4
 DEF : 4
-PRICE : 20
+PRICE : 40
 #
 ID : 4
 NAME : 강화 가죽 바지
 HP : 4
 DEF : 4
-PRICE : 20
+PRICE : 56
 #
 ID : 5
 NAME : 두꺼운 가죽 바지
 HP : 4
 DEF : 4
-PRICE : 20
+PRICE : 68
 #
 ID : 6
 NAME : 경화 가죽 바지
 HP : 4
 DEF : 4
-PRICE : 20
+PRICE : 92
 #
 ID : 7
 NAME : 강인한 가죽 바지
 HP : 4
 DEF : 4
-PRICE : 20
+PRICE : 112
 #
 ID : 8
 NAME : 가죽 철편 바지
 HP : 4
 DEF : 4
-PRICE : 20
+PRICE : 128
 #
 ID : 9
 NAME : 철심 가죽 바지
 HP : 4
 DEF : 4
-PRICE : 20
+PRICE : 156
 #
 ID : 10
 NAME : 보강 가죽 바지
 HP : 4
 DEF : 4
-PRICE : 20
+PRICE : 168
 #
 ID : 11
 NAME : 초급 철제 바지
 HP : 4
 DEF : 4
-PRICE : 20
+PRICE : 180
 #
 ID : 12
 NAME : 전투용 철바지
 HP : 4
 DEF : 4
-PRICE : 20
+PRICE : 192
 #
 ID : 13
 NAME : 강철 바지
 HP : 4
 DEF : 4
-PRICE : 20
+PRICE : 204
 #
 ID : 14
 NAME : 기사단 바지
 HP : 4
 DEF : 4
-PRICE : 20
+PRICE : 216
 #
 ID : 15
 NAME : 은바지
 HP : 4
 DEF : 4
-PRICE : 20
+PRICE : 228
 #
