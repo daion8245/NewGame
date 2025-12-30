@@ -145,16 +145,27 @@ namespace newgame.Locations
 
         private void ClearedFloorSetup()
         {
-            for (int y = 0; y < map.Count; y++)
+            RestoreWallsAndMonstersFromOriginal();
+        }
+
+        private void RestoreWallsAndMonstersFromOriginal()
+        {
+            List<List<int>>? original = GameManager.Instance.GetOriginalDungeonMap(floor);
+            if (original == null || original.Count == 0)
             {
-                for (int x = 0; x < map[y].Count; x++)
+                return;
+            }
+
+            int height = Math.Min(map.Count, original.Count);
+            for (int y = 0; y < height; y++)
+            {
+                int width = Math.Min(map[y].Count, original[y].Count);
+                for (int x = 0; x < width; x++)
                 {
-                    if ((RoomType)map[y][x] == RoomType.Monster
-                        || ((RoomType)map[y][x] == RoomType.Ladder
-                            || ((RoomType)map[y][x] == RoomType.Exit)))
-                    {}else
+                    RoomType originalRoom = (RoomType)original[y][x];
+                    if (originalRoom == RoomType.Wall || originalRoom == RoomType.Monster)
                     {
-                        map[y][x] = (int)RoomType.Empty;
+                        map[y][x] = (int)originalRoom;
                     }
                 }
             }

@@ -394,6 +394,11 @@ namespace newgame
         /// 던전 맵 데이터: key = 층수, value = 타일 맵(행렬)
         /// </summary>
         public Dictionary<int, List<List<int>>> dungeonMapInfo = new Dictionary<int, List<List<int>>>();
+
+        /// <summary>
+        /// 초기 던전 맵 원본 데이터: key = 층수, value = 타일 맵(행렬)
+        /// </summary>
+        public Dictionary<int, List<List<int>>> originalDungeonMapInfo = new Dictionary<int, List<List<int>>>();
         
         /// <summary>
         /// 클리어한 던전의 층 기록: key = 층수, value = 클리어 여부
@@ -407,7 +412,10 @@ namespace newgame
         public void SetDungeonMapInfo(List<List<int>> _Map)
         {
             int key = dungeonMapInfo.Count + 1;
-            dungeonMapInfo.Add(key, _Map);
+            var copy = DeepCopyMap(_Map);
+
+            dungeonMapInfo[key] = DeepCopyMap(_Map);
+            originalDungeonMapInfo[key] = copy;
         }
 
         /// <summary>
@@ -424,12 +432,22 @@ namespace newgame
             }
 
             var original = dungeonMapInfo[_key];
-            var copy = new List<List<int>>();
-            foreach (var innerList in original)
+            return DeepCopyMap(original);
+        }
+
+        /// <summary>
+        /// 초기 던전 맵 복사본을 반환한다.
+        /// </summary>
+        /// <param name="floor">층수</param>
+        /// <returns>초기 맵 복사본 또는 null</returns>
+        public List<List<int>>? GetOriginalDungeonMap(int floor)
+        {
+            if (!originalDungeonMapInfo.TryGetValue(floor, out var original))
             {
-                copy.Add(new List<int>(innerList));
+                return null;
             }
-            return copy;
+
+            return DeepCopyMap(original);
         }
 
         /// <summary>
@@ -457,6 +475,33 @@ namespace newgame
             }
 
             dungeonMapInfo[floor] = copy;
+        }
+
+        /// <summary>
+        /// 던전 맵을 초기 원본으로 리셋한다.
+        /// </summary>
+        /// <param name="floor">층수</param>
+        public void ResetDungeonMapToOriginal(int floor)
+        {
+            if (!originalDungeonMapInfo.TryGetValue(floor, out var original))
+            {
+                return;
+            }
+
+            dungeonMapInfo[floor] = DeepCopyMap(original);
+        }
+
+        /// <summary>
+        /// 저장된 맵 리스트를 깊은 복사한다.
+        /// </summary>
+        private static List<List<int>> DeepCopyMap(List<List<int>> source)
+        {
+            var copy = new List<List<int>>();
+            foreach (var innerList in source)
+            {
+                copy.Add(new List<int>(innerList));
+            }
+            return copy;
         }
         #endregion
         
