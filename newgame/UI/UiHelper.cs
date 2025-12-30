@@ -1,4 +1,6 @@
-﻿namespace newgame.UI
+﻿using newgame.Locations;
+
+namespace newgame.UI
 {
     internal static class UiHelper
     {
@@ -148,5 +150,19 @@
             return selected;
         }
         #endregion
+
+        public static ClassType MessageAndSelect(string[] message, List<ClassType> select, bool spacing = true)
+        {
+            List<string> classOptions = new();
+            
+            foreach (var classType in select)
+            {
+                classOptions.Add(classType.ToString());
+            }
+            
+            int selectedClasses = MessageAndSelect(message, classOptions.ToArray(), spacing);
+            
+            return select[selectedClasses];
+        }
     }
 }
