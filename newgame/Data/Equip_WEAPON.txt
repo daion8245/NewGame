@@ -4,13 +4,97 @@ ATK : 1
 PRICE : 0
 #
 ID : 2
-NAME : 목검
+NAME : 거친 나무 막대기
 ATK : 2
 CC : 1
 PRICE : 10
 #
 ID : 3
-NAME : 금간 검
+NAME : 금 간 나무 몽둥이
+ATK : 3
+CC : 1
+CD : 1
+PRICE : 15
+#
+ID : 4
+NAME : 초보자의 몽둥이
+ATK : 3
+CC : 1
+CD : 1
+PRICE : 15
+#
+ID : 5
+NAME : 훈련용 몽둥이
+ATK : 3
+CC : 1
+CD : 1
+PRICE : 15
+#
+ID : 6
+NAME : 낡은 몽둥이
+ATK : 3
+CC : 1
+CD : 1
+PRICE : 15
+#
+ID : 7
+NAME : 가죽 손잡이 몽둥이
+ATK : 3
+CC : 1
+CD : 1
+PRICE : 15
+#
+ID : 8
+NAME : 질긴 손잡이 몽둥이
+ATK : 3
+CC : 1
+CD : 1
+PRICE : 15
+#
+ID : 9
+NAME : 전투용 몽둥이
+ATK : 3
+CC : 1
+CD : 1
+PRICE : 15
+#
+ID : 10
+NAME : 철심 몽둥이
+ATK : 3
+CC : 1
+CD : 1
+PRICE : 15
+#
+ID : 11
+NAME : 보강 몽둥이
+ATK : 3
+CC : 1
+CD : 1
+PRICE : 15
+#
+ID : 12
+NAME : 초급 철 몽둥이
+ATK : 3
+CC : 1
+CD : 1
+PRICE : 15
+#
+ID : 13
+NAME : 강철 몽둥이
+ATK : 3
+CC : 1
+CD : 1
+PRICE : 15
+#
+ID : 14
+NAME : 강철 전투 몽둥이
+ATK : 3
+CC : 1
+CD : 1
+PRICE : 15
+#
+ID : 15
+NAME : 기사단 둔기
 ATK : 3
 CC : 1
 CD : 1
