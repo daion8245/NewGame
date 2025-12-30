@@ -414,17 +414,15 @@ namespace newgame.Locations
 
         #region 층별 몬스터 지정
 
-        Func<string,int> findMonsterIdByName = (name) => GameManager.Instance.FindAMonsterName(name);
-        
         private readonly Dictionary<int, List<int>> _floorMonsters = new Dictionary<int, List<int>>()
         {
             { 0, new List<int> { GameManager.Instance.FindAMonsterName("슬라임"), GameManager.Instance.FindAMonsterName("빅 슬라임") } },    // 1층 몬스터 ID
-            { 1, new List<int> { 3, 4, 5 } }, // 2층 몬스터 ID
-            { 2, new List<int> { 6, 7 } },    // 3층 몬스터 ID
-            { 3, new List<int> { 8, 9 } },    // 4층 몬스터 ID
-            { 4, new List<int> { 10, 11 } },  // 5층 몬스터 ID
-            { 5, new List<int> { 13, 14 } },  // 6층 몬스터 ID
-            { 6, new List<int> { 15, 16 } },  // 7층 몬스터 ID
+            { 1, new List<int> { GameManager.Instance.FindAMonsterName("스켈레톤"), GameManager.Instance.FindAMonsterName("스켈레톤 영혼"), GameManager.Instance.FindAMonsterName("스켈레톤 기사") } }, // 2층 몬스터 ID
+            { 2, new List<int> { GameManager.Instance.FindAMonsterName("고블린"), GameManager.Instance.FindAMonsterName("갱 고블린") } },    // 3층 몬스터 ID
+            { 3, new List<int> { GameManager.Instance.FindAMonsterName("좀비"), GameManager.Instance.FindAMonsterName("애기 좀비") } },    // 4층 몬스터 ID
+            { 4, new List<int> { GameManager.Instance.FindAMonsterName("거미"), GameManager.Instance.FindAMonsterName("독 거미") } },  // 5층 몬스터 ID
+            { 5, new List<int> { GameManager.Instance.FindAMonsterName("작은 하피"), GameManager.Instance.FindAMonsterName("하피") } },  // 6층 몬스터 ID
+            { 6, new List<int> { GameManager.Instance.FindAMonsterName("작은 트롤"), GameManager.Instance.FindAMonsterName("트롤") } },  // 7층 몬스터 ID
             // 필요시 추가 층수 및 몬스터 ID
         };
 

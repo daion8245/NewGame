@@ -3,8 +3,8 @@ LEVEL : 1
 hp : 40
 ATK : 5
 DEF : 3
-EXP : 3
-COIN : 1
+EXP : 30
+COIN : 3
 CRICHANCE : 1
 CRIDMG : 9999
 #
@@ -13,8 +13,8 @@ LEVEL : 2
 hp : 50
 ATK : 7
 DEF : 4
-EXP : 5
-COIN : 3
+EXP : 32
+COIN : 5
 CRICHANCE : 2
 CRIDMG : 9999
 #
@@ -23,8 +23,8 @@ LEVEL : 2
 hp : 50
 ATK : 10
 DEF : 3
-EXP : 10
-COIN : 5
+EXP : 43
+COIN : 7
 CRICHANCE : 16
 CRIDMG : 155
 #
@@ -33,8 +33,8 @@ LEVEL : 3
 hp : 80
 ATK : 13
 DEF : 3
-EXP : 20
-COIN : 7
+EXP : 46
+COIN : 10
 CRICHANCE : 15
 CRIDMG : 200
 #
@@ -43,8 +43,8 @@ LEVEL : 4
 hp : 100
 ATK : 12
 DEF : 25
-EXP : 10
-COIN : 9
+EXP : 50
+COIN : 11
 CRICHANCE : 10
 CRIDMG : 100
 #
@@ -53,7 +53,7 @@ LEVEL : 3
 hp : 90
 ATK : 14
 DEF : 3
-EXP : 15
+EXP : 57
 COIN : 10
 CRICHANCE : 9
 CRIDMG : 160
@@ -63,7 +63,7 @@ LEVEL : 5
 hp : 85
 ATK : 17
 DEF : 4
-EXP : 20
+EXP : 63
 COIN : 12
 CRICHANCE : 13
 CRIDMG : 170
@@ -73,7 +73,7 @@ LEVEL : 4
 hp : 100
 ATK : 20
 DEF : 5
-EXP : 20
+EXP : 65
 COIN : 13
 CRICHANCE : 10
 CRIDMG : 150
@@ -83,7 +83,7 @@ LEVEL : 5
 hp : 97
 ATK : 24
 DEF : 4
-EXP : 25
+EXP : 73
 COIN : 12
 CRICHANCE : 20
 CRIDMG : 200
@@ -93,7 +93,7 @@ LEVEL : 6
 hp : 120
 ATK : 25
 DEF : 10
-EXP : 35
+EXP : 75
 COIN : 15
 CRICHANCE : 14
 CRIDMG : 170
@@ -103,7 +103,7 @@ LEVEL : 7
 hp : 113
 ATK : 27
 DEF : 8
-EXP : 40
+EXP : 83
 COIN : 18
 CRICHANCE : 14
 CRIDMG : 170
@@ -113,7 +113,7 @@ LEVEL : 8
 hp : 20
 ATK : 10
 DEF : 888
-EXP : 88
+EXP : 100
 COIN : 5
 CRICHANCE : 8
 CRIDMG : 88
