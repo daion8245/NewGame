@@ -1,90 +1,97 @@
 ID : 1
 NAME : 초보자 상의
-HP : 3
-DEF : 2
+DEF : 1
 PRICE : 0
 #
 ID : 2
 NAME : 가죽 갑옷
-HP : 5
 DEF : 3
-PRICE : 10
+MP : 1
+PRICE : 20
 #
 ID : 3
 NAME : 질긴 가죽 갑옷
-HP : 7
-DEF : 4
-PRICE : 20
+DEF : 5
+MP : 2
+PRICE : 40
 #
 ID : 4
 NAME : 강화 가죽 갑옷
-HP : 7
-DEF : 4
-PRICE : 20
+DEF : 7
+MP : 3
+PRICE : 60
 #
 ID : 5
 NAME : 두꺼운 가죽 갑옷
-HP : 7
-DEF : 4
-PRICE : 20
+DEF : 9
+MP : 4
+PRICE : 80
 #
 ID : 6
 NAME : 경화 가죽 갑옷
-HP : 7
-DEF : 4
-PRICE : 20
+DEF : 12
+MP : 5
+PRICE : 100
 #
 ID : 7
 NAME : 강인한 가죽 갑옷
-HP : 7
-DEF : 4
-PRICE : 20
+DEF : 15
+MP : 6
+PRICE : 120
 #
 ID : 8
 NAME : 가죽 철편 갑옷
-HP : 7
-DEF : 4
-PRICE : 20
+DEF : 18
+HP : 10
+MP : 7
+PRICE : 160
 #
 ID : 9
 NAME : 철심 가죽 갑옷
-HP : 7
-DEF : 4
-PRICE : 20
+DEF : 21
+HP : 15
+MP : 8
+PRICE : 180
 #
 ID : 10
 NAME : 보강 가죽 갑옷
-HP : 7
-DEF : 4
-PRICE : 20
+DEF : 24
+HP : 20
+MP : 9
+PRICE : 200
 #
 ID : 11
 NAME : 초급 철제 갑옷
-HP : 7
-DEF : 4
-PRICE : 20
+DEF : 27
+HP : 25
+MP : 10
+PRICE : 220
 #
 ID : 12
 NAME : 전투용 철갑옷
-HP : 7
-DEF : 4
-PRICE : 20
+DEF : 30
+HP : 30
+MP : 11
+PRICE : 240
 #
 ID : 13
 NAME : 강철 갑옷
-HP : 7
-DEF : 4
-PRICE : 20
+DEF : 33
+HP : 35
+MP : 12
+PRICE : 260
 #
 ID : 14
 NAME : 기사단 갑옷
-HP : 7
-DEF : 4
-PRICE : 20
+DEF : 36
+HP : 40
+MP : 13
+PRICE : 280
 #
 ID : 15
 NAME : 은갑옷
-HP : 7
-DEF : 4
-PRICE : 20
+DEF : 39
+HP : 45
+MP : 14
+PRICE : 300
 #
