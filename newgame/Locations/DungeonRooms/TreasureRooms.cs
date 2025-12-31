@@ -32,6 +32,7 @@ public class TreasureRooms
         var player = GameManager.Instance.Player;
         ItemType itemtype = RandomItemTypeGenarator();
         string itemname = RandomItemGenarator(itemtype);
+        ItemGenarator(itemname, itemtype);
         
         Console.Clear();
         for (int i=0; i<30; i++)
@@ -42,7 +43,20 @@ public class TreasureRooms
 
     private void ItemGenarator(string itemname, ItemType itemtype)
     {
-        
+        var player = GameManager.Instance.Player;
+        switch (itemtype)
+        {
+            case ItemType.Gold:
+            {
+                player.MyStatus.gold += int.Parse(itemname);
+                TxtOut(["보물상자에서 골드 "+itemname+"을(를) 획득했다!"]);
+                break;
+            }
+            case ItemType.Potion:
+            {
+                break;
+            }
+        }
     }
 
     private string RandomItemGenarator(ItemType itemtype)
@@ -63,13 +77,27 @@ public class TreasureRooms
                 return potions[index];
             }
             case ItemType.Equipment:
-                return "Equipment";
+            {
+                Random random = new Random();
+                //S, G, H, P, C,
+                string[] equipments = {"S_11", "G_9", "H_8", "P_13", "C_7"};
+                int index = random.Next(equipments.Length);
+                return equipments[index];
+            }
             case ItemType.Weapon:
-                return "Weapon";
+                Random rand = new Random();
+                int[] weapons = {1,3,6,8,9,15 };
+                int weaponIndex = rand.Next(weapons.Length);
+                return weapons[weaponIndex].ToString();
             case ItemType.SkillBook:
-                return "SkillBook";
+                Random rnd = new Random();
+                string[] skillbooks = {"파이어볼","아쿠아 볼","마구치기"};
+                int skillIndex = rnd.Next(skillbooks.Length);
+                return skillbooks[skillIndex];
             case ItemType.Stat:
-                return "Stat";
+                Random randomStat = new Random();
+                string[] stat = { "str", "def", "hp", "mp" };
+                return stat[randomStat.Next(stat.Length)];
             default:
                 return "Unknown Item";
         }
