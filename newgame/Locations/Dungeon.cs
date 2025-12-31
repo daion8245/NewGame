@@ -242,7 +242,7 @@ namespace newgame.Locations
                 #endregion
                 case (RoomType.Treasure):
                     {
-                        // 보물 획득 로직 추가
+                        TreasureRoomCreate();
                         break;
                     }
                 case (RoomType.Shop):
@@ -495,7 +495,12 @@ namespace newgame.Locations
 
         #region 보물 방
 
-        
+        void TreasureRoomCreate()
+        {
+            // 보물 방 로직 추가
+            TreasureRooms treasureRooms = new TreasureRooms();
+            treasureRooms.Start();
+        }
 
         #endregion
 
