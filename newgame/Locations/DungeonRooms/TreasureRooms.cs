@@ -29,7 +29,6 @@ public class TreasureRooms
 
     private void OpenTreasureBox()
     {
-        var player = GameManager.Instance.Player;
         ItemType itemtype = RandomItemTypeGenarator();
         string itemname = RandomItemGenarator(itemtype);
         ItemGenarator(itemname, itemtype);
@@ -43,7 +42,7 @@ public class TreasureRooms
 
     private void ItemGenarator(string itemname, ItemType itemtype)
     {
-        var player = GameManager.Instance.Player;
+        var player = GameManager.Instance.RequirePlayer();
         switch (itemtype)
         {
             case ItemType.Gold:
@@ -54,22 +53,118 @@ public class TreasureRooms
             }
             case ItemType.Potion:
             {
+                if (Enum.TryParse<newgame.Items.ItemType>(itemname, out var potionType))
+                {
+                    if (Inventory.Instance.AddItem(potionType))
+                    {
+                        string potionName = Inventory.Instance.GetItemName(potionType);
+                        TxtOut([$"보물상자에서 {potionName}을(를) 획득했다!"]);
+                    }
+                }
+                else
+                {
+                    TxtOut([$"알 수 없는 포션입니다: {itemname}"]);
+                }
                 break;
             }
             case ItemType.Equipment:
             {
+                string[] parts = itemname.Split('_', StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length < 2 || !int.TryParse(parts[1], out int equipId))
+                {
+                    TxtOut(["잘못된 장비 데이터입니다."]);
+                    break;
+                }
+
+                EquipType equipType = char.ToUpperInvariant(parts[0][0]) switch
+                {
+                    'S' => EquipType.SHOES,
+                    'G' => EquipType.GLOVE,
+                    'H' => EquipType.HELMET,
+                    'P' => EquipType.PANTS,
+                    'C' => EquipType.SHIRT,
+                    _ => EquipType.NONE
+                };
+
+                if (equipType == EquipType.NONE)
+                {
+                    TxtOut([$"알 수 없는 장비 타입입니다: {itemname}"]);
+                    break;
+                }
+
+                Equipment? equip = GameManager.Instance.FindEquipment(equipType, equipId);
+                if (equip != null)
+                {
+                    Inventory.Instance.AddEquip(equip);
+                    TxtOut([$"보물상자에서 {equip.GetEquipName}을(를) 획득했다!"]);
+                }
+                else
+                {
+                    TxtOut([$"장비 정보를 찾을 수 없습니다: {itemname}"]);
+                }
                 break;
             }
             case ItemType.Weapon:
             {
+                if (int.TryParse(itemname, out int weaponId))
+                {
+                    Equipment? weapon = GameManager.Instance.FindEquipment(EquipType.WEAPON, weaponId);
+                    if (weapon != null)
+                    {
+                        Inventory.Instance.AddEquip(weapon);
+                        TxtOut([$"보물상자에서 {weapon.GetEquipName}을(를) 획득했다!"]);
+                    }
+                    else
+                    {
+                        TxtOut([$"무기 정보를 찾을 수 없습니다: {itemname}"]);
+                    }
+                }
+                else
+                {
+                    TxtOut([$"알 수 없는 무기 데이터입니다: {itemname}"]);
+                }
                 break;
             }
             case ItemType.SkillBook:
             {
+                var skill = GameManager.Instance.FindSkillByName(itemname);
+                if (skill != null)
+                {
+                    player.skillSystem.AddCanUseSkill(itemname);
+                    TxtOut([$"보물상자에서 스킬북을 읽고 '{itemname}' 스킬을 익혔다!"]);
+                }
+                else
+                {
+                    TxtOut([$"알 수 없는 스킬북입니다: {itemname}"]);
+                }
                 break;
             }
             case ItemType.Stat:
             {
+                switch (itemname.ToLowerInvariant())
+                {
+                    case "str":
+                        player.MyStatus.ATK += 1;
+                        TxtOut(["힘이 1 상승했다!"]);
+                        break;
+                    case "def":
+                        player.MyStatus.DEF += 1;
+                        TxtOut(["방어력이 1 상승했다!"]);
+                        break;
+                    case "hp":
+                        player.MyStatus.MaxHp += 5;
+                        player.MyStatus.Hp = Math.Min(player.MyStatus.Hp + 5, player.MyStatus.MaxHp);
+                        TxtOut(["최대 체력이 5 증가했다!"]);
+                        break;
+                    case "mp":
+                        player.MyStatus.MaxMp += 5;
+                        player.MyStatus.Mp = Math.Min(player.MyStatus.Mp + 5, player.MyStatus.MaxMp);
+                        TxtOut(["최대 마나가 5 증가했다!"]);
+                        break;
+                    default:
+                        TxtOut([$"알 수 없는 스탯 보상입니다: {itemname}"]);
+                        break;
+                }
                 break;
             }
         }
