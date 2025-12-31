@@ -49,6 +49,34 @@ namespace newgame.Characters
         public void ClearAllCanUseSkills() => canUseSkill.Clear();
 
         /// <summary>
+        /// 이름이 일치하는 스킬만 제거한다.
+        /// </summary>
+        /// <param name="names">제거할 스킬 이름들</param>
+        public void RemoveSkillsByName(IEnumerable<string> names)
+        {
+            if (names == null)
+            {
+                return;
+            }
+
+            HashSet<string> targets = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var name in names)
+            {
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    targets.Add(name.Trim());
+                }
+            }
+
+            if (targets.Count == 0)
+            {
+                return;
+            }
+
+            canUseSkill.RemoveAll(skill => targets.Contains(skill.name));
+        }
+
+        /// <summary>
         /// 매개변수로 받은 스킬의 이름이 전체 스킬 리스트에 있는지 확인하고, 있다면 플레이어의
         /// 사용 가능 스킬을 제거하는 함수
         /// </summary>
