@@ -56,6 +56,22 @@ public class TreasureRooms
             {
                 break;
             }
+            case ItemType.Equipment:
+            {
+                break;
+            }
+            case ItemType.Weapon:
+            {
+                break;
+            }
+            case ItemType.SkillBook:
+            {
+                break;
+            }
+            case ItemType.Stat:
+            {
+                break;
+            }
         }
     }
 
