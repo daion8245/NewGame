@@ -27,8 +27,19 @@ ATK : 10
 HP : 7
 DEF : 3
 MP : 0
-CC : 50
-CD : 30
+CC : 1
+CD : 2
 SKILL : 카운터
 SKILL : 연타
+#
+NAME : 영웅
+DESCRIPTION : [드디어 영웅이 된 자]
+ATK : 100
+HP : 1
+DEF : 1
+MP : 50
+CC : 5
+CD : 3
+SKILL : 영원한 승리의 검
+SKILL : 집중
 #

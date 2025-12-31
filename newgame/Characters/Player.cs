@@ -60,7 +60,7 @@ namespace newgame.Characters
 
             MyStatus.ApplyClass(classType);
             currentClass = classType;
-            ApplyClassSkills(classType.name);
+            ApplyClassSkills(classType.name, null);
         }
 
         public void ChangeClass(CharacterClassType classType)
@@ -76,9 +76,19 @@ namespace newgame.Characters
                 return;
             }
 
+            List<string> previousClassSkillNames = new List<string>();
+            if (currentClass != null)
+            {
+                List<SkillType> previousSkills = GameManager.Instance.GetClassSkills(currentClass.Value.name);
+                foreach (SkillType skill in previousSkills)
+                {
+                    previousClassSkillNames.Add(skill.name);
+                }
+            }
+
             MyStatus.ApplyClass(classType);
             currentClass = classType;
-            ApplyClassSkills(classType.name);
+            ApplyClassSkills(classType.name, previousClassSkillNames);
         }
 
         public bool TryAssignClass(string className)
@@ -113,15 +123,19 @@ namespace newgame.Characters
             return true;
         }
 
-        private void ApplyClassSkills(string className)
+        private void ApplyClassSkills(string className, List<string>? previousClassSkillNames)
         {
             List<SkillType> classSkills = GameManager.Instance.GetClassSkills(className);
+            if (previousClassSkillNames != null && previousClassSkillNames.Count > 0)
+            {
+                skillSystem.RemoveSkillsByName(previousClassSkillNames);
+            }
+
             if (classSkills.Count == 0)
             {
                 return;
             }
 
-            skillSystem.ClearAllCanUseSkills();
             foreach (SkillType skill in classSkills)
             {
                 skillSystem.AddCanUseSkill(skill.name);
@@ -139,7 +153,7 @@ namespace newgame.Characters
             if (GameManager.Instance.TryGetPlayerClass(MyStatus.ClassName, out CharacterClassType classType))
             {
                 currentClass = classType;
-                ApplyClassSkills(classType.name);
+                ApplyClassSkills(classType.name, null);
             }
             else
             {
@@ -389,6 +403,15 @@ namespace newgame.Characters
                         break;
                     }
                 case "아쿠아 볼":
+                    {
+                        if (!IsDead && useSkill.skillTurn > 0)
+                        {
+                            StatusEffects.AddTickSkill(useSkill.name, useSkill.skillTurn);
+                            appliedEffect = true;
+                        }
+                        break;
+                    }
+                case "집중":
                     {
                         if (!IsDead && useSkill.skillTurn > 0)
                         {

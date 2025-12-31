@@ -46,9 +46,12 @@ namespace newgame.Characters
 
         public void ShowStat()
         {
+            string currentJob = string.IsNullOrWhiteSpace(status.ClassName) ? "없음" : status.ClassName;
+            
             UiHelper.TxtOut(new string[]
             {
                 $"이름 : {status.Name}",
+                $"  직업 : {currentJob}",
                 $"  레벨 : {status.level}",
                 $"  체력 : {status.Hp}/{status.MaxHp}",
                 $"  공격력 : {status.ATK}",

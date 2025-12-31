@@ -166,6 +166,7 @@ namespace newgame.Services
                 "소드 어택" => "출혈",
                 "영혼 흡수" => "저주",
                 "물기" => "출혈",
+                "집중" => "집중",
                 _ => skillName
             };
         }
@@ -218,6 +219,15 @@ namespace newgame.Services
                         int remain = Math.Max(remainingTurns, 0);
                         string label = $"{skill}(지속)";
                         string message = messageBuilder(caster, owner, dotDamage, label, defeated, false) + $" (남은 턴: {remain})";
+                        return new SkillTickLog(caster, owner, message, defeated);
+                    }
+                case "집중":
+                    {
+                        int manaAdd = (caster.MyStatus.Mp / 2) + 100;
+                        caster.MyStatus.Mp += manaAdd;
+                        caster.MyStatus.Hp += caster.MyStatus.MaxHp / 20;
+                        string message = $"영웅은 집중했다.... \n 약간의 체력이 회복되고, {manaAdd} 마나가 최대치를 넘어 회복되었다!";
+                        bool defeated = false;
                         return new SkillTickLog(caster, owner, message, defeated);
                     }
                 default:
