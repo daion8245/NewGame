@@ -89,3 +89,12 @@ SKILL : 수호신의 한방
 SKILL : 수호신의 세상 쪼개기
 SKILL : 수호신의 숨결
 #
+NAME : 드레곤
+LEVEL : 100
+hp : 5000
+ATK : 1000
+DEF : 500
+EXP : 1000
+COIN : 100000
+SKILL : 드레곤의 숨결
+SKILL : 드레곤 다이브
