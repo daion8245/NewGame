@@ -58,6 +58,26 @@ COIN : 140
 SKILL : 여신의 분노
 SKILL : 할퀴기
 #
+NAME : 트롤수
+LEVEL : 50
+hp : 500
+ATK : 200
+DEF :50
+EXP : 200
+COIN : 200
+SKILL : 내려치기
+SKILL : 뿌수기
+#
+NAME : 드레곤
+LEVEL : 100
+hp : 5000
+ATK : 1000
+DEF : 500
+EXP : 1000
+COIN : 100000
+SKILL : 드레곤의 숨결
+SKILL : 드레곤 다이브
+#
 NAME : 수호신의 왼팔
 LEVEL : 999
 hp : 9999
@@ -89,12 +109,4 @@ SKILL : 수호신의 한방
 SKILL : 수호신의 세상 쪼개기
 SKILL : 수호신의 숨결
 #
-NAME : 드레곤
-LEVEL : 100
-hp : 5000
-ATK : 1000
-DEF : 500
-EXP : 1000
-COIN : 100000
-SKILL : 드레곤의 숨결
-SKILL : 드레곤 다이브
+

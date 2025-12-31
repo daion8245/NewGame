@@ -425,6 +425,10 @@ namespace newgame.Locations
             { 4, new List<int> { GameManager.Instance.FindAMonsterName("거미"), GameManager.Instance.FindAMonsterName("독 거미") } },  // 5층 몬스터 ID
             { 5, new List<int> { GameManager.Instance.FindAMonsterName("작은 하피"), GameManager.Instance.FindAMonsterName("하피") } },  // 6층 몬스터 ID
             { 6, new List<int> { GameManager.Instance.FindAMonsterName("작은 트롤"), GameManager.Instance.FindAMonsterName("트롤") } },  // 7층 몬스터 ID
+            { 7, new List<int> { GameManager.Instance.FindAMonsterName("새끼 드레곤") } },  // 8층 몬스터 ID
+            { 8, new List<int> { GameManager.Instance.FindAMonsterName("아주작은 정체불명의 생명체") } },  // 9층 몬스터 ID
+            { 9, new List<int> { GameManager.Instance.FindAMonsterName("아주 큰 정체불명의 생명체") } },  // 10층 몬스터 ID
+            { 10, new List<int> { GameManager.Instance.FindAMonsterName("수호신의 문지기") } },  // 11층 몬스터 ID
             // 필요시 추가 층수 및 몬스터 ID
         };
 

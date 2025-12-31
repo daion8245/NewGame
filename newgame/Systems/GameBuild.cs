@@ -56,6 +56,9 @@ namespace newgame.Systems
             _dataManager.LoadPlayer_ClassData();
             _gameManager.UnlockPlayerClass("검사"); // 초기 해금 직업 (추가 해금은 퀘스트/조건에서 호출)
             _gameManager.UnlockPlayerClass("영웅"); // 초기 해금 직업 (추가 해금은 퀘스트/조건에서 호출)
+            _gameManager.UnlockPlayerClass("마법사"); // 초기 해금 직업 (추가 해금은 퀘스트/조건에서 호출)
+            
+            _gameManager.UnlockPlayerClass("도적"); // 초기 해금 직업 (추가 해금은 퀘스트/조건에서 호출)
             _dataManager.LoadDungeonShopData();
             _gameManager.SetItemList();
         }

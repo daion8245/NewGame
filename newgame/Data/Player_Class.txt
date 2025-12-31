@@ -43,3 +43,25 @@ CD : 3
 SKILL : 영원한 승리의 검
 SKILL : 집중
 #
+NAME : 마법사
+DESCRIPTION : [마법을 이용해 전투하는 클래스]
+ATK : 3
+HP : 1
+DEF : 1
+MP : 100
+CC : 3
+CD : 5
+SKILL : 뇌진탕
+SKILL : 블랙홀
+#
+NAME : 도적
+DESCRIPTION : [상대를 짧은 시간 안에 죽이는 클래스]
+ATK : 20
+HP : 1
+DEF : 0
+MP : 4
+CC : 3
+CD : 5
+SKILL : 빠르게 죽이기
+SKILL : 암살
+#
